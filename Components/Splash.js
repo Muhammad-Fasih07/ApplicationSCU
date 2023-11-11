@@ -1,29 +1,29 @@
-import { StyleSheet, Text, View, SafeArea } from "react-native";
-import React, { useEffect } from "react";
-import * as Animatable from "react-native-animatable";
+import { StyleSheet, Text, View, SafeArea } from 'react-native';
+import React, { useEffect } from 'react';
+import * as Animatable from 'react-native-animatable';
 
 const Splash = ({ navigation }) => {
-  useEffect(()=>{
-    setTimeout(()=>{
-      navigation.navigate('Login')
-    },2000);
-  },[]);
+  useEffect(() => {
+    setTimeout(() => {
+      navigation.navigate('Welcome');
+    }, 2000);
+  }, []);
 
   return (
     <View
       style={{
-        backgroundColor: "rgb(24, 61, 61)",
+        backgroundColor: 'black',
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       <Animatable.Text
         style={{
-          color: "rgb(236, 227, 206)",
-          fontStyle: "italic",
+          color: 'rgb(236, 227, 206)',
+          fontStyle: 'italic',
           fontSize: 70,
-          fontWeight: "800",
+          fontWeight: '800',
         }}
         duration={2000}
         animation="bounceIn"
