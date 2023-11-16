@@ -4,7 +4,7 @@ import { TextInput } from 'react-native-gesture-handler';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const Login = () => {
+const Login = ({ navigation }) => {
   return (
     <SafeAreaView>
       <View
@@ -103,11 +103,13 @@ const Login = () => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
+        onPress={() => navigation.navigate('Register')}
           style={{
             padding: 15,
           }}
         >
           <Text
+             
             style={{
               color: 'rgb(24,61,61)',
               textAlign: 'center',

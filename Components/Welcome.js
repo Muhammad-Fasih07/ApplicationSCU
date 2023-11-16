@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View, SafeAreaView, ImageBackground, Dimensions } from 'react-native';
+import {  StyleSheet, Text, View, SafeAreaView, ImageBackground, Dimensions,TouchableOpacity } from 'react-native';
 import React from 'react';
+
 
 
 const { height } = Dimensions.get('window');
