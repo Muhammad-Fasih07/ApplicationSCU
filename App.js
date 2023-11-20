@@ -8,6 +8,9 @@ import Login from './Components/Login';
 import Splash from './Components/Splash';
 import Welcome from './Components/Welcome';
 import Register from './Components/Register';
+import RegisterN from './Components/RegisterN';
+import Termcondition from './Components/Termcondition';
+import Privacypolicy from './Components/Privacypolicy';
 
 const Stack = createStackNavigator();
 
@@ -19,11 +22,14 @@ const App = () => {
         <Stack.Screen name="Welcome" component={Welcome} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen name="RegisterN" component={RegisterN} />
+        <Stack.Screen name="Termcondition" component={Termcondition} />
+        <Stack.Screen name="Privacypolicy" component={Privacypolicy} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
 export default App;
-
+ 
 const styles = StyleSheet.create({});
