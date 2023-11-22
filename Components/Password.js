@@ -3,19 +3,27 @@ import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Register = ({ navigation }) => {
-  const [name, setName] = useState('');
-  const handleNameChange = (text) => {
-    // Limit character count to 15
-    if (text.length <= 20) {
-      setName(text);
+  const [password, setPassword] = useState('');
+
+  const handlePasswordChange = (text) => {
+    // Validate password with only numbers and characters and a maximum length of 8
+    const regex = /^[a-zA-Z0-9]*$/;
+    if (regex.test(text) && text.length <= 8) {
+      setPassword(text);
     }
   };
-  
+
+  const getPlaceholder = () => {
+    if (password.length === 0) {
+      return 'Enter your password (max 8 characters, only numbers and characters)';
+    } else {
+      return '•'.repeat(Math.min(password.length, 8)) + ' ' + 'Enter your password (max 8 characters, only numbers and characters)';
+    }
+  };
+
   const handleSubmit = () => {
-    navigation.navigate('Password');
-    // Handle submission logic here, e.g., sending the name to a server or saving it locally
-    // console.log('Submitted name:', name);
-    // You can add further logic based on your requirements
+    navigation.navigate('Dashboard');
+    // Handle submission logic here, e.g., validate password, etc.
   };
 
   return (
@@ -29,7 +37,7 @@ const Register = ({ navigation }) => {
       }}
     >
       <TouchableOpacity
-        onPress={() => navigation.navigate('Login')}
+        onPress={() => navigation.navigate('Register')}
         style={{
           position: 'absolute',
           top: 50,
@@ -42,7 +50,6 @@ const Register = ({ navigation }) => {
         <Ionicons name="arrow-back" size={20} color="white" />
       </TouchableOpacity>
 
-      {/* First View */}
       <View
         style={{
           alignItems: 'center',
@@ -57,7 +64,7 @@ const Register = ({ navigation }) => {
             marginBottom: 10,
           }}
         >
-          What's Your Name?
+          Create a Password
         </Text>
 
         <Text
@@ -68,46 +75,36 @@ const Register = ({ navigation }) => {
             marginBottom: 20,
           }}
         >
-          Please provide your name to help us identify you.
+          Set a password with only numbers and characters (max 8 characters)
         </Text>
       </View>
 
-      {/* Second View */}
       <View
         style={{
           flex: 1,
           justifyContent: 'space-between',
-          
           marginRight: 160,
         }}
       >
-        <View
-          style={{
-            width: '80%',
-            marginBottom: 20,
-            alignItems:'center',
-            marginLeft:150
-          
-          }}
-        >
+        <View style={{ width: '80%', marginBottom: 20, alignItems: 'center', marginLeft: 150 }}>
           <TextInput
             style={{
               borderWidth: 2,
               borderColor: 'rgb(24,61,61)',
               borderRadius: 25,
-              paddingHorizontal: 90,
+              paddingHorizontal: 75,
               paddingVertical: 12,
               width: '200%',
-              marginLeft:7
-              
+              marginLeft: 7,
             }}
-            placeholder="Type your name here"
-            value={name}
-            onChangeText={handleNameChange}
-            maxLength={20} // Set maximum character length to 20
+            placeholder="Enter your password"
+            value={password}
+            onChangeText={handlePasswordChange}
+            secureTextEntry={true} // Hide the entered text for passwords
           />
         </View>
       </View>
+
       <View>
         <Text
           style={{
@@ -117,7 +114,7 @@ const Register = ({ navigation }) => {
             fontWeight: '400',
           }}
         >
-          By creating SCU account you agree with SCU's
+          By creating an account, you agree to our Terms & Conditions
         </Text>
       </View>
 
@@ -174,7 +171,7 @@ const Register = ({ navigation }) => {
 
       <View style={{ marginBottom: 30 }}>
         <TouchableOpacity
-          onPress={handleSubmit}
+          onPress={() => navigation.navigate('Dashboard')}
           style={{
             backgroundColor: 'rgb(24,61,61)',
             paddingVertical: 15,

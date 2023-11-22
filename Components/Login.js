@@ -68,7 +68,7 @@ const Login = ({ navigation }) => {
         <View>
           <Text
             style={{
-              fontWeight: 'bold',
+              fontWeight: '400',
 
               color: 'rgb(24, 61, 61)',
               alignSelf: 'flex-end',
@@ -114,7 +114,7 @@ const Login = ({ navigation }) => {
               color: 'rgb(24,61,61)',
               textAlign: 'center',
               fontSize: 15,
-              fontWeight: 'bold',
+              fontWeight: '400',
             }}
           >
             Create new account
@@ -131,7 +131,7 @@ const Login = ({ navigation }) => {
               color: 'rgb(24,61,61)',
               textAlign: 'center',
               fontSize: 15,
-              fontWeight: 'bold',
+              fontWeight: '400',
             }}
           >
             Or continue with

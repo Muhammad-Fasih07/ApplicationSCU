@@ -6,17 +6,31 @@ const TermsAndConditionsScreen = () => {
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <View
         style={{
-            marginTop:50,
-          backgroundColor: '#1E1E1E',
+          marginTop: 50,
+          backgroundColor: 'rgb(24,61,61)',
           paddingVertical: 20,
           paddingHorizontal: 24,
           borderBottomWidth: 1,
           borderBottomColor: '#383838',
         }}
       >
-        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff' }}>Terms and Conditions</Text>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: '#fff',
+          }}
+        >
+          Terms and Conditions
+        </Text>
       </View>
-      <ScrollView style={{ flex: 1, paddingTop: 20, paddingHorizontal: 24 }}>
+      <ScrollView
+        style={{
+          flex: 1,
+          paddingTop: 20,
+          paddingHorizontal: 24,
+        }}
+      >
         <View
           style={{
             backgroundColor: '#fff',
@@ -24,13 +38,19 @@ const TermsAndConditionsScreen = () => {
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.2,
-            shadowRadius: 4,
+            shadowRadius: 9,
             elevation: 5,
             marginBottom: 20,
             padding: 16,
           }}
         >
-          <Text style={{ fontSize: 16, lineHeight: 24, color: '#333' }}>
+          <Text
+            style={{
+              fontSize: 16,
+              lineHeight: 24,
+              color: '#333',
+            }}
+          >
             {'\n'}
             Conditions:{'\n'}
             1. Lorem ipsum dolor sit amet, consectetur adipiscing elit.{'\n'}

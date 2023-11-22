@@ -3,20 +3,39 @@ import { View, Text, ScrollView } from 'react-native';
 
 const Privacypolicy = () => {
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: '#fff',
+      }}
+    >
       <View
         style={{
-            marginTop:50,
-          backgroundColor: '#1E1E1E',
+          marginTop: 50,
+          backgroundColor: 'rgb(24,61,61)',
           paddingVertical: 20,
           paddingHorizontal: 24,
           borderBottomWidth: 1,
           borderBottomColor: '#383838',
         }}
       >
-        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff' }}>Privacy Policy</Text>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: '#fff',
+          }}
+        >
+          Privacy Policy
+        </Text>
       </View>
-      <ScrollView style={{ flex: 1, paddingTop: 20, paddingHorizontal: 24 }}>
+      <ScrollView
+        style={{
+          flex: 1,
+          paddingTop: 20,
+          paddingHorizontal: 24,
+        }}
+      >
         <View
           style={{
             backgroundColor: '#fff',
@@ -30,7 +49,13 @@ const Privacypolicy = () => {
             padding: 16,
           }}
         >
-          <Text style={{ fontSize: 16, lineHeight: 24, color: '#333' }}>
+          <Text
+            style={{
+              fontSize: 16,
+              lineHeight: 24,
+              color: '#333',
+            }}
+          >
             {'\n'}
             Conditions:{'\n'}
             1. Lorem ipsum dolor sit amet, consectetur adipiscing elit.{'\n'}

@@ -11,6 +11,8 @@ import Register from './Components/Register';
 import RegisterN from './Components/RegisterN';
 import Termcondition from './Components/Termcondition';
 import Privacypolicy from './Components/Privacypolicy';
+import Password from './Components/Password';
+import Dashboard from './Components/Dashboard';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +27,8 @@ const App = () => {
         <Stack.Screen name="RegisterN" component={RegisterN} />
         <Stack.Screen name="Termcondition" component={Termcondition} />
         <Stack.Screen name="Privacypolicy" component={Privacypolicy} />
+        <Stack.Screen name="Password" component={Password} />
+        <Stack.Screen name="Dashboard" component={Dashboard} />
       </Stack.Navigator>
     </NavigationContainer>
   );
