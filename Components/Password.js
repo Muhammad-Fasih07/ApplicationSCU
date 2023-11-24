@@ -13,19 +13,6 @@ const Register = ({ navigation }) => {
     }
   };
 
-  const getPlaceholder = () => {
-    if (password.length === 0) {
-      return 'Enter your password (max 8 characters, only numbers and characters)';
-    } else {
-      return '•'.repeat(Math.min(password.length, 8)) + ' ' + 'Enter your password (max 8 characters, only numbers and characters)';
-    }
-  };
-
-  const handleSubmit = () => {
-    navigation.navigate('Dashboard');
-    // Handle submission logic here, e.g., validate password, etc.
-  };
-
   return (
     <View
       style={{
