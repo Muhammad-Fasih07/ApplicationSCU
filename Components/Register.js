@@ -38,7 +38,7 @@ const Register = ({ navigation }) => {
       }}
     >
       <TouchableOpacity
-        onPress={() => navigation.navigate('Login')}
+        onPress={() => navigation.navigate('RegisterN')}
         style={{
           position: 'absolute',
           top: 50,

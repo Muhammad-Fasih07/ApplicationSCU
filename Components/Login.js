@@ -78,6 +78,7 @@ const Login = ({ navigation }) => {
           </Text>
         </View>
         <TouchableOpacity
+        onPress={() => navigation.navigate('Dashboard')}
           style={{
             padding: 15,
             backgroundColor: 'rgb(24,61,61)',
@@ -103,7 +104,7 @@ const Login = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-        onPress={() => navigation.navigate('Register')}
+        onPress={() => navigation.navigate('RegisterN')}
           style={{
             padding: 15,
           }}
