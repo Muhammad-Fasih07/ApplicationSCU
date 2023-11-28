@@ -1,19 +1,28 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Register = ({ navigation }) => {
   const [name, setName] = useState('');
+
   const handleNameChange = (text) => {
-    // Limit character count to 15
+    // Limit character count to 20
     if (text.length <= 20) {
-      setName(text);
+      // Capitalize the first letter of the name
+      const capitalizedText = text.charAt(0).toUpperCase() + text.slice(1);
+      setName(capitalizedText);
     }
   };
-  
+
   const handleSubmit = () => {
+    if (!name || !/^[A-Z][a-zA-Z]{1,}$/.test(name)) {
+      // Display an error if the name is empty or doesn't meet criteria
+      Alert.alert('Invalid Name', 'Please enter a valid name with the first letter capitalized.');
+      return;
+    }
+    
     navigation.navigate('Password');
-    // Handle submission logic here, e.g., sending the name to a server or saving it locally
+    // Handle submission logic here
     // console.log('Submitted name:', name);
     // You can add further logic based on your requirements
   };
@@ -25,7 +34,7 @@ const Register = ({ navigation }) => {
         justifyContent: 'flex-start',
         alignItems: 'center',
         paddingHorizontal: 20,
-        paddingTop: 50, // Adjust paddingTop for better alignment
+        paddingTop: 50,
       }}
     >
       <TouchableOpacity
@@ -77,7 +86,6 @@ const Register = ({ navigation }) => {
         style={{
           flex: 1,
           justifyContent: 'space-between',
-          
           marginRight: 160,
         }}
       >
@@ -85,9 +93,8 @@ const Register = ({ navigation }) => {
           style={{
             width: '80%',
             marginBottom: 20,
-            alignItems:'center',
-            marginLeft:150
-          
+            alignItems: 'center',
+            marginLeft: 150,
           }}
         >
           <TextInput
@@ -95,11 +102,10 @@ const Register = ({ navigation }) => {
               borderWidth: 2,
               borderColor: 'rgb(24,61,61)',
               borderRadius: 25,
-              paddingHorizontal: 90,
+              paddingHorizontal: 70,
               paddingVertical: 12,
-              width: '200%',
-              marginLeft:7
-              
+              width: '100%',
+              marginLeft: 7,
             }}
             placeholder="Type your name here"
             value={name}
@@ -108,6 +114,8 @@ const Register = ({ navigation }) => {
           />
         </View>
       </View>
+
+      {/* Agreement and Submit */}
       <View>
         <Text
           style={{
@@ -129,11 +137,10 @@ const Register = ({ navigation }) => {
           marginBottom: 20,
         }}
       >
+        {/* Terms & Conditions, Privacy Policy options */}
         <TouchableOpacity
           onPress={() => navigation.navigate('Termcondition')}
-          style={{
-            marginRight: 5,
-          }}
+          style={{ marginRight: 5 }}
         >
           <Text
             style={{
@@ -145,20 +152,10 @@ const Register = ({ navigation }) => {
             Terms & Conditions
           </Text>
         </TouchableOpacity>
-
-        <Text
-          style={{
-            color: 'black',
-          }}
-        >
-          •
-        </Text>
-
+        <Text style={{ color: 'black' }}>•</Text>
         <TouchableOpacity
           onPress={() => navigation.navigate('Privacypolicy')}
-          style={{
-            marginLeft: 5,
-          }}
+          style={{ marginLeft: 5 }}
         >
           <Text
             style={{

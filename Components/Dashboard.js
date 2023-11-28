@@ -1,81 +1,48 @@
+// Dashboard.js
+
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { View, Text } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
 
-const Dashboard = ({ navigation }) => {
-  const handleLogout = () => {
-    // Logic for handling logout
-    // For example, clearing authentication tokens or user data
-    navigation.navigate('Login'); // Navigate to the Login screen after logout
-  };
-
+const Dashboard = () => {
   return (
     <View
       style={{
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        paddingTop: 50, // Adjust paddingTop for better alignment
+        backgroundColor: '#B5C99A',
       }}
     >
-      <Text
+      {/* Header */}
+      <View
         style={{
-          fontSize: 25,
-          fontWeight: 'bold',
-          marginBottom: 20,
-        }}
-      >
-        Dashboard
-      </Text>
-
-      {/* Add various sections or components representing different functionalities */}
-      <TouchableOpacity
-        onPress={() => {
-          // Navigate to different screens or perform actions based on dashboard items
-          // Example: navigation.navigate('Profile') to navigate to the profile screen
-        }}
-        style={{
-          backgroundColor: 'lightblue',
           padding: 20,
-          marginBottom: 20,
-          borderRadius: 10,
-          width: '80%',
+          borderBottomWidth: 2,
+          borderBottomColor: '#718355',
           alignItems: 'center',
         }}
       >
-        <Text>Profile</Text>
-      </TouchableOpacity>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: 'bold',
+            marginTop: 15,
+          }}
+        >
+          SCU
+        </Text>
+      </View>
 
-      <TouchableOpacity
-        onPress={() => {
-          // Logic or navigation for other dashboard functionalities
-        }}
+      {/* Main Content */}
+      <View
         style={{
-          backgroundColor: 'lightgreen',
-          padding: 20,
-          marginBottom: 20,
-          borderRadius: 10,
-          width: '80%',
+          flex: 1,
+          justifyContent: 'center',
           alignItems: 'center',
         }}
       >
-        <Text>Analytics</Text>
-      </TouchableOpacity>
-
-      {/* Logout button */}
-      <TouchableOpacity
-        onPress={handleLogout}
-        style={{
-          backgroundColor: 'red',
-          padding: 15,
-          borderRadius: 10,
-          width: '50%',
-          alignItems: 'center',
-        }}
-      >
-        <Text style={{ color: 'white' }}>Logout</Text>
-      </TouchableOpacity>
+        {/* Your dashboard content goes here */}
+        <Text>Welcome to SCU Dashboard</Text>
+      </View>
     </View>
   );
 };

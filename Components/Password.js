@@ -1,15 +1,33 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Register = ({ navigation }) => {
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handlePasswordChange = (text) => {
     // Validate password with only numbers and characters and a maximum length of 8
     const regex = /^[a-zA-Z0-9]*$/;
     if (regex.test(text) && text.length <= 8) {
       setPassword(text);
+      setErrorMessage('');
+    } else {
+      setErrorMessage('Password must contain only numbers and characters, and be at most 8 characters long.');
+    } 
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleSubmit = () => {
+    if (!password || errorMessage) {
+      Alert.alert('Error', 'Please correct the errors before submitting.');
+    } else {
+      // Password is valid, navigate to the next page
+      navigation.navigate('Dashboard'); // Replace 'NextPage' with the actual name of your next page
     }
   };
 
@@ -20,7 +38,7 @@ const Register = ({ navigation }) => {
         justifyContent: 'flex-start',
         alignItems: 'center',
         paddingHorizontal: 20,
-        paddingTop: 50, // Adjust paddingTop for better alignment
+        paddingTop: 50,
       }}
     >
       <TouchableOpacity
@@ -68,28 +86,37 @@ const Register = ({ navigation }) => {
 
       <View
         style={{
-          flex: 1,
-          justifyContent: 'space-between',
-          marginRight: 160,
+          width: '50%',
+          marginBottom: 20,
+          alignItems: 'center',
+          marginBottom: 290,
         }}
       >
-        <View style={{ width: '80%', marginBottom: 20, alignItems: 'center', marginLeft: 150 }}>
-          <TextInput
-            style={{
-              borderWidth: 2,
-              borderColor: 'rgb(24,61,61)',
-              borderRadius: 25,
-              paddingHorizontal: 75,
-              paddingVertical: 12,
-              width: '200%',
-              marginLeft: 7,
-            }}
-            placeholder="Enter your password"
-            value={password}
-            onChangeText={handlePasswordChange}
-            secureTextEntry={true} // Hide the entered text for passwords
-          />
-        </View>
+        <TextInput
+          style={{
+            borderWidth: 2,
+            borderColor: 'rgb(24,61,61)',
+            borderRadius: 25,
+            paddingHorizontal: 75,
+            paddingVertical: 12,
+            width: '200%',
+            marginLeft: 7,
+          }}
+          placeholder="Enter your password"
+          value={password}
+          onChangeText={handlePasswordChange}
+          secureTextEntry={!showPassword}
+        />
+        <TouchableOpacity
+          onPress={toggleShowPassword}
+          style={{
+            position: 'absolute',
+            right: -60,
+            top: 15,
+          }}
+        >
+          <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color="gray" />
+        </TouchableOpacity>
       </View>
 
       <View>
@@ -156,9 +183,13 @@ const Register = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
+      <View style={{ marginBottom: 10, alignItems: 'center' }}>
+        {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
+      </View>
+
       <View style={{ marginBottom: 30 }}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Dashboard')}
+          onPress={handleSubmit}
           style={{
             backgroundColor: 'rgb(24,61,61)',
             paddingVertical: 15,
