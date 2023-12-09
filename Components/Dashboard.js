@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 
-const Dashboard = () => {
+const Dashboard = ({navigation}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const animatedImageRef = useRef(null);
 
@@ -15,7 +15,7 @@ const Dashboard = () => {
   };
 
   const handleProfileClick = () => {
-    console.log('Navigate to profile settings');
+    console.log('Navigate to mainscreen');
     closeDrawer();
   };
 
@@ -31,8 +31,9 @@ const Dashboard = () => {
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          backgroundColor: '#333',
+          backgroundColor: 'rgb(57, 88, 134)',
           padding: 10,
+          
         }}
       >
         <TouchableOpacity onPress={toggleDrawer}>
@@ -48,12 +49,12 @@ const Dashboard = () => {
         </TouchableOpacity>
         <Text
           style={{
-            color: '#fff',
+            color: 'rgb(213, 222, 239)',
             fontSize: 18,
             fontWeight: 'bold',
           }}
         >
-          Dashboard
+          Welcome to SCU
         </Text>
       </View>
       <View
@@ -64,10 +65,19 @@ const Dashboard = () => {
           padding: 20,
         }}
       >
-        <Text>Welcome to the dashboard!</Text>
         <TouchableOpacity onPress={animateImage}>
           <Animatable.View ref={animatedImageRef}>
-            <Image source={require('../assets/images/logo.png ')} style={{ width: 150, height: 150, marginTop: 20 }} />
+            <Image
+              source={require('../assets/bus.jpg')}
+              style={{
+                width: 350,
+                marginBottom: 550,
+                height: 150,
+                marginHorizontal: 50,
+                borderRadius: 20,
+                backgroundColor: 'rgb(24,61,61)',
+              }}
+            />
           </Animatable.View>
         </TouchableOpacity>
       </View>
@@ -79,14 +89,129 @@ const Dashboard = () => {
             left: 0,
             bottom: 0,
             width: 250,
-            backgroundColor: '#f0f0f0',
+            backgroundColor: 'rgb(138, 174, 224)',
             padding: 20,
+            borderRadius: 5,
           }}
         >
+          {/* User Picture */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20, marginTop: 30 }}>
+            <Image
+              source={require('../assets/userlogo.png')}
+              style={{ width: 50, height: 50, borderRadius: 25, marginRight: 30 }}
+            />
+            {/* Replace with actual user name */}
+            <Text style={{ fontSize: 16, color: '#333' ,fontWeight:'bold'}}>User Name</Text>
+          </View>
+
+          {/* Drawer items */}
           <TouchableOpacity onPress={handleProfileClick}>
-            <Text style={{ fontSize: 16, marginBottom: 10, color: '#333' }}>Profile Settings</Text>
+            <Text
+              style={{
+                fontSize: 16,
+                marginBottom: 10,
+                color: '#333',
+                marginTop: 30,
+                fontWeight: 'bold',
+              }}
+            >
+              Your Trip
+            </Text>
           </TouchableOpacity>
-          {/* Add more drawer items here */}
+          <TouchableOpacity onPress={handleProfileClick}>
+            <Text
+              style={{
+                fontSize: 16,
+                marginBottom: 10,
+                color: '#333',
+                marginTop: 15,
+                fontWeight: 'bold',
+              }}
+            >
+              Wallet
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleProfileClick}>
+            <Text
+              style={{
+                fontSize: 16,
+                marginBottom: 10,
+                color: '#333',
+                marginTop: 15,
+                fontWeight: 'bold',
+              }}
+            >
+              Payment
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleProfileClick}>
+            <Text
+              style={{
+                fontSize: 16,
+                marginBottom: 10,
+                color: '#333',
+                marginTop: 15,
+                fontWeight: 'bold',
+              }}
+            >
+              Help
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleProfileClick}>
+            <Text
+              style={{
+                fontSize: 16,
+                marginBottom: 10,
+                color: '#333',
+                marginTop: 15,
+                fontWeight: 'bold',
+              }}
+            >
+              Setting
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleProfileClick}>
+            <Text
+              style={{
+                fontSize: 16,
+                marginBottom: 10,
+                color: '#333',
+                marginTop: 15,
+                fontWeight: 'bold',
+              }}
+            >
+              Privacy Center
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+        onPress={() => navigation.navigate('Driver')}
+          style={{
+            marginTop:280,
+            padding: 10,
+            backgroundColor: '#022B42',
+            marginVertical: 3,
+            borderRadius: 5,
+            shadowColor: 'rgb(147, 177, 166)',
+            shadowOffset: {
+              width: 0,
+              height: 3,
+            },
+            shadowOpacity: 0.3,
+          }}
+        >
+          <Text
+            style={{
+              color: 'white',
+              textAlign: 'center',
+              fontSize: 20,
+              fontWeight: 'bold',
+            }}
+          >
+            Driver Mode
+          </Text>
+        </TouchableOpacity>
+         
+          {/* Add other drawer items here */}
         </View>
       )}
     </View>

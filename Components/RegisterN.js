@@ -114,7 +114,7 @@ const App = ({ navigation }) => {
                navigation.navigate('Register')
             }}
             style={{
-              marginTop: 265,
+              marginTop: 375,
               backgroundColor:'rgb(24,61,61)',
               padding: 13.5,
               borderRadius: 25,

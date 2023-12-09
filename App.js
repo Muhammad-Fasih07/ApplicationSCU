@@ -13,6 +13,11 @@ import Termcondition from './Components/Termcondition';
 import Privacypolicy from './Components/Privacypolicy';
 import Password from './Components/Password';
 import Dashboard from './Components/Dashboard';
+import Driver from './Components/Driver';
+import Car from './Components/Car';
+import Bus from './Components/Bus';
+import Van from './Components/Van';
+import Dashboard2 from './Components/Dashboard2';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +34,13 @@ const App = () => {
         <Stack.Screen name="Privacypolicy" component={Privacypolicy} />
         <Stack.Screen name="Password" component={Password} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
+        <Stack.Screen name="Driver" component={Driver} />
+        <Stack.Screen name="Car" component={Car}/>
+        <Stack.Screen name="Van" component={Van}/>
+        <Stack.Screen name="Bus" component={Bus}/>
+        <Stack.Screen name="Dashboard2" component={Dashboard2}/>
+        
+       
       </Stack.Navigator>
     </NavigationContainer>
   );

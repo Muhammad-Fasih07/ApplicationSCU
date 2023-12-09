@@ -58,7 +58,7 @@ const Register = ({ navigation }) => {
       <View
         style={{
           alignItems: 'center',
-          marginTop: 90,
+          marginTop: 70,
         }}
       >
         <Text
