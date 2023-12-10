@@ -184,7 +184,7 @@ const Dashboard = ({navigation}) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-        onPress={() => navigation.navigate('Driver')}
+        onPress={() => navigation.navigate('Dashboard')}
           style={{
             marginTop:280,
             padding: 10,
@@ -207,7 +207,7 @@ const Dashboard = ({navigation}) => {
               fontWeight: 'bold',
             }}
           >
-            Driver Mode
+            Passenger Mode
           </Text>
         </TouchableOpacity>
          

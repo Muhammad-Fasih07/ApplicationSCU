@@ -18,6 +18,7 @@ import Car from './Components/Car';
 import Bus from './Components/Bus';
 import Van from './Components/Van';
 import Dashboard2 from './Components/Dashboard2';
+import Driverdoc from './Components/Driverdoc';
 
 const Stack = createStackNavigator();
 
@@ -39,7 +40,7 @@ const App = () => {
         <Stack.Screen name="Van" component={Van}/>
         <Stack.Screen name="Bus" component={Bus}/>
         <Stack.Screen name="Dashboard2" component={Dashboard2}/>
-        
+        <Stack.Screen name="Driverdoc" component={Driverdoc}/>
        
       </Stack.Navigator>
     </NavigationContainer>
