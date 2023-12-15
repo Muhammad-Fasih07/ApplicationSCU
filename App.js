@@ -19,6 +19,7 @@ import Bus from './Components/Bus';
 import Van from './Components/Van';
 import Dashboard2 from './Components/Dashboard2';
 import Driverdoc from './Components/Driverdoc';
+import Selection from './Components/Selection';
 
 const Stack = createStackNavigator();
 
@@ -36,17 +37,17 @@ const App = () => {
         <Stack.Screen name="Password" component={Password} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="Driver" component={Driver} />
-        <Stack.Screen name="Car" component={Car}/>
-        <Stack.Screen name="Van" component={Van}/>
-        <Stack.Screen name="Bus" component={Bus}/>
-        <Stack.Screen name="Dashboard2" component={Dashboard2}/>
-        <Stack.Screen name="Driverdoc" component={Driverdoc}/>
-       
+        <Stack.Screen name="Car" component={Car} />
+        <Stack.Screen name="Van" component={Van} />
+        <Stack.Screen name="Bus" component={Bus} />
+        <Stack.Screen name="Dashboard2" component={Dashboard2} />
+        <Stack.Screen name="Driverdoc" component={Driverdoc} />
+        <Stack.Screen name="Selection" component={Selection} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
 export default App;
- 
+
 const styles = StyleSheet.create({});
