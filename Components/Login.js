@@ -18,7 +18,7 @@ const Login = ({ navigation }) => {
           <Text
             style={{
               fontSize: 40,
-              color: 'rgb(24, 61, 61)',
+              color: '#022B42',
               fontWeight: 'bold',
               marginVertical: 30,
             }}
@@ -70,7 +70,7 @@ const Login = ({ navigation }) => {
             style={{
               fontWeight: '400',
 
-              color: 'rgb(24, 61, 61)',
+              color: 'black',
               alignSelf: 'flex-end',
             }}
           >
@@ -81,7 +81,7 @@ const Login = ({ navigation }) => {
           onPress={() => navigation.navigate('Dashboard')}
           style={{
             padding: 15,
-            backgroundColor: 'rgb(24,61,61)',
+            backgroundColor: '#022B42',
             marginVertical: 30,
             borderRadius: 5,
             shadowColor: 'rgb(147, 177, 166)',
@@ -111,7 +111,7 @@ const Login = ({ navigation }) => {
         >
           <Text
             style={{
-              color: 'rgb(24,61,61)',
+              color: 'black',
               textAlign: 'center',
               fontSize: 15,
               fontWeight: '400',
@@ -128,7 +128,7 @@ const Login = ({ navigation }) => {
         >
           <Text
             style={{
-              color: 'rgb(24,61,61)',
+              color: 'black',
               textAlign: 'center',
               fontSize: 15,
               fontWeight: '400',
@@ -146,33 +146,33 @@ const Login = ({ navigation }) => {
             <TouchableOpacity
               style={{
                 padding: 10,
-                backgroundColor: 'gray',
+                backgroundColor: '#022B42',
                 borderRadius: 20,
                 marginHorizontal: 10,
               }}
             >
-              <Ionicons name="logo-google" color={Colors.text} size={20} />
+              <Ionicons name="logo-google" color={Colors.white} size={20} />
             </TouchableOpacity>
             <TouchableOpacity
               style={{
                 padding: 10,
-                backgroundColor: 'gray',
+                backgroundColor: '#022B42',
                 borderRadius: 20,
                 marginHorizontal: 10,
               }}
             >
-              <Ionicons name="logo-apple" color={Colors.text} size={20} />
+              <Ionicons name="logo-apple" color={Colors.white} size={20} />
             </TouchableOpacity>
 
             <TouchableOpacity
               style={{
                 padding: 10,
-                backgroundColor: 'gray',
+                backgroundColor: '#022B42',
                 borderRadius: 20,
                 marginHorizontal: 10,
               }}
             >
-              <Ionicons name="logo-facebook" color={Colors.text} size={20} />
+              <Ionicons name="logo-facebook" color={Colors.white} size={20} />
             </TouchableOpacity>
           </View>
         </View>

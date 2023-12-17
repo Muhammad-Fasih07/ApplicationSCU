@@ -30,10 +30,10 @@ const App = ({ navigation }) => {
               left: 8,
               padding: 15,
               borderRadius: 40,
-              backgroundColor: 'gray',
+              backgroundColor: '#022B42',
             }}
           >
-            <Ionicons name="arrow-back" size={20} color="white" />
+            <Ionicons name="arrow-back" size={20} color="#FDD387" />
           </TouchableOpacity>
 
           <View
@@ -92,7 +92,7 @@ const App = ({ navigation }) => {
               color: '#333',
             }}
           />
-           {showMessage && (
+          {showMessage && (
             <View
               style={{
                 padding: 10,
@@ -111,20 +111,19 @@ const App = ({ navigation }) => {
               const checkValid = phoneInput.current?.isValidNumber(value);
               setShowMessage(true);
               setValid(checkValid ? checkValid : false);
-               navigation.navigate('Register')
+              navigation.navigate('Register');
             }}
             style={{
               marginTop: 375,
-              backgroundColor:'rgb(24,61,61)',
+              backgroundColor: '#022B42',
               padding: 13.5,
               borderRadius: 25,
               alignItems: 'center',
-              width:'100%'
+              width: '100%',
             }}
           >
             <Text style={{ color: '#fff', fontSize: 18 }}>Submit</Text>
           </TouchableOpacity>
-         
         </SafeAreaView>
       </View>
     </>

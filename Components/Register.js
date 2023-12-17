@@ -20,7 +20,7 @@ const Register = ({ navigation }) => {
       Alert.alert('Invalid Name', 'Please enter a valid name with the first letter capitalized.');
       return;
     }
-    
+
     navigation.navigate('Password');
     // Handle submission logic here
     // console.log('Submitted name:', name);
@@ -41,21 +41,21 @@ const Register = ({ navigation }) => {
         onPress={() => navigation.navigate('RegisterN')}
         style={{
           position: 'absolute',
-          top: 50,
+          top: 40,
           left: 20,
           padding: 15,
           borderRadius: 50,
-          backgroundColor: 'gray',
+          backgroundColor: '#022B42',
         }}
       >
-        <Ionicons name="arrow-back" size={20} color="white" />
+        <Ionicons name="arrow-back" size={20} color="#FDD387" />
       </TouchableOpacity>
 
       {/* First View */}
       <View
         style={{
           alignItems: 'center',
-          marginTop: 90,
+          marginTop: 70,
         }}
       >
         <Text
@@ -100,7 +100,7 @@ const Register = ({ navigation }) => {
           <TextInput
             style={{
               borderWidth: 2,
-              borderColor: 'rgb(24,61,61)',
+              borderColor: '#022B42',
               borderRadius: 25,
               paddingHorizontal: 70,
               paddingVertical: 12,
@@ -138,13 +138,10 @@ const Register = ({ navigation }) => {
         }}
       >
         {/* Terms & Conditions, Privacy Policy options */}
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Termcondition')}
-          style={{ marginRight: 5 }}
-        >
+        <TouchableOpacity onPress={() => navigation.navigate('Termcondition')} style={{ marginRight: 5 }}>
           <Text
             style={{
-              color: 'rgb(24,61,61)',
+              color: '#022B42',
               fontSize: 15,
               fontWeight: '400',
             }}
@@ -153,13 +150,10 @@ const Register = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
         <Text style={{ color: 'black' }}>•</Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Privacypolicy')}
-          style={{ marginLeft: 5 }}
-        >
+        <TouchableOpacity onPress={() => navigation.navigate('Privacypolicy')} style={{ marginLeft: 5 }}>
           <Text
             style={{
-              color: 'rgb(24,61,61)',
+              color: '#022B42',
               fontSize: 15,
               fontWeight: '400',
             }}
@@ -173,7 +167,7 @@ const Register = ({ navigation }) => {
         <TouchableOpacity
           onPress={handleSubmit}
           style={{
-            backgroundColor: 'rgb(24,61,61)',
+            backgroundColor: '#022B42',
             paddingVertical: 15,
             paddingHorizontal: 150,
             borderRadius: 25,

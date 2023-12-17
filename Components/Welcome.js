@@ -1,38 +1,30 @@
-import {  StyleSheet, Text, View, SafeAreaView, ImageBackground, Dimensions,TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, ImageBackground, Dimensions, TouchableOpacity } from 'react-native';
 import React from 'react';
-
-
 
 const { height } = Dimensions.get('window');
 
 const Welcome = ({ navigation }) => {
-
-    
-          
-       
-
   return (
     <SafeAreaView>
-      <View style={{backgroundColor:'rgb(94, 147, 177)'}}>
+      <View style={{ backgroundColor: 'rgb(94, 147, 177)' }}>
         <ImageBackground
           style={{
             height: height / 1.6,
           }}
           resizeMode="center"
-          source={require('../assets/images/logo.png')}
+          source={require('../assets/scuwelcome.png')}
         />
         <View
           style={{
             paddingHorizontal: 16,
             paddingTop: 4,
-            
           }}
         >
           <Text
             style={{
               fontSize: 40,
               fontWeight: 'bold',
-              
+              color: 'white',
               textAlign: 'center',
               marginTop: -50,
             }}
@@ -41,10 +33,7 @@ const Welcome = ({ navigation }) => {
           </Text>
         </View>
 
-        <View style={{ paddingHorizontal: 8, 
-            paddingVertical: 36, 
-          
-            }}>
+        <View style={{ paddingHorizontal: 8, paddingVertical: 36 }}>
           <TouchableOpacity
             onPress={() => navigation.navigate('Login')}
             style={{
@@ -52,10 +41,10 @@ const Welcome = ({ navigation }) => {
               paddingHorizontal: 10,
               width: '80%',
               borderRadius: 4,
-              backgroundColor: 'rgb(24,61,61)',
+              backgroundColor: '#022B42',
               marginLeft: 34,
               alignContent: 'center',
-              marginVertical:120,
+              marginVertical: 120,
             }}
           >
             <Text

@@ -47,7 +47,7 @@ const ContactScreen = ({ navigation }) => {
           justifyContent: 'center',
         }}
       >
-        <Icon name="person" size={50} color="#fff" />
+        <Icon name="person" size={50} color="#FDD387" />
         <Text
           style={{
             color: '#fff',
@@ -71,7 +71,7 @@ const ContactScreen = ({ navigation }) => {
           justifyContent: 'center',
         }}
       >
-        <Icon name="person" size={50} color="#fff" />
+        <Icon name="person" size={50} color="#FDD387" />
         <Text
           style={{
             color: '#fff',

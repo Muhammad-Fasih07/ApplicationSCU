@@ -15,7 +15,7 @@ const Register = ({ navigation }) => {
       setErrorMessage('');
     } else {
       setErrorMessage('Password must contain only numbers and characters, and be at most 8 characters long.');
-    } 
+    }
   };
 
   const toggleShowPassword = () => {
@@ -49,10 +49,10 @@ const Register = ({ navigation }) => {
           left: 20,
           padding: 15,
           borderRadius: 50,
-          backgroundColor: 'gray',
+          backgroundColor: '#022B42',
         }}
       >
-        <Ionicons name="arrow-back" size={20} color="white" />
+        <Ionicons name="arrow-back" size={20} color="#FDD387" />
       </TouchableOpacity>
 
       <View
@@ -95,7 +95,7 @@ const Register = ({ navigation }) => {
         <TextInput
           style={{
             borderWidth: 2,
-            borderColor: 'rgb(24,61,61)',
+            borderColor: '#022B42',
             borderRadius: 25,
             paddingHorizontal: 75,
             paddingVertical: 12,
@@ -148,7 +148,7 @@ const Register = ({ navigation }) => {
         >
           <Text
             style={{
-              color: 'rgb(24,61,61)',
+              color: '#022B42',
               fontSize: 15,
               fontWeight: '400',
             }}
@@ -173,7 +173,7 @@ const Register = ({ navigation }) => {
         >
           <Text
             style={{
-              color: 'rgb(24,61,61)',
+              color: '#022B42',
               fontSize: 15,
               fontWeight: '400',
             }}
@@ -191,7 +191,7 @@ const Register = ({ navigation }) => {
         <TouchableOpacity
           onPress={handleSubmit}
           style={{
-            backgroundColor: 'rgb(24,61,61)',
+            backgroundColor: '#022B42',
             paddingVertical: 15,
             paddingHorizontal: 150,
             borderRadius: 25,
