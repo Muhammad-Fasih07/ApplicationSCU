@@ -6,8 +6,7 @@ const TermsAndConditionsScreen = () => {
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <View
         style={{
-          marginTop: 50,
-          backgroundColor: 'rgb(24,61,61)',
+          backgroundColor: '#022B42',
           paddingVertical: 20,
           paddingHorizontal: 24,
           borderBottomWidth: 1,

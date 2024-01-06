@@ -6,15 +6,15 @@ const Register = ({ navigation }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [gender, setGender] = useState('');
-  const [carBrand, setCarBrand] = useState('');
-  const [carModel, setCarModel] = useState('');
+  const [VehicleBrand, setVehicleBrand] = useState('');
+  const [VehicleModel, setVehicleModel] = useState('');
   const [licenseNumber, setLicenseNumber] = useState('');
-  const [carNumberPlate, setCarNumberPlate] = useState('');
+  const [carNumberPlate, setVehicleNumberPlate] = useState('');
 
   const handleSubmit = () => {
     // Delay for 1 second before showing the success message (for demonstration purposes)
     // Similarly validate other fields
-    
+
     navigation.navigate('Driverdoc');
     // Handle submission logic here
   };
@@ -40,7 +40,7 @@ const Register = ({ navigation }) => {
           backgroundColor: '#022B42',
         }}
       >
-        <Ionicons name="arrow-back" size={20} color="white" />
+        <Ionicons name="arrow-back" size={20} color="#FDD387" />
       </TouchableOpacity>
 
       <View
@@ -115,9 +115,9 @@ const Register = ({ navigation }) => {
             width: '80%',
             marginBottom: 22,
           }}
-          placeholder="Car Brand"
-          value={carBrand}
-          onChangeText={(text) => setCarBrand(text)}
+          placeholder="Vehicle Brand"
+          value={VehicleBrand}
+          onChangeText={(text) => setVehicleBrand(text)}
         />
 
         <TextInput
@@ -130,9 +130,9 @@ const Register = ({ navigation }) => {
             width: '80%',
             marginBottom: 22,
           }}
-          placeholder="Car Model"
-          value={carModel}
-          onChangeText={(text) => setCarModel(text)}
+          placeholder="Vehicle Model"
+          value={VehicleBrand}
+          onChangeText={(text) => setVehicleModel(text)}
         />
 
         <TextInput
@@ -160,9 +160,9 @@ const Register = ({ navigation }) => {
             width: '80%',
             marginBottom: 22,
           }}
-          placeholder="Car Number Plate"
+          placeholder="Vehicle Number Plate"
           value={carNumberPlate}
-          onChangeText={(text) => setCarNumberPlate(text)}
+          onChangeText={(text) => setVehicleNumberPlate(text)}
         />
       </View>
 
@@ -176,7 +176,7 @@ const Register = ({ navigation }) => {
             borderRadius: 25,
             width: '150%',
             alignItems: 'center',
-            marginTop:50
+            marginTop: 30,
           }}
         >
           <Text

@@ -15,12 +15,11 @@ import Password from './Components/Password';
 import Dashboard from './Components/Dashboard';
 import Driver from './Components/Driver';
 import Car from './Components/Car';
-import Bus from './Components/Bus';
-import Van from './Components/Van';
 import Dashboard2 from './Components/Dashboard2';
 import Driverdoc from './Components/Driverdoc';
 import Selection from './Components/Selection';
-
+import Phonenumber from './Components/Phonenumber';
+import Forgetpassword from './Components/Forgetpassword';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -38,11 +37,11 @@ const App = () => {
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="Driver" component={Driver} />
         <Stack.Screen name="Car" component={Car} />
-        <Stack.Screen name="Van" component={Van} />
-        <Stack.Screen name="Bus" component={Bus} />
         <Stack.Screen name="Dashboard2" component={Dashboard2} />
         <Stack.Screen name="Driverdoc" component={Driverdoc} />
         <Stack.Screen name="Selection" component={Selection} />
+        <Stack.Screen name="Phonenumber" component={Phonenumber} />
+        <Stack.Screen name="Forgetpassword" component={Forgetpassword} />
       </Stack.Navigator>
     </NavigationContainer>
   );

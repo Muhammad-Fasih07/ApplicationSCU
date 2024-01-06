@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
 import { TextInput } from 'react-native-gesture-handler';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
@@ -11,20 +11,20 @@ const Login = ({ navigation }) => {
         style={{
           padding: 20,
           marginTop: 20,
-          // backgroundColor:'rgb(147, 177, 166)'
         }}
       >
         <View style={{ alignItems: 'center' }}>
-          <Text
+          <Image
+            source={require('../assets/logoscu.png')}
             style={{
-              fontSize: 40,
-              color: '#022B42',
-              fontWeight: 'bold',
-              marginVertical: 30,
+              width: '30%', // Use 100% width to make it responsive
+              height: 80,
+              marginBottom: 20, // Adjust margin as needed
+              borderRadius: 20,
+              backgroundColor: 'rgb(24,61,61)',
             }}
-          >
-            SCU
-          </Text>
+          />
+
           <Text
             style={{
               fontWeight: 'bold',
@@ -66,16 +66,18 @@ const Login = ({ navigation }) => {
           />
         </View>
         <View>
-          <Text
-            style={{
-              fontWeight: '400',
+          <TouchableOpacity onPress={() => navigation.navigate('Forgetpassword')}>
+            <Text
+              style={{
+                fontWeight: '400',
 
-              color: 'black',
-              alignSelf: 'flex-end',
-            }}
-          >
-            Forget your password?
-          </Text>
+                color: 'black',
+                alignSelf: 'flex-end',
+              }}
+            >
+              Forget your password?
+            </Text>
+          </TouchableOpacity>
         </View>
         <TouchableOpacity
           onPress={() => navigation.navigate('Dashboard')}

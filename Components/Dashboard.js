@@ -13,7 +13,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as Animatable from 'react-native-animatable';
 
-const Dashboard = () => {
+const Dashboard = (navigation) => {
   const circleSize = 120; // This is both the height and width of the circle
   const animatedImageRef = useRef(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -59,6 +59,7 @@ const Dashboard = () => {
               shadowRadius: 5,
               elevation: 5,
               paddingTop: 20,
+              right: '35%',
               paddingBottom: 50,
             }}
           >
@@ -175,33 +176,6 @@ const Dashboard = () => {
                   }}
                 >
                   Privacy Center
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('Driver')}
-                style={{
-                  marginTop: 240,
-                  padding: 10,
-                  backgroundColor: '#022B42',
-                  marginVertical: 3,
-                  borderRadius: 5,
-                  shadowColor: 'rgb(147, 177, 166)',
-                  shadowOffset: {
-                    width: 0,
-                    height: 3,
-                  },
-                  shadowOpacity: 0.3,
-                }}
-              >
-                <Text
-                  style={{
-                    color: 'white',
-                    textAlign: 'center',
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Driver Mode
                 </Text>
               </TouchableOpacity>
 

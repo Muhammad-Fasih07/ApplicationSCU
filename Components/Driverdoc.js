@@ -17,15 +17,13 @@ export default function FileUploadScreen() {
       aspect: [4, 3],
       quality: 1,
     });
-    
-  const handleSubmit = () => {
-    
-    // Similarly validate other fields
-    
-    navigation.navigate('Dashboard2');
-    // Handle submission logic here
-  };
 
+    const handleSubmit = () => {
+      // Similarly validate other fields
+
+      navigation.navigate('Dashboard2');
+      // Handle submission logic here
+    };
 
     if (!result.canceled) {
       switch (type) {
@@ -64,7 +62,7 @@ export default function FileUploadScreen() {
             }}
           />
         ) : (
-          <Button title="Select Driver Photo" onPress={() => pickImage('driver')} />
+          <Button title="Select Driver Photo" color="#022B42" onPress={() => pickImage('driver')} />
         )}
       </TouchableOpacity>
       <TouchableOpacity
@@ -82,7 +80,7 @@ export default function FileUploadScreen() {
             }}
           />
         ) : (
-          <Button title="Select License Photo" onPress={() => pickImage('license')} />
+          <Button title="Select License Photo" color="#022B42" onPress={() => pickImage('license')} />
         )}
       </TouchableOpacity>
       <TouchableOpacity
@@ -100,13 +98,12 @@ export default function FileUploadScreen() {
             }}
           />
         ) : (
-          <Button title="Select Vehicle Photo" onPress={() => pickImage('vehicle')} />
+          <Button title="Select Vehicle Photo" color="#022B42" onPress={() => pickImage('vehicle')} />
         )}
       </TouchableOpacity>
       <TouchableOpacity
         style={{
           marginBottom: 20,
-         
         }}
         onPress={() => pickImage('cnic')}
       >
@@ -116,11 +113,10 @@ export default function FileUploadScreen() {
             style={{
               width: 150,
               height: 100,
-              
             }}
           />
         ) : (
-          <Button title="Select CNIC Photo" onPress={() => pickImage('cnic')} />
+          <Button title="Select CNIC Photo" color="#022B42" onPress={() => pickImage('cnic')} />
         )}
       </TouchableOpacity>
       <TouchableOpacity

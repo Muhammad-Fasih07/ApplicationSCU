@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, SafeAreaView, ImageBackground, Dimensions, TouchableOpacity } from 'react-native';
 import React from 'react';
+import { TextInput } from 'react-native-gesture-handler';
 
 const { height } = Dimensions.get('window');
 
