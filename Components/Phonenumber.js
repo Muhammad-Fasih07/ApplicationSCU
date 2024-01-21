@@ -111,7 +111,7 @@ const App = ({ navigation }) => {
               const checkValid = phoneInput.current?.isValidNumber(value);
               setShowMessage(true);
               setValid(checkValid ? checkValid : false);
-              navigation.navigate('Car');
+              navigation.navigate('DriverPassword');
             }}
             style={{
               marginTop: 375,

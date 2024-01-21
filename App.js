@@ -1,20 +1,21 @@
 import 'react-native-gesture-handler';
+import { Link } from 'react-router-dom';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import React from 'react';
-
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Login from './Components/Login';
 import Splash from './Components/Splash';
 import Welcome from './Components/Welcome';
-import Register from './Components/Register';
-import RegisterN from './Components/RegisterN';
+import PassengerRegNo from './Components/PassengerRegNo';
+import PassengerRegname from './Components/PassengerRegname';
 import Termcondition from './Components/Termcondition';
 import Privacypolicy from './Components/Privacypolicy';
-import Password from './Components/Password';
+import PassengerPassword from './Components/PassengerPassword';
 import Dashboard from './Components/Dashboard';
+import Driverdetails from './Components/Driverdetails';
 import Driver from './Components/Driver';
-import Car from './Components/Car';
+import DriverPassword from './Components/DriverPassword';
 import Dashboard2 from './Components/Dashboard2';
 import Driverdoc from './Components/Driverdoc';
 import Selection from './Components/Selection';
@@ -29,14 +30,15 @@ const App = () => {
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Welcome" component={Welcome} />
         <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="RegisterN" component={RegisterN} />
+        <Stack.Screen name="PassengerRegNo" component={PassengerRegNo} />
+        <Stack.Screen name="PassengerRegname" component={PassengerRegname} />
         <Stack.Screen name="Termcondition" component={Termcondition} />
         <Stack.Screen name="Privacypolicy" component={Privacypolicy} />
-        <Stack.Screen name="Password" component={Password} />
+        <Stack.Screen name="PassengerPassword" component={PassengerPassword} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
+        <Stack.Screen name="Driverdetails" component={Driverdetails} />
         <Stack.Screen name="Driver" component={Driver} />
-        <Stack.Screen name="Car" component={Car} />
+        <Stack.Screen name="DriverPassword" component={DriverPassword} />
         <Stack.Screen name="Dashboard2" component={Dashboard2} />
         <Stack.Screen name="Driverdoc" component={Driverdoc} />
         <Stack.Screen name="Selection" component={Selection} />

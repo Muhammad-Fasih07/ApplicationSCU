@@ -13,7 +13,7 @@ const Welcome = ({ navigation }) => {
             height: height / 1.6,
           }}
           resizeMode="center"
-          source={require('../assets/scuwelcome.png')}
+          source={require('../assets/logo.png')}
         />
         <View
           style={{

@@ -3,32 +3,28 @@ import { View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Register = ({ navigation }) => {
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState('');
 
-  const handlePasswordChange = (text) => {
-    // Validate password with only numbers and characters and a maximum length of 8
-    const regex = /^[a-zA-Z0-9]*$/;
-    if (regex.test(text) && text.length <= 8) {
-      setPassword(text);
-      setErrorMessage('');
-    } else {
-      setErrorMessage('Password must contain only numbers and characters, and be at most 8 characters long.');
+  const handleNameChange = (text) => {
+    // Allow only alphabets and limit character count to 20
+    if (text.length <= 20) {
+      // Update the state only if the character is an alphabet or the field is being cleared
+      if (/^[a-zA-Z]*$/.test(text) || text === '') {
+        setName(text);
+      }
     }
   };
-
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
   const handleSubmit = () => {
-    if (!password || errorMessage) {
-      Alert.alert('Error', 'Please correct the errors before submitting.');
-    } else {
-      // Password is valid, navigate to the next page
-      navigation.navigate('Dashboard'); // Replace 'NextPage' with the actual name of your next page
+    if (!name || !/^[A-Za-z]+$/.test(name)) {
+      // Display an error if the name is empty or doesn't meet criteria
+      Alert.alert('Invalid Name', 'Please enter a valid name using only alphabets.');
+      return;
     }
+
+    navigation.navigate('PassengerPassword');
+    // Handle submission logic here
+    // console.log('Submitted name:', name);
+    // You can add further logic based on your requirements
   };
 
   return (
@@ -42,10 +38,10 @@ const Register = ({ navigation }) => {
       }}
     >
       <TouchableOpacity
-        onPress={() => navigation.navigate('Register')}
+        onPress={() => navigation.navigate('PassengerRegNo')}
         style={{
           position: 'absolute',
-          top: 50,
+          top: 40,
           left: 20,
           padding: 15,
           borderRadius: 50,
@@ -55,6 +51,7 @@ const Register = ({ navigation }) => {
         <Ionicons name="arrow-back" size={20} color="#FDD387" />
       </TouchableOpacity>
 
+      {/* First View */}
       <View
         style={{
           alignItems: 'center',
@@ -69,7 +66,7 @@ const Register = ({ navigation }) => {
             marginBottom: 10,
           }}
         >
-          Create a Password
+          What's Your Name?
         </Text>
 
         <Text
@@ -80,45 +77,45 @@ const Register = ({ navigation }) => {
             marginBottom: 20,
           }}
         >
-          Set a password with only numbers and characters (max 8 characters)
+          Please provide your name to help us identify you.
         </Text>
       </View>
 
+      {/* Second View */}
       <View
         style={{
-          width: '50%',
-          marginBottom: 20,
-          alignItems: 'center',
-          marginBottom: 290,
+          flex: 1,
+          justifyContent: 'space-between',
+          marginRight: 160,
         }}
       >
-        <TextInput
+        <View
           style={{
-            borderWidth: 2,
-            borderColor: '#022B42',
-            borderRadius: 25,
-            paddingHorizontal: 75,
-            paddingVertical: 12,
-            width: '200%',
-            marginLeft: 7,
-          }}
-          placeholder="Enter your password"
-          value={password}
-          onChangeText={handlePasswordChange}
-          secureTextEntry={!showPassword}
-        />
-        <TouchableOpacity
-          onPress={toggleShowPassword}
-          style={{
-            position: 'absolute',
-            right: -60,
-            top: 15,
+            width: '80%',
+            marginBottom: 20,
+            alignItems: 'center',
+            marginLeft: 150,
           }}
         >
-          <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color="gray" />
-        </TouchableOpacity>
+          <TextInput
+            style={{
+              borderWidth: 2,
+              borderColor: '#022B42',
+              borderRadius: 25,
+              paddingHorizontal: 70,
+              paddingVertical: 12,
+              width: '100%',
+              marginLeft: 7,
+            }}
+            placeholder="Type your name here"
+            value={name}
+            onChangeText={handleNameChange}
+            maxLength={20} // Set maximum character length to 20
+          />
+        </View>
       </View>
 
+      {/* Agreement and Submit */}
       <View>
         <Text
           style={{
@@ -128,7 +125,7 @@ const Register = ({ navigation }) => {
             fontWeight: '400',
           }}
         >
-          By creating an account, you agree to our Terms & Conditions
+          By creating SCU account you agree with SCU's
         </Text>
       </View>
 
@@ -140,12 +137,8 @@ const Register = ({ navigation }) => {
           marginBottom: 20,
         }}
       >
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Termcondition')}
-          style={{
-            marginRight: 5,
-          }}
-        >
+        {/* Terms & Conditions, Privacy Policy options */}
+        <TouchableOpacity onPress={() => navigation.navigate('Termcondition')} style={{ marginRight: 5 }}>
           <Text
             style={{
               color: '#022B42',
@@ -156,21 +149,8 @@ const Register = ({ navigation }) => {
             Terms & Conditions
           </Text>
         </TouchableOpacity>
-
-        <Text
-          style={{
-            color: 'black',
-          }}
-        >
-          •
-        </Text>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Privacypolicy')}
-          style={{
-            marginLeft: 5,
-          }}
-        >
+        <Text style={{ color: 'black' }}>•</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Privacypolicy')} style={{ marginLeft: 5 }}>
           <Text
             style={{
               color: '#022B42',
@@ -181,10 +161,6 @@ const Register = ({ navigation }) => {
             Privacy Policy
           </Text>
         </TouchableOpacity>
-      </View>
-
-      <View style={{ marginBottom: 10, alignItems: 'center' }}>
-        {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
       </View>
 
       <View style={{ marginBottom: 30 }}>

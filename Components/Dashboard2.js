@@ -178,6 +178,20 @@ const Dashboard = (navigation) => {
                   Privacy Center
                 </Text>
               </TouchableOpacity>
+              <TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    marginBottom: 10,
+                    color: 'red',
+                    marginTop: 15,
+                    fontWeight: 'bold',
+                    left: 40,
+                  }}
+                >
+                  Logout
+                </Text>
+              </TouchableOpacity>
 
               {/* Add other drawer items here */}
             </View>

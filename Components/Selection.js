@@ -34,9 +34,10 @@ const ContactScreen = ({ navigation }) => {
           Register as
         </Text>
       </View>
+
       {/* Student button */}
       <TouchableOpacity
-        onPress={() => navigation.navigate('RegisterN')}
+        onPress={() => navigation.navigate('PassengerRegNo')}
         style={{
           backgroundColor: '#022B42',
           borderRadius: circleSize / 2, // Half of the width/height to make it a circle

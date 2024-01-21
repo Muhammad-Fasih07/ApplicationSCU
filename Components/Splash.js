@@ -20,7 +20,7 @@ const Splash = ({ navigation }) => {
     >
       <Animatable.Text
         style={{
-          color: 'rgb(236, 227, 206)',
+          color: '#FFDE59',
           fontStyle: 'italic',
           fontSize: 70,
           fontWeight: '800',

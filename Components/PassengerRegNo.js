@@ -1,14 +1,38 @@
-import React, { useState, useRef } from 'react';
-import { SafeAreaView, View, StatusBar, TouchableOpacity, Text } from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView, View, StatusBar, TouchableOpacity, Text, Alert } from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Ionicons from 'reaxiosact-native-vector-icons/Ionicons';
+import axios from ''; // Import Axios
 
 const App = ({ navigation }) => {
-  const [value, setValue] = useState('');
-  const [formattedValue, setFormattedValue] = useState('');
-  const [valid, setValid] = useState(false);
-  const [showMessage, setShowMessage] = useState(false);
-  const phoneInput = useRef(null);
+  const [phonenumber, setPhonenumber] = useState('');
+
+  const handleChange = (value) => {
+    setPhonenumber(value);
+  };
+
+  const handleSubmit = () => {
+    const phoneRegex = /^\d{10}$/;
+
+    if (!phoneRegex.test(phonenumber)) {
+      Alert.alert('Invalid Phone Number', 'Please enter a valid Pakistani phone number.');
+      return;
+    }
+
+    const backendEndpoint = 'http://192.168.100.7:5000/passenger/signup';
+
+    // Use Axios to make the POST request
+    axios
+      .post(backendEndpoint, { phonenumber }, { headers: { 'Content-Type': 'application/json' } })
+      .then((response) => {
+        console.log('Success:', response.data);
+        // Handle successful submission
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        Alert.alert('Error', 'An error occurred during registration.');
+      });
+  };
 
   return (
     <>
@@ -23,10 +47,10 @@ const App = ({ navigation }) => {
       >
         <SafeAreaView style={{ flex: 1 }}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => navigation.navigate('Selection')}
             style={{
               position: 'absolute',
-              top: 40,
+              top: 15,
               left: 8,
               padding: 15,
               borderRadius: 40,
@@ -63,15 +87,11 @@ const App = ({ navigation }) => {
           </View>
 
           <PhoneInput
-            ref={phoneInput}
-            defaultValue={value}
+            defaultValue={phonenumber}
             defaultCode="PK"
             layout="first"
             onChangeText={(text) => {
-              setValue(text);
-            }}
-            onChangeFormattedText={(text) => {
-              setFormattedValue(text);
+              handleChange(text);
             }}
             withDarkTheme
             withShadow
@@ -92,27 +112,9 @@ const App = ({ navigation }) => {
               color: '#333',
             }}
           />
-          {showMessage && (
-            <View
-              style={{
-                padding: 10,
-                backgroundColor: '#eee',
-                marginTop: 20,
-                borderRadius: 5,
-              }}
-            >
-              <Text>Value: {value}</Text>
-              <Text>Formatted Value: {formattedValue}</Text>
-              <Text>Valid: {valid ? 'true' : 'false'}</Text>
-            </View>
-          )}
+
           <TouchableOpacity
-            onPress={() => {
-              const checkValid = phoneInput.current?.isValidNumber(value);
-              setShowMessage(true);
-              setValid(checkValid ? checkValid : false);
-              navigation.navigate('Register');
-            }}
+            onPress={handleSubmit}
             style={{
               marginTop: 375,
               backgroundColor: '#022B42',
