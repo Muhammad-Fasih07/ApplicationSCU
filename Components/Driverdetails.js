@@ -1,22 +1,48 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const Register = ({ navigation }) => {
+const Register = ({ navigation, route }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [gender, setGender] = useState('');
-  const [VehicleBrand, setVehicleBrand] = useState('');
-  const [VehicleModel, setVehicleModel] = useState('');
+  const [vehicleBrand, setVehicleBrand] = useState('');
+  const [vehicleModel, setVehicleModel] = useState('');
   const [licenseNumber, setLicenseNumber] = useState('');
   const [carNumberPlate, setVehicleNumberPlate] = useState('');
 
-  const handleSubmit = () => {
-    // Delay for 1 second before showing the success message (for demonstration purposes)
-    // Similarly validate other fields
+  // Extracting values from route.params if available
+  const { vehicleType, phonenumber, password, identityTypeDriver } = route.params;
 
-    navigation.navigate('Driverdoc');
-    // Handle submission logic here
+  const handleSubmit = () => {
+    // Add validation logic as needed
+
+    // Log the form data
+    console.log('Identity Type Driver:', identityTypeDriver);
+    console.log('Vehicle Type:', vehicleType);
+    console.log('Phone Number:', phonenumber);
+    console.log('Password:', password);
+    console.log('First Name:', firstName);
+    console.log('Last Name:', lastName);
+    console.log('Gender:', gender);
+    console.log('Vehicle Brand:', vehicleBrand);
+    console.log('Vehicle Model:', vehicleModel);
+    console.log('License Number:', licenseNumber);
+    console.log('Vehicle Number Plate:', carNumberPlate);
+
+    // Navigate to the next screen and pass necessary details
+    navigation.navigate('Driverdoc', {
+      identityTypeDriver,
+      vehicleType,
+      phonenumber,
+      password,
+      firstName,
+      lastName,
+      gender,
+      vehicleBrand,
+      vehicleModel,
+      licenseNumber,
+      carNumberPlate,
+    });
   };
 
   return (
@@ -29,20 +55,6 @@ const Register = ({ navigation }) => {
         paddingTop: 50,
       }}
     >
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Driver')}
-        style={{
-          position: 'absolute',
-          top: 30,
-          left: 20,
-          padding: 15,
-          borderRadius: 50,
-          backgroundColor: '#022B42',
-        }}
-      >
-        <Ionicons name="arrow-back" size={20} color="#FDD387" />
-      </TouchableOpacity>
-
       <View
         style={{
           alignItems: 'center',
@@ -110,13 +122,13 @@ const Register = ({ navigation }) => {
             borderWidth: 2,
             borderColor: '#022B42',
             borderRadius: 25,
-            paddingHorizontal: 115,
+            paddingHorizontal: 105,
             paddingVertical: 12,
             width: '80%',
             marginBottom: 22,
           }}
           placeholder="Vehicle Brand"
-          value={VehicleBrand}
+          value={vehicleBrand}
           onChangeText={(text) => setVehicleBrand(text)}
         />
 
@@ -125,13 +137,13 @@ const Register = ({ navigation }) => {
             borderWidth: 2,
             borderColor: '#022B42',
             borderRadius: 25,
-            paddingHorizontal: 115,
+            paddingHorizontal: 105,
             paddingVertical: 12,
             width: '80%',
             marginBottom: 22,
           }}
           placeholder="Vehicle Model"
-          value={VehicleBrand}
+          value={vehicleModel}
           onChangeText={(text) => setVehicleModel(text)}
         />
 
@@ -140,7 +152,7 @@ const Register = ({ navigation }) => {
             borderWidth: 2,
             borderColor: '#022B42',
             borderRadius: 25,
-            paddingHorizontal: 95,
+            paddingHorizontal: 100,
             paddingVertical: 12,
             width: '80%',
             marginBottom: 22,
@@ -155,7 +167,7 @@ const Register = ({ navigation }) => {
             borderWidth: 2,
             borderColor: '#022B42',
             borderRadius: 25,
-            paddingHorizontal: 92,
+            paddingHorizontal: 80,
             paddingVertical: 12,
             width: '80%',
             marginBottom: 22,

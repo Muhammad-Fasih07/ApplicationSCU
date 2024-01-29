@@ -1,14 +1,29 @@
 import React, { useState } from 'react';
 import { View, Button, Image, TouchableOpacity, Text, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 
-export default function FileUploadScreen() {
+const FileUploadScreen = ({ route }) => {
   const [driverPhoto, setDriverPhoto] = useState(null);
   const [licensePhoto, setLicensePhoto] = useState(null);
   const [vehiclePhoto, setVehiclePhoto] = useState(null);
   const [cnicPhoto, setCnicPhoto] = useState(null);
   const navigation = useNavigation();
+
+  const {
+    firstName,
+    lastName,
+    gender,
+    vehicleType,
+    phonenumber,
+    password,
+    vehicleBrand,
+    vehicleModel,
+    licenseNumber,
+    carNumberPlate,
+    identityTypeDriver,
+  } = route.params || {};
 
   const pickImage = async (type) => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -17,14 +32,7 @@ export default function FileUploadScreen() {
       aspect: [4, 3],
       quality: 1,
     });
-
-    const handleSubmit = () => {
-      // Similarly validate other fields
-
-      navigation.navigate('Dashboard2');
-      // Handle submission logic here
-    };
-
+  
     if (!result.canceled) {
       switch (type) {
         case 'driver':
@@ -44,9 +52,50 @@ export default function FileUploadScreen() {
       }
     }
   };
+  
+
+  const submitData = async () => {
+    try {
+      // Make an API request to your backend endpoint for driver registration
+      const response = await axios.post('http://192.168.100.18:8082/api/registerDriver', {
+        type: vehicleType,
+        firstName,
+        lastName,
+        phoneNumber: phonenumber,
+        password,
+        gender,
+        vehicleBrand,
+        vehicleModel,
+        licenseNumber,
+        vehicleNumberPlate: carNumberPlate,
+        driverPhoto,
+        licensePhoto,
+        vehiclePhoto,
+        cnicPhoto,
+      });
+
+      // Handle the API response as needed
+      if (response.status === 201) {
+        Alert.alert('Success', 'Driver registered successfully!');
+        // Redirect to the next screen or perform any other action
+        navigation.navigate('Login');
+      } else {
+        Alert.alert('Error', 'Failed to register driver. Please try again.');
+      }
+    } catch (error) {
+      console.error('API request failed:', error);
+      Alert.alert('Error', 'Failed to register driver. Please try again.');
+    }
+  };
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      {/* Logo Image */}
+      <Image
+        source={require('../assets/logoscu.png')}
+        style={{ width: 200, height: 140, resizeMode: 'contain', marginBottom: 20, borderRadius: 40 }}
+      />
+
       <TouchableOpacity
         style={{
           marginBottom: 20,
@@ -57,8 +106,8 @@ export default function FileUploadScreen() {
           <Image
             source={{ uri: driverPhoto }}
             style={{
-              width: 150,
-              height: 100,
+              width: 170,
+              height: 110,
             }}
           />
         ) : (
@@ -75,8 +124,8 @@ export default function FileUploadScreen() {
           <Image
             source={{ uri: licensePhoto }}
             style={{
-              width: 150,
-              height: 100,
+              width: 170,
+              height: 110,
             }}
           />
         ) : (
@@ -93,8 +142,8 @@ export default function FileUploadScreen() {
           <Image
             source={{ uri: vehiclePhoto }}
             style={{
-              width: 150,
-              height: 100,
+              width: 170,
+              height: 110,
             }}
           />
         ) : (
@@ -111,20 +160,16 @@ export default function FileUploadScreen() {
           <Image
             source={{ uri: cnicPhoto }}
             style={{
-              width: 150,
-              height: 100,
+              width: 170,
+              height: 110,
             }}
           />
         ) : (
           <Button title="Select CNIC Photo" color="#022B42" onPress={() => pickImage('cnic')} />
         )}
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Dashboard2')}
-        style={{
-          marginBottom: 20,
-        }}
-      >
+
+      <TouchableOpacity onPress={submitData}>
         <View
           style={{
             backgroundColor: '#022B42',
@@ -145,4 +190,6 @@ export default function FileUploadScreen() {
       </TouchableOpacity>
     </View>
   );
-}
+};
+
+export default FileUploadScreen;

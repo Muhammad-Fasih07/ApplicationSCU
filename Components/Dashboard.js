@@ -9,14 +9,18 @@ import {
   SafeAreaView,
   TextInput,
   Image,
+  Linking
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as Animatable from 'react-native-animatable';
 
-const Dashboard = (navigation) => {
+const Dashboard = ({ route,navigation }) => {
+  const { user } = route.params;
   const circleSize = 120; // This is both the height and width of the circle
   const animatedImageRef = useRef(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [emergencyModalVisible, setEmergencyModalVisible] = useState(false);
+
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -26,6 +30,13 @@ const Dashboard = (navigation) => {
     if (animatedImageRef.current) {
       animatedImageRef.current.shake(800); // Example animation, replace with your preferred animation
     }
+  };
+  // Define the handleEmergencyCall function here inside the Dashboard component
+  const handleEmergencyCall = (number) => {
+    // Use the Linking API to make a phone call
+    Linking.openURL(`tel:${number}`);
+    // Close the modal after making the call
+    setEmergencyModalVisible(false);
   };
 
   return (
@@ -46,6 +57,53 @@ const Dashboard = (navigation) => {
           onPress={toggleDrawer}
         />
       )}
+
+
+{/* Emergency Button */}
+<TouchableOpacity
+        onPress={() => setEmergencyModalVisible(true)}
+        style={{
+          position: 'absolute',
+          top: 15,
+          left: 325,
+          zIndex: 10,
+          backgroundColor: 'red',
+          borderRadius: 25,
+          width: 50,
+          height: 50,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Icon name="warning" size={30} color="#fff" />
+      </TouchableOpacity>
+
+      {/* Emergency Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={emergencyModalVisible}
+        onRequestClose={() => setEmergencyModalVisible(false)}
+      >
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, alignItems: 'center' }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 20 }}>Emergency Call</Text>
+            <TouchableOpacity
+              style={{ marginBottom: 10 }}
+              onPress={() => handleEmergencyCall('1122')}
+            >
+              <Text style={{ color: 'blue', fontSize: 16 }}>Call Ambulance (1122)</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleEmergencyCall('15')}
+            >
+              <Text style={{ color: 'blue', fontSize: 16 }}>Call Police (15)</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+
 
       <Modal animationType="slide" transparent={true} visible={drawerOpen} onRequestClose={toggleDrawer}>
         <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-end' }}>
@@ -136,7 +194,7 @@ const Dashboard = (navigation) => {
                   Payment
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('Contactus')}>
                 <Text
                   style={{
                     fontSize: 16,
@@ -147,7 +205,7 @@ const Dashboard = (navigation) => {
                     left: 40,
                   }}
                 >
-                  Help
+                  Contact Us
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity>
@@ -164,7 +222,7 @@ const Dashboard = (navigation) => {
                   Setting
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('Privacycenter')}>
                 <Text
                   style={{
                     fontSize: 16,
@@ -179,11 +237,28 @@ const Dashboard = (navigation) => {
                 </Text>
               </TouchableOpacity>
 
+              <TouchableOpacity onPress={() => navigation.navigate('Welcome')}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    marginBottom: 10,
+                    color: 'red',
+                    marginTop: 15,
+                    fontWeight: 'bold',
+                    left: 40,
+                  }}
+                >
+                  Logout
+                </Text>
+              </TouchableOpacity>
+
               {/* Add other drawer items here */}
             </View>
           </View>
         </View>
       </Modal>
+      
+
 
       <ScrollView style={{ flex: 1, backgroundColor: '#fff' }}>
         <View
@@ -203,7 +278,7 @@ const Dashboard = (navigation) => {
               fontWeight: 'bold',
             }}
           >
-            Hey, Muhammad 👋
+            Hey, {user.name} 👋
           </Text>
           <View style={{ width: 30 }} />
         </View>

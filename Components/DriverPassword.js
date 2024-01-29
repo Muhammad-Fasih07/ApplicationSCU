@@ -2,20 +2,19 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const Register = ({ navigation }) => {
+const Register = ({ navigation, route }) => {
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
+  const { vehicleType, phonenumber } = route.params;
+
   const handlePasswordChange = (text) => {
-    // Validate password with only numbers and characters and a maximum length of 8
-    const regex = /^[a-zA-Z0-9]*$/;
-    if (regex.test(text) && text.length <= 8) {
-      setPassword(text);
-      setErrorMessage('');
-    } else {
-      setErrorMessage('Password must contain only numbers and characters, and be at most 8 characters long.');
-    }
+    setPassword(text);
+
+    // Check the regex and update the error state
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8}$/;
+    setErrorMessage(!regex.test(text) ? 'Password must meet the criteria.' : '');
   };
 
   const toggleShowPassword = () => {
@@ -26,8 +25,12 @@ const Register = ({ navigation }) => {
     if (!password || errorMessage) {
       Alert.alert('Error', 'Please correct the errors before submitting.');
     } else {
+      // console.log('Vehicle Type:', vehicleType);
+      // console.log('Phone Number:', phonenumber);
+      // console.log('password:', password);
+     
       // Password is valid, navigate to the next page
-      navigation.navigate('Driverdetails'); // Replace 'NextPage' with the actual name of your next page
+      navigation.navigate('Driverdetails', { vehicleType, phonenumber, password });
     }
   };
 
@@ -41,20 +44,6 @@ const Register = ({ navigation }) => {
         paddingTop: 50,
       }}
     >
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Register')}
-        style={{
-          position: 'absolute',
-          top: 50,
-          left: 20,
-          padding: 15,
-          borderRadius: 50,
-          backgroundColor: '#022B42',
-        }}
-      >
-        <Ionicons name="arrow-back" size={20} color="#FDD387" />
-      </TouchableOpacity>
-
       <View
         style={{
           alignItems: 'center',
@@ -95,7 +84,7 @@ const Register = ({ navigation }) => {
         <TextInput
           style={{
             borderWidth: 2,
-            borderColor: '#022B42',
+            borderColor: errorMessage ? 'red' : '#022B42',
             borderRadius: 25,
             paddingHorizontal: 75,
             paddingVertical: 12,

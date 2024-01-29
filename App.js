@@ -19,8 +19,11 @@ import DriverPassword from './Components/DriverPassword';
 import Dashboard2 from './Components/Dashboard2';
 import Driverdoc from './Components/Driverdoc';
 import Selection from './Components/Selection';
-import Phonenumber from './Components/Phonenumber';
+import DriverPhonenumber from './Components/DriverPhonenumber';
 import Forgetpassword from './Components/Forgetpassword';
+import Contactus from './Components/Contactus';
+import Complaint from './Components/Complaint';
+import Privacycenter from './Components/Privacycenter';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -42,8 +45,11 @@ const App = () => {
         <Stack.Screen name="Dashboard2" component={Dashboard2} />
         <Stack.Screen name="Driverdoc" component={Driverdoc} />
         <Stack.Screen name="Selection" component={Selection} />
-        <Stack.Screen name="Phonenumber" component={Phonenumber} />
+        <Stack.Screen name="DriverPhonenumber" component={DriverPhonenumber} />
         <Stack.Screen name="Forgetpassword" component={Forgetpassword} />
+        <Stack.Screen name="Contactus" component={Contactus} />
+        <Stack.Screen name="Complaint" component={Complaint} />
+        <Stack.Screen name="Privacycenter" component={Privacycenter} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -2,8 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const Register = ({ navigation }) => {
-  const [name, setName] = useState('');
+const Register = ({ navigation, route }) => {
+  const [Name, setName] = useState('');
+
+    // Access the phonenumber parameter from the route
+    // const phonenumber = route.params?.phonenumber || '';
+    // console.log(phonenumber);
+    // const Name = route.params?.name || '';
+    // console.log(Name);
+    const {phonenumber} = route.params;
+    // console.log(phonenumber);
+    // console.log(Name);
 
   const handleNameChange = (text) => {
     // Allow only alphabets and limit character count to 20
@@ -15,13 +24,14 @@ const Register = ({ navigation }) => {
     }
   };
   const handleSubmit = () => {
-    if (!name || !/^[A-Za-z]+$/.test(name)) {
+    if (!Name || !/^[A-Za-z]+$/.test(Name)) {
       // Display an error if the name is empty or doesn't meet criteria
       Alert.alert('Invalid Name', 'Please enter a valid name using only alphabets.');
       return;
     }
 
-    navigation.navigate('PassengerPassword');
+    navigation.navigate('PassengerPassword',{phonenumber,Name});
+    
     // Handle submission logic here
     // console.log('Submitted name:', name);
     // You can add further logic based on your requirements
@@ -37,19 +47,7 @@ const Register = ({ navigation }) => {
         paddingTop: 50,
       }}
     >
-      <TouchableOpacity
-        onPress={() => navigation.navigate('PassengerRegNo')}
-        style={{
-          position: 'absolute',
-          top: 40,
-          left: 20,
-          padding: 15,
-          borderRadius: 50,
-          backgroundColor: '#022B42',
-        }}
-      >
-        <Ionicons name="arrow-back" size={20} color="#FDD387" />
-      </TouchableOpacity>
+      
 
       {/* First View */}
       <View
@@ -108,7 +106,7 @@ const Register = ({ navigation }) => {
               marginLeft: 7,
             }}
             placeholder="Type your name here"
-            value={name}
+            value={Name}
             onChangeText={handleNameChange}
             maxLength={20} // Set maximum character length to 20
           />

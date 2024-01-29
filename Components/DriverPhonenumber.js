@@ -1,14 +1,35 @@
-import React, { useState, useRef } from 'react';
-import { SafeAreaView, View, StatusBar, TouchableOpacity, Text } from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView, View, StatusBar, TouchableOpacity, Text, Alert } from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const App = ({ navigation }) => {
-  const [value, setValue] = useState('');
-  const [formattedValue, setFormattedValue] = useState('');
-  const [valid, setValid] = useState(false);
-  const [showMessage, setShowMessage] = useState(false);
-  const phoneInput = useRef(null);
+const DriverPhonenumber = ({ navigation, route }) => {
+  const [phonenumber, setPhonenumber] = useState('');
+  const { vehicleType } = route.params;
+
+  const handleChange = (value) => {
+    setPhonenumber(value);
+  };
+
+  const handleSubmit = () => {
+    const phoneRegex = /^\d{10}$/;
+
+    if (!phoneRegex.test(phonenumber)) {
+      Alert.alert('Invalid Phone Number', 'Please enter a valid Pakistani phone number.');
+      return;
+    }
+
+    // Log the values and then navigate to the next screen
+    console.log('Identity Type Driver:', route.params.identityTypeDriver);
+    console.log('Vehicle Type:', vehicleType);
+    console.log('Phone Number:', phonenumber);
+
+    // Pass identityTypeDriver, vehicleType, and phonenumber to the next screen
+    navigation.navigate('DriverPassword', {
+      identityTypeDriver: route.params.identityTypeDriver,
+      vehicleType,
+      phonenumber,
+    });
+  };
 
   return (
     <>
@@ -22,20 +43,6 @@ const App = ({ navigation }) => {
         }}
       >
         <SafeAreaView style={{ flex: 1 }}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Selection')}
-            style={{
-              position: 'absolute',
-              top: 40,
-              left: 8,
-              padding: 15,
-              borderRadius: 40,
-              backgroundColor: '#022B42',
-            }}
-          >
-            <Ionicons name="arrow-back" size={20} color="#FDD387" />
-          </TouchableOpacity>
-
           <View
             style={{
               marginTop: 120,
@@ -58,20 +65,16 @@ const App = ({ navigation }) => {
                 color: 'gray',
               }}
             >
-              Enter your phone number, to create an account or log in
+              Enter your phone number to create an account or log in
             </Text>
           </View>
 
           <PhoneInput
-            ref={phoneInput}
-            defaultValue={value}
+            defaultValue={phonenumber}
             defaultCode="PK"
             layout="first"
             onChangeText={(text) => {
-              setValue(text);
-            }}
-            onChangeFormattedText={(text) => {
-              setFormattedValue(text);
+              handleChange(text);
             }}
             withDarkTheme
             withShadow
@@ -92,27 +95,9 @@ const App = ({ navigation }) => {
               color: '#333',
             }}
           />
-          {showMessage && (
-            <View
-              style={{
-                padding: 10,
-                backgroundColor: '#eee',
-                marginTop: 20,
-                borderRadius: 5,
-              }}
-            >
-              <Text>Value: {value}</Text>
-              <Text>Formatted Value: {formattedValue}</Text>
-              <Text>Valid: {valid ? 'true' : 'false'}</Text>
-            </View>
-          )}
+
           <TouchableOpacity
-            onPress={() => {
-              const checkValid = phoneInput.current?.isValidNumber(value);
-              setShowMessage(true);
-              setValid(checkValid ? checkValid : false);
-              navigation.navigate('DriverPassword');
-            }}
+            onPress={handleSubmit}
             style={{
               marginTop: 375,
               backgroundColor: '#022B42',
@@ -130,4 +115,4 @@ const App = ({ navigation }) => {
   );
 };
 
-export default App;
+export default DriverPhonenumber;

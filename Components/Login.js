@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, Alert } from 'react-native';
+import { useState } from 'react';
 import React from 'react';
 import Axios from 'axios';
 import { TextInput } from 'react-native-gesture-handler';
@@ -6,12 +7,40 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Login = ({ navigation }) => {
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      const response = await Axios.post('http://192.168.100.18:8082/api/login', {
+        phonenumber: phoneNumber,
+        password: password,
+      });
+  
+      if (response.status === 200) {
+        // Login successful
+        const user = response.data.user;
+        navigation.navigate('Dashboard', { user });
+      } else {
+        // Login failed
+        Alert.alert('Login Failed', 'Invalid phone number or password.', [{ text: 'OK' }]);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'An error occurred during login.', [{ text: 'OK' }]);
+    }
+  };
+  
+  
+  
+  
+
   return (
     <SafeAreaView>
       <View
         style={{
           padding: 20,
-          marginTop: 20,
+          marginTop: 40,
         }}
       >
         <View style={{ alignItems: 'center' }}>
@@ -40,10 +69,11 @@ const Login = ({ navigation }) => {
         <View
           style={{
             marginVertical: 30,
+            marginTop: 40,
           }}
         >
           <TextInput
-            placeholder="Email"
+            placeholder="Email/Phonenumber"
             placeholderTextColor={Colors.darkText}
             style={{
               fontSize: 15,
@@ -52,7 +82,10 @@ const Login = ({ navigation }) => {
               borderRadius: 5,
               marginVertical: 5,
             }}
+            value={phoneNumber}
+            onChangeText={(text) => setPhoneNumber(text)}
           />
+
           <TextInput
             placeholder="Password"
             placeholderTextColor={Colors.darkText}
@@ -64,7 +97,11 @@ const Login = ({ navigation }) => {
               borderRadius: 5,
               marginVertical: 5,
             }}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
           />
+
+          
         </View>
         <View>
           <TouchableOpacity onPress={() => navigation.navigate('Forgetpassword')}>
@@ -81,7 +118,8 @@ const Login = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Dashboard')}
+          // onPress={() => navigation.navigate('Dashboard')}
+          onPress={handleLogin}
           style={{
             padding: 15,
             backgroundColor: '#022B42',

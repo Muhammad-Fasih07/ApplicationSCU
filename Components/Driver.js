@@ -3,8 +3,14 @@ import { View, Text, TouchableOpacity, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const ContactScreen = ({ navigation }) => {
+const ContactScreen = ({ navigation,route }) => {
   const circleSize = 150;
+
+  const vehicleTypeCar = 'Car';
+  const vehicleTypeVan = 'Van';
+  const vehicleTypeBus = 'Bus';
+
+  const { identityTypedriver } = route.params;
 
   return (
     <View
@@ -39,7 +45,7 @@ const ContactScreen = ({ navigation }) => {
       </View>
       {/* Car button */}
       <TouchableOpacity
-        onPress={() => navigation.navigate('Phonenumber')}
+        onPress={() => navigation.navigate('DriverPhonenumber', { identityTypedriver,vehicleType: 'Car' })}
         style={{
           backgroundColor: '#022B42',
           borderRadius: circleSize / 2,
@@ -54,7 +60,7 @@ const ContactScreen = ({ navigation }) => {
       </TouchableOpacity>
       {/* Van button */}
       <TouchableOpacity
-        onPress={() => navigation.navigate('Phonenumber')}
+        onPress={() => navigation.navigate('DriverPhonenumber', { identityTypedriver,vehicleType: 'Van' })}
         style={{
           backgroundColor: '#022B42',
           borderRadius: circleSize / 2,
@@ -69,7 +75,7 @@ const ContactScreen = ({ navigation }) => {
       </TouchableOpacity>
       {/* Bus button */}
       <TouchableOpacity
-        onPress={() => navigation.navigate('Phonenumber')}
+        onPress={() => navigation.navigate('DriverPhonenumber', { identityTypedriver,vehicleType: 'Bus' })}
         style={{
           backgroundColor: '#022B42',
           borderRadius: circleSize / 2,

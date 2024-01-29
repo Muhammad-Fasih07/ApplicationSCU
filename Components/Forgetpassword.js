@@ -15,6 +15,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
     }
   };
 
+  
   return (
     <View style={styles.container}>
       <Image
@@ -38,12 +39,12 @@ const ForgotPasswordScreen = ({ navigation }) => {
       <TouchableOpacity onPress={handleResetPassword} style={styles.resetButton}>
         <Text style={styles.resetButtonText}>Reset Password</Text>
       </TouchableOpacity>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => navigation.goBack()} // Navigate back to the login screen
         style={styles.goBackButton}
       >
         <Text style={styles.goBackButtonText}>Go Back</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };

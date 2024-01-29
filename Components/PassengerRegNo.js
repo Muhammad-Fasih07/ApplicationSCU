@@ -1,37 +1,27 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, StatusBar, TouchableOpacity, Text, Alert } from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
-import Ionicons from 'reaxiosact-native-vector-icons/Ionicons';
-import axios from ''; // Import Axios
 
-const App = ({ navigation }) => {
+
+
+const PassengerRegNo = ({ navigation,route }) => {
   const [phonenumber, setPhonenumber] = useState('');
+  // console.log(phonenumber);
 
   const handleChange = (value) => {
     setPhonenumber(value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = () => { 
     const phoneRegex = /^\d{10}$/;
 
     if (!phoneRegex.test(phonenumber)) {
       Alert.alert('Invalid Phone Number', 'Please enter a valid Pakistani phone number.');
       return;
     }
+    navigation.navigate('PassengerRegname', { phonenumber });
 
-    const backendEndpoint = 'http://192.168.100.7:5000/passenger/signup';
-
-    // Use Axios to make the POST request
-    axios
-      .post(backendEndpoint, { phonenumber }, { headers: { 'Content-Type': 'application/json' } })
-      .then((response) => {
-        console.log('Success:', response.data);
-        // Handle successful submission
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        Alert.alert('Error', 'An error occurred during registration.');
-      });
+   
   };
 
   return (
@@ -46,19 +36,7 @@ const App = ({ navigation }) => {
         }}
       >
         <SafeAreaView style={{ flex: 1 }}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Selection')}
-            style={{
-              position: 'absolute',
-              top: 15,
-              left: 8,
-              padding: 15,
-              borderRadius: 40,
-              backgroundColor: '#022B42',
-            }}
-          >
-            <Ionicons name="arrow-back" size={20} color="#FDD387" />
-          </TouchableOpacity>
+          
 
           <View
             style={{
@@ -132,4 +110,4 @@ const App = ({ navigation }) => {
   );
 };
 
-export default App;
+export default PassengerRegNo;
