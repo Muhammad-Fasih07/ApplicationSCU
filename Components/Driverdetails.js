@@ -11,13 +11,13 @@ const Register = ({ navigation, route }) => {
   const [carNumberPlate, setVehicleNumberPlate] = useState('');
 
   // Extracting values from route.params if available
-  const { vehicleType, phonenumber, password, identityTypeDriver } = route.params;
+  const { vehicleType, phonenumber, password, identity } = route.params;
 
   const handleSubmit = () => {
     // Add validation logic as needed
 
     // Log the form data
-    console.log('Identity Type Driver:', identityTypeDriver);
+    console.log('identity:', identity);
     console.log('Vehicle Type:', vehicleType);
     console.log('Phone Number:', phonenumber);
     console.log('Password:', password);
@@ -31,7 +31,7 @@ const Register = ({ navigation, route }) => {
 
     // Navigate to the next screen and pass necessary details
     navigation.navigate('Driverdoc', {
-      identityTypeDriver,
+      identity,
       vehicleType,
       phonenumber,
       password,

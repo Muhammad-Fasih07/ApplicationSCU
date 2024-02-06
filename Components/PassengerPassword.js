@@ -8,7 +8,7 @@ const Register = ({ navigation, route }) => {
   const [isError, setIsError] = useState(false);
 
   // Access the phonenumber parameter from the route
-  const { phonenumber, Name } = route.params;
+  const {identity,phonenumber, Name } = route.params;
   // console.log(phonenumber);
   // console.log(Name);
   // console.log(password);
@@ -37,6 +37,7 @@ const Register = ({ navigation, route }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            identity: identity,
             phonenumber: phonenumber,
             name: Name,
             password: password,

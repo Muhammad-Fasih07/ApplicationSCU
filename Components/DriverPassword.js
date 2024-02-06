@@ -7,7 +7,7 @@ const Register = ({ navigation, route }) => {
   const [showPassword, setShowPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const { vehicleType, phonenumber } = route.params;
+  const { vehicleType, phonenumber,identity } = route.params;
 
   const handlePasswordChange = (text) => {
     setPassword(text);
@@ -25,12 +25,14 @@ const Register = ({ navigation, route }) => {
     if (!password || errorMessage) {
       Alert.alert('Error', 'Please correct the errors before submitting.');
     } else {
-      // console.log('Vehicle Type:', vehicleType);
-      // console.log('Phone Number:', phonenumber);
-      // console.log('password:', password);
+      console.log('Driver:', identity);
+      console.log('Vehicle Type:', vehicleType);
+      console.log('Phone Number:', phonenumber);
+      console.log('password:', password);
+      
      
       // Password is valid, navigate to the next page
-      navigation.navigate('Driverdetails', { vehicleType, phonenumber, password });
+      navigation.navigate('Driverdetails', { identity,vehicleType, phonenumber, password });
     }
   };
 

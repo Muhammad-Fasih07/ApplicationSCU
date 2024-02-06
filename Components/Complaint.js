@@ -4,51 +4,50 @@ import axios from 'axios';
 
 const ComplaintForm = () => {
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [phonenumber, setPhoneNumber] = useState('');
   const [complaint, setComplaint] = useState('');
 
-
-
-
- 
-/**
- * Handle the form submission.
- *
- * @return {Promise<void>} Returns a Promise that resolves when the submission is complete.
- */
-const handleSubmit = async () => {
-  // Check if any of the required fields are empty
-  if (!name.trim() || !email.trim() || !complaint.trim()) {
+  /**
+   * Handle the form submission.
+   *
+   * @return {Promise<void>} Returns a Promise that resolves when the submission is complete.
+   */
+  const handleSubmit = async () => {
+    // Check if any of the required fields are empty
+    if (!name.trim() || !phonenumber.trim() || !complaint.trim()) {
       // Display an error message if any of the fields are empty
-      Alert.alert('Error', 'Name, email, and complaint are required fields');
+      Alert.alert('Error', 'Name, phone number, and complaint are required fields');
       return;
-  }
+    }
 
-  try {
+    try {
+      // Log the data before making the request
+      console.log('Data to be submitted:', { name, phonenumber, complaint });
+
       // Make a POST request to the API endpoint
-      const response = await axios.post('http://172.17.248.156:12345/api/complaints', {
-          name: name,
-          email: email,
-          description: complaint,
+      const response = await axios.post('http://192.168.100.18:8082/api/complaints', {
+        name: name,
+        phonenumber: phonenumber,
+        description: complaint,
       });
 
       if (response.status === 201) {
-          // Display a success message if the complaint is successfully submitted
-          Alert.alert('Complaint Submitted', 'Your complaint has been submitted successfully.');
-          // Clear the form fields after successful submission if needed
-          setName('');
-          setEmail('');
-          setComplaint('');
+        // Display a success message if the complaint is successfully submitted
+        Alert.alert('Complaint Submitted', 'Your complaint has been submitted successfully.');
+        // Clear the form fields after successful submission if needed
+        setName('');
+        setPhoneNumber('');
+        setComplaint('');
       } else {
-          // Display an error message if the API request fails
-          Alert.alert('Error', 'An error occurred while submitting your complaint.');
+        // Display an error message if the API request fails
+        Alert.alert('Error', 'An error occurred while submitting your complaint.');
       }
-  } catch (error) {
+    } catch (error) {
       // Display an error message if there is an error submitting the complaint
       console.error('Error submitting complaint:', error);
       Alert.alert('Error', 'An error occurred while submitting your complaint.');
-  }
-};
+    }
+  };
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
@@ -74,10 +73,10 @@ const handleSubmit = async () => {
 
       <TextInput
         style={{ borderWidth: 2, borderColor: '#022B42', borderRadius: 20, padding: 10, marginBottom: 20 }}
-        placeholder="Enter your email"
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-        keyboardType="email-address"
+        placeholder="Enter your Phone number"
+        value={phonenumber}
+        onChangeText={(text) => setPhoneNumber(text)}
+        keyboardType="phone-pad" // Use "phone-pad" instead of "phone-number"
       />
 
       <TextInput
@@ -90,15 +89,13 @@ const handleSubmit = async () => {
 
       <TouchableOpacity
         style={{
-          // isSubmitDisabled ? '#ccc' : 
-          backgroundColor: '#022B42', // Disable the button if fields are empty
+          backgroundColor: '#022B42',
           borderRadius: 20,
           padding: 15,
           marginTop: 80,
           alignItems: 'center',
         }}
         onPress={handleSubmit}
-        // disabled={isSubmitDisabled} // Disable the button if fields are empty
       >
         <Text style={{ color: '#fff', fontSize: 18, fontWeight: 'bold' }}>Submit Complaint</Text>
       </TouchableOpacity>

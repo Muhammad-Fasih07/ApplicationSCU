@@ -1,16 +1,15 @@
+// ContactScreen.jsx
+
 import React from 'react';
 import { View, Text, TouchableOpacity, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const ContactScreen = ({ navigation,route }) => {
+const ContactScreen = ({ navigation, route }) => {
   const circleSize = 150;
+  
+ 
 
-  const vehicleTypeCar = 'Car';
-  const vehicleTypeVan = 'Van';
-  const vehicleTypeBus = 'Bus';
-
-  const { identityTypedriver } = route.params;
 
   return (
     <View
@@ -18,8 +17,8 @@ const ContactScreen = ({ navigation,route }) => {
         flex: 1,
         backgroundColor: 'white',
         alignItems: 'center',
-        justifyContent: 'space-between', // Changed to 'space-between' for equal spacing
-        paddingBottom: 50, // Added padding at the bottom
+        justifyContent: 'space-between',
+        paddingBottom: 50,
       }}
     >
       <StatusBar backgroundColor="rgb(138, 174, 224)" barStyle="light-content" />
@@ -45,7 +44,7 @@ const ContactScreen = ({ navigation,route }) => {
       </View>
       {/* Car button */}
       <TouchableOpacity
-        onPress={() => navigation.navigate('DriverPhonenumber', { identityTypedriver,vehicleType: 'Car' })}
+        onPress={() => navigation.navigate('DriverPhonenumber', { identity: 'Driver',vehicleType: 'Car' })}
         style={{
           backgroundColor: '#022B42',
           borderRadius: circleSize / 2,
@@ -60,7 +59,7 @@ const ContactScreen = ({ navigation,route }) => {
       </TouchableOpacity>
       {/* Van button */}
       <TouchableOpacity
-        onPress={() => navigation.navigate('DriverPhonenumber', { identityTypedriver,vehicleType: 'Van' })}
+        onPress={() => navigation.navigate('DriverPhonenumber', {identity: 'Driver' ,vehicleType: 'Van' })}
         style={{
           backgroundColor: '#022B42',
           borderRadius: circleSize / 2,
@@ -75,7 +74,7 @@ const ContactScreen = ({ navigation,route }) => {
       </TouchableOpacity>
       {/* Bus button */}
       <TouchableOpacity
-        onPress={() => navigation.navigate('DriverPhonenumber', { identityTypedriver,vehicleType: 'Bus' })}
+        onPress={() => navigation.navigate('DriverPhonenumber', { identity: 'Driver' ,vehicleType: 'Bus' })}
         style={{
           backgroundColor: '#022B42',
           borderRadius: circleSize / 2,
@@ -90,7 +89,6 @@ const ContactScreen = ({ navigation,route }) => {
       </TouchableOpacity>
       {/* Empty space at the bottom */}
       <View style={{ height: 10 }}></View>
-
       {/* Agreement and Submit */}
       <View>
         <Text
@@ -104,7 +102,6 @@ const ContactScreen = ({ navigation,route }) => {
           By creating SCU account you agree with SCU's
         </Text>
       </View>
-
       <View
         style={{
           flexDirection: 'row',

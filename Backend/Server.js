@@ -44,15 +44,15 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // API endpoint to handle Passenger registration
 app.post('/api/register', (req, res) => {
-  const { phonenumber, name, password } = req.body;  // Use req.body instead of reqBody
+  const { identity, phonenumber, name, password } = req.body;  // Include identity in the request body
   console.log(req.body);  // Log req.body, not reqBody
 
-  if (!phonenumber || !name || !password) {
+  if (!identity || !phonenumber || !name || !password) {
     return res.status(400).json({ message: 'Please provide all required fields.' });
   }
 
-  const query = 'INSERT INTO passenger (phonenumber, name, password) VALUES (?, ?, ?)';
-  const values = [phonenumber, name, password];
+  const query = 'INSERT INTO passenger (identity, phonenumber, name, password) VALUES (?, ?, ?, ?)';
+  const values = [identity, phonenumber, name, password];
 
   db.query(query, values, (err, result) => {
     if (err) {
@@ -64,6 +64,8 @@ app.post('/api/register', (req, res) => {
     res.status(201).json({ message: 'Passenger registered successfully' });
   });
 });
+
+
 
 
 // API endpoint to handle driver registration
@@ -108,8 +110,12 @@ app.post('/api/registerDriver', (req, res) => {
     return res.status(400).json({ message: 'Please provide all required fields.' });
   }
 
-  const query =
-    'INSERT INTO driver (`identity`,`type, `firste`-name`, `last-name`, `phone-number`, `password`, `gender`, `vehicle-brand`, `vehicle-model`, `license-number`, `vehicle-number-plate`, `driver-photo`, `license-photo`, `vehicle-photo`, `cnic-photo`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const query = `
+    INSERT INTO driver (\`identity\`, \`type\`, \`name\`, \`last-name\`, \`phonenumber\`, \`password\`, \`gender\`,
+      \`vehicle-brand\`, \`vehicle-model\`, \`license-number\`, \`vehicle-number-plate\`, \`driver-photo\`,
+      \`license-photo\`, \`vehicle-photo\`, \`cnic-photo\`)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  
   const values = [
     identity,
     type,
@@ -125,7 +131,7 @@ app.post('/api/registerDriver', (req, res) => {
     driverPhoto,
     licensePhoto,
     vehiclePhoto,
-    cnicPhoto,
+    cnicPhoto
   ];
 
   db.query(query, values, (err, result) => {
@@ -143,8 +149,6 @@ app.post('/api/registerDriver', (req, res) => {
 
 
 
-
-
 // Login API endpoint
 app.post('/api/login', (req, res) => {
   const { phonenumber, password } = req.body;
@@ -153,57 +157,94 @@ app.post('/api/login', (req, res) => {
     return res.status(400).json({ message: 'Phone number and password are required.' });
   }
 
-  const query = 'SELECT * FROM passenger WHERE phonenumber = ? AND password = ?';
+  const passengerQuery = 'SELECT * FROM passenger WHERE phonenumber = ? AND password = ?';
+  const driverQuery = 'SELECT * FROM driver WHERE phonenumber = ? AND password = ?'; // Update the column name
   const values = [phonenumber, password];
 
-  db.query(query, values, (err, results) => {
-    if (err) {
-      console.error('Error querying database:', err);
-      return res.status(500).json({ message: 'Internal server error' });
+  // Log the query and values for debugging
+  console.log('Passenger Query:', passengerQuery, 'Values:', values);
+
+  db.query(passengerQuery, values, (passengerErr, passengerResults) => {
+    if (passengerErr) {
+      console.error('Error querying passenger database:', passengerErr);
+      return res.status(500).json({ message: 'Passenger Internal server error', error: passengerErr.message });
     }
 
-    if (results.length > 0) {
-      // User login successful, extract user details
-      const user = results[0];
-      const { name /* ... add other fields as needed */ } = user;
+    if (passengerResults.length > 0) {
+      const passenger = passengerResults[0];
+      const { name, identity /* ... other fields */ } = passenger;
 
-      // Return user details along with success message
-      res.status(200).json({
-        message: 'Login successful',
-        user: {
-          name,
-          // ... add other fields as needed
-        },
+      // Return passenger details along with success message and navigate to dashboard1
+      return res.status(200).json({
+        message: 'Passenger login successful',
+        user: { name, identity },
+        navigateTo: 'Dashboard', // Modify the dashboard name as needed
       });
-    } else {
-      // User login failed
-      res.status(401).json({ message: 'Invalid phone number or password' });
     }
+
+    // If passenger login failed, check the driver table
+    // Log the query and values for debugging
+    console.log('Driver Query:', driverQuery, 'Values:', values);
+
+    db.query(driverQuery, values, (driverErr, driverResults) => {
+      if (driverErr) {
+        console.error('Error querying driver database:', driverErr);
+        return res.status(500).json({ message: 'Driver Internal server error', error: driverErr.message });
+      }
+
+      if (driverResults.length > 0) {
+        const driver = driverResults[0];
+        const { name, identity /* ... other fields */ } = driver;
+
+        // Return driver details along with success message and navigate to dashboard2
+        return res.status(200).json({
+          message: 'Driver login successful',
+          user: { name, identity },
+          navigateTo: 'Dashboard2', // Modify the dashboard name as needed
+        });
+      }
+
+      // If neither passenger nor driver login is successful
+      return res.status(401).json({ message: 'Invalid phone number or password' });
+    });
   });
 });
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 // API endpoint to insert a complaint
 app.post('/api/complaints', (req, res) => {
-  const { name, email, description } = req.body;
+  const { name, phonenumber, description } = req.body;
 
-  if (!name || !email || !description) {
-    return res.status(400).json({ error: 'Name, email, and description are required fields' });
+  if (!name || !phonenumber || !description) {
+    return res.status(400).json({ error: 'Name, phonenumber, and description are required fields' });
   }
 
-  const insertQuery = 'INSERT INTO complaints (name, email, description) VALUES (?, ?, ?)';
-  const values = [name, email, description];
+  const insertQuery = 'INSERT INTO complaints (name, phonenumber, description) VALUES (?, ?, ?)';
+  const values = [name, phonenumber, description];
 
-  connection.query(insertQuery, values, (err, results) => {
+  db.query(insertQuery, values, (err, results) => {
     if (err) {
-      console.error('Error inserting complaint:', err);
+      console.error('Error inserting complaint:', err);  // Log the error details
       return res.status(500).json({ error: 'Internal server error' });
     }
 
     return res.status(201).json({ message: 'Complaint inserted successfully' });
   });
 });
+
 
 app.get('/' , (re, res) =>{
   return res.json("scu app running")

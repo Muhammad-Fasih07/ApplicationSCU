@@ -4,7 +4,7 @@ import PhoneInput from 'react-native-phone-number-input';
 
 const DriverPhonenumber = ({ navigation, route }) => {
   const [phonenumber, setPhonenumber] = useState('');
-  const { vehicleType } = route.params;
+  const { vehicleType,identity} = route.params;
 
   const handleChange = (value) => {
     setPhonenumber(value);
@@ -19,13 +19,13 @@ const DriverPhonenumber = ({ navigation, route }) => {
     }
 
     // Log the values and then navigate to the next screen
-    console.log('Identity Type Driver:', route.params.identityTypeDriver);
+    console.log('Driver:', identity);
     console.log('Vehicle Type:', vehicleType);
     console.log('Phone Number:', phonenumber);
 
     // Pass identityTypeDriver, vehicleType, and phonenumber to the next screen
     navigation.navigate('DriverPassword', {
-      identityTypeDriver: route.params.identityTypeDriver,
+      identity,
       vehicleType,
       phonenumber,
     });

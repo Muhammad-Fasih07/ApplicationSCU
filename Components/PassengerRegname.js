@@ -10,7 +10,7 @@ const Register = ({ navigation, route }) => {
     // console.log(phonenumber);
     // const Name = route.params?.name || '';
     // console.log(Name);
-    const {phonenumber} = route.params;
+    const {identity,phonenumber} = route.params;
     // console.log(phonenumber);
     // console.log(Name);
 
@@ -30,7 +30,7 @@ const Register = ({ navigation, route }) => {
       return;
     }
 
-    navigation.navigate('PassengerPassword',{phonenumber,Name});
+    navigation.navigate('PassengerPassword',{identity,phonenumber,Name});
     
     // Handle submission logic here
     // console.log('Submitted name:', name);

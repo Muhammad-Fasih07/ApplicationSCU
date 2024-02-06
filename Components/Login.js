@@ -1,10 +1,17 @@
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, Alert } from 'react-native';
-import { useState } from 'react';
-import React from 'react';
-import Axios from 'axios';
+import React, { useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Axios from 'axios';
 
 const Login = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -12,27 +19,62 @@ const Login = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await Axios.post('http://192.168.100.18:8082/api/login', {
+      const response = await Axios.post('http://192.168.10.13:8082/api/login', {
         phonenumber: phoneNumber,
         password: password,
       });
   
       if (response.status === 200) {
-        // Login successful
-        const user = response.data.user;
-        navigation.navigate('Dashboard', { user });
+        const { user, navigateTo } = response.data;
+  
+        if (user && navigateTo) {
+          switch (navigateTo) {
+            case 'Dashboard':
+              navigation.navigate('Dashboard', { user });
+              break;
+            case 'Dashboard2':
+              navigation.navigate('Dashboard2', { user });
+              break;
+            default:
+              Alert.alert('Login Failed', 'Invalid identity.', [{ text: 'OK' }]);
+          }
+        } else {
+          Alert.alert('Login Failed', 'Invalid response from server.', [{ text: 'OK' }]);
+        }
       } else {
-        // Login failed
-        Alert.alert('Login Failed', 'Invalid phone number or password.', [{ text: 'OK' }]);
+        // Check for specific error messages
+        if (response.data && response.data.error) {
+          const { error } = response.data;
+          if (error === 'InvalidPhoneNumber') {
+            setErrorMessage('Invalid phone number. Please check and try again.');
+          } else if (error === 'InvalidPassword') {
+            setErrorMessage('Invalid password. Please check and try again.');
+          } else {
+            setErrorMessage('Invalid phone number or password. Please check and try again.');
+          }
+        } else {
+          setErrorMessage('Invalid phone number or password.');
+        }
+  
+        // Clear input fields
+        setPhoneNumber('');
+        setPassword('');
+  
+        // Show the error message
+        showAlert();
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'An error occurred during login.', [{ text: 'OK' }]);
+      setErrorMessage('An error occurred during login.');
+  
+      // Clear input fields
+      setPhoneNumber('');
+      setPassword('');
+  
+      // Show the error message
+      showAlert();
     }
   };
-  
-  
-  
   
 
   return (
@@ -47,9 +89,9 @@ const Login = ({ navigation }) => {
           <Image
             source={require('../assets/logoscu.png')}
             style={{
-              width: '30%', // Use 100% width to make it responsive
+              width: '30%',
               height: 80,
-              marginBottom: 20, // Adjust margin as needed
+              marginBottom: 20,
               borderRadius: 20,
               backgroundColor: 'rgb(24,61,61)',
             }}
@@ -100,15 +142,12 @@ const Login = ({ navigation }) => {
             value={password}
             onChangeText={(text) => setPassword(text)}
           />
-
-          
         </View>
         <View>
           <TouchableOpacity onPress={() => navigation.navigate('Forgetpassword')}>
             <Text
               style={{
                 fontWeight: '400',
-
                 color: 'black',
                 alignSelf: 'flex-end',
               }}
@@ -118,7 +157,6 @@ const Login = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-          // onPress={() => navigation.navigate('Dashboard')}
           onPress={handleLogin}
           style={{
             padding: 15,
@@ -161,7 +199,6 @@ const Login = ({ navigation }) => {
             Create new account
           </Text>
         </TouchableOpacity>
-
         <View
           style={{
             marginVertical: 30,

@@ -147,7 +147,7 @@ const Dashboard = ({ route,navigation }) => {
                     fontWeight: 'bold',
                   }}
                 >
-                  User Name
+                  {user.name}
                 </Text>
               </View>
 

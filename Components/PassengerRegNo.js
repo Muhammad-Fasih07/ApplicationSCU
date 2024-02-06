@@ -2,26 +2,28 @@ import React, { useState } from 'react';
 import { SafeAreaView, View, StatusBar, TouchableOpacity, Text, Alert } from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
 
-
-
-const PassengerRegNo = ({ navigation,route }) => {
+const PassengerRegNo = ({ navigation, route }) => {
   const [phonenumber, setPhonenumber] = useState('');
-  // console.log(phonenumber);
+  const { params } = route;
+
+  // Check if params and identity exist, otherwise set a default value
+  const identity = params?.identity || 'Passenger';
+
+  console.log(identity);
+  console.log(phonenumber);
 
   const handleChange = (value) => {
     setPhonenumber(value);
   };
 
-  const handleSubmit = () => { 
+  const handleSubmit = () => {
     const phoneRegex = /^\d{10}$/;
 
     if (!phoneRegex.test(phonenumber)) {
       Alert.alert('Invalid Phone Number', 'Please enter a valid Pakistani phone number.');
       return;
     }
-    navigation.navigate('PassengerRegname', { phonenumber });
-
-   
+    navigation.navigate('PassengerRegname', { identity, phonenumber });
   };
 
   return (
@@ -36,8 +38,6 @@ const PassengerRegNo = ({ navigation,route }) => {
         }}
       >
         <SafeAreaView style={{ flex: 1 }}>
-          
-
           <View
             style={{
               marginTop: 120,

@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const ContactScreen = ({ navigation, route }) => {
+const ContactScreen = ({ navigation }) => {
   const circleSize = 200;
 
-  const identityTypePassenger = 'Passenger';
-  const identityTypeDriver = 'Driver';
+  const [identity, setIdentity] = useState('');
+
+  const handleDriverPress = () => {
+    setIdentity('Driver');
+  };
+
+  const handlePassengerPress = () => {
+    setIdentity('Passenger');
+  };
+
+  useEffect(() => {
+    if (identity === 'Driver') {
+      navigation.navigate('Driver', { Driver: identity });
+    } else if (identity === 'Passenger') {
+      navigation.navigate('PassengerRegNo', { Passenger: identity });
+    }
+  }, [identity, navigation]);
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center' }}>
@@ -15,7 +30,7 @@ const ContactScreen = ({ navigation, route }) => {
 
       {/* Passenger button */}
       <TouchableOpacity
-        onPress={() => navigation.navigate('PassengerRegNo', { identityType: identityTypePassenger })}
+        onPress={handlePassengerPress}
         style={{
           backgroundColor: '#022B42',
           borderRadius: circleSize / 2,
@@ -33,7 +48,7 @@ const ContactScreen = ({ navigation, route }) => {
 
       {/* Driver button */}
       <TouchableOpacity
-        onPress={() => navigation.navigate('Driver', { identityType: identityTypeDriver })}
+        onPress={handleDriverPress}
         style={{
           backgroundColor: '#022B42',
           borderRadius: circleSize / 2,

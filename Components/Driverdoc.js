@@ -22,8 +22,8 @@ const FileUploadScreen = ({ route }) => {
     vehicleModel,
     licenseNumber,
     carNumberPlate,
-    identityTypeDriver,
-  } = route.params || {};
+    identity,
+  } = route.params ;
 
   const pickImage = async (type) => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -55,9 +55,11 @@ const FileUploadScreen = ({ route }) => {
   
 
   const submitData = async () => {
-    try {
-      // Make an API request to your backend endpoint for driver registration
+   
+  
+      // Make the API request to your backend endpoint for driver registration
       const response = await axios.post('http://192.168.100.18:8082/api/registerDriver', {
+        identity,
         type: vehicleType,
         firstName,
         lastName,
@@ -73,7 +75,7 @@ const FileUploadScreen = ({ route }) => {
         vehiclePhoto,
         cnicPhoto,
       });
-
+  
       // Handle the API response as needed
       if (response.status === 201) {
         Alert.alert('Success', 'Driver registered successfully!');
@@ -82,11 +84,10 @@ const FileUploadScreen = ({ route }) => {
       } else {
         Alert.alert('Error', 'Failed to register driver. Please try again.');
       }
-    } catch (error) {
-      console.error('API request failed:', error);
-      Alert.alert('Error', 'Failed to register driver. Please try again.');
-    }
+   
   };
+  
+
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>

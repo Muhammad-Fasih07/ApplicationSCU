@@ -14,7 +14,8 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as Animatable from 'react-native-animatable';
 
-const Dashboard = ({ navigation }) => {
+const Dashboard = ({ route,navigation }) => {
+  const { user } = route.params;
   const circleSize = 120; // This is both the height and width of the circle
   const animatedImageRef = useRef(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -146,7 +147,7 @@ const Dashboard = ({ navigation }) => {
                     fontWeight: 'bold',
                   }}
                 >
-                  User Name
+                  {user.name}
                 </Text>
               </View>
 
@@ -277,7 +278,7 @@ const Dashboard = ({ navigation }) => {
               fontWeight: 'bold',
             }}
           >
-            Hey, Muhammad 👋
+             Hey, {user.name} 👋
           </Text>
           <View style={{ width: 30 }} />
         </View>
