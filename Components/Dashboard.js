@@ -310,6 +310,7 @@ const Dashboard = ({ route,navigation }) => {
         >
           {/* Pick & Drop */}
           <TouchableOpacity
+           onPress={() => navigation.navigate('PassengerRoute')}
             style={{
               backgroundColor: '#022B42',
               borderRadius: circleSize / 2,

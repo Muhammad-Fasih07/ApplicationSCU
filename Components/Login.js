@@ -19,7 +19,7 @@ const Login = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await Axios.post('http://192.168.10.13:8082/api/login', {
+      const response = await Axios.post('http://172.17.243.179:8082/api/login', {
         phonenumber: phoneNumber,
         password: password,
       });

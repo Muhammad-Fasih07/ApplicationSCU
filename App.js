@@ -24,6 +24,8 @@ import Forgetpassword from './Components/Forgetpassword';
 import Contactus from './Components/Contactus';
 import Complaint from './Components/Complaint';
 import Privacycenter from './Components/Privacycenter';
+import DriverRoute from './Components/DriverRoute';
+import PassengerRoute from './Components/PassengerRoute';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -50,6 +52,8 @@ const App = () => {
         <Stack.Screen name="Contactus" component={Contactus} />
         <Stack.Screen name="Complaint" component={Complaint} />
         <Stack.Screen name="Privacycenter" component={Privacycenter} />
+        <Stack.Screen name="DriverRoute" component={DriverRoute} />
+        <Stack.Screen name="PassengerRoute" component={PassengerRoute} />
       </Stack.Navigator>
     </NavigationContainer>
   );

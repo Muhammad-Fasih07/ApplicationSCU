@@ -14,13 +14,12 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as Animatable from 'react-native-animatable';
 
-const Dashboard = ({ route,navigation }) => {
+const Dashboard = ({ route, navigation }) => {
   const { user } = route.params;
   const circleSize = 120; // This is both the height and width of the circle
   const animatedImageRef = useRef(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [emergencyModalVisible, setEmergencyModalVisible] = useState(false);
-
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -31,11 +30,9 @@ const Dashboard = ({ route,navigation }) => {
       animatedImageRef.current.shake(800); // Example animation, replace with your preferred animation
     }
   };
-  // Define the handleEmergencyCall function here inside the Dashboard component
+
   const handleEmergencyCall = (number) => {
-    // Use the Linking API to make a phone call
     Linking.openURL(`tel:${number}`);
-    // Close the modal after making the call
     setEmergencyModalVisible(false);
   };
 
@@ -58,9 +55,7 @@ const Dashboard = ({ route,navigation }) => {
         />
       )}
 
-
-{/* Emergency Button */}
-<TouchableOpacity
+      <TouchableOpacity
         onPress={() => setEmergencyModalVisible(true)}
         style={{
           position: 'absolute',
@@ -78,7 +73,6 @@ const Dashboard = ({ route,navigation }) => {
         <Icon name="warning" size={30} color="#fff" />
       </TouchableOpacity>
 
-      {/* Emergency Modal */}
       <Modal
         animationType="fade"
         transparent={true}
@@ -103,8 +97,6 @@ const Dashboard = ({ route,navigation }) => {
         </View>
       </Modal>
 
-
-
       <Modal animationType="slide" transparent={true} visible={drawerOpen} onRequestClose={toggleDrawer}>
         <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-end' }}>
           <View
@@ -125,7 +117,6 @@ const Dashboard = ({ route,navigation }) => {
               <Icon name="close" size={30} />
             </TouchableOpacity>
             <View>
-              {/* User Picture */}
               <View
                 style={{
                   flexDirection: 'row',
@@ -139,7 +130,6 @@ const Dashboard = ({ route,navigation }) => {
                   source={require('../assets/userlogo.png')}
                   style={{ width: 50, height: 50, borderRadius: 25, marginRight: 20 }}
                 />
-                {/* Replace with actual user name */}
                 <Text
                   style={{
                     fontSize: 16,
@@ -150,8 +140,6 @@ const Dashboard = ({ route,navigation }) => {
                   {user.name}
                 </Text>
               </View>
-
-              {/* Drawer items */}
               <TouchableOpacity>
                 <Text
                   style={{
@@ -236,7 +224,6 @@ const Dashboard = ({ route,navigation }) => {
                   Privacy Center
                 </Text>
               </TouchableOpacity>
-
               <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                 <Text
                   style={{
@@ -251,14 +238,10 @@ const Dashboard = ({ route,navigation }) => {
                   Logout
                 </Text>
               </TouchableOpacity>
-
-              {/* Add other drawer items here */}
             </View>
           </View>
         </View>
       </Modal>
-      
-
 
       <ScrollView style={{ flex: 1, backgroundColor: '#fff' }}>
         <View
@@ -283,17 +266,14 @@ const Dashboard = ({ route,navigation }) => {
           <View style={{ width: 30 }} />
         </View>
 
-        {/* The rest of your main dashboard content goes here */}
-        {/* Example content */}
-        {/* ... */}
         <TouchableOpacity onPress={animateImage}>
           <Animatable.View ref={animatedImageRef}>
             <Image
               source={require('../assets/bus.jpg')}
               style={{
-                width: '100%', // Use 100% width to make it responsive
+                width: '100%',
                 height: 150,
-                marginBottom: 20, // Adjust margin as needed
+                marginBottom: 20,
                 borderRadius: 20,
                 backgroundColor: 'rgb(24,61,61)',
               }}
@@ -305,11 +285,11 @@ const Dashboard = ({ route,navigation }) => {
           style={{
             flexDirection: 'row',
             justifyContent: 'space-around',
-            marginBottom: 20, // Adjust margin as needed
+            marginBottom: 20,
           }}
         >
-          {/* Pick & Drop */}
           <TouchableOpacity
+            onPress={() => navigation.navigate('DriverRoute')}
             style={{
               backgroundColor: '#022B42',
               borderRadius: circleSize / 2,
@@ -331,7 +311,6 @@ const Dashboard = ({ route,navigation }) => {
             </Text>
           </TouchableOpacity>
 
-          {/* Carpooling */}
           <TouchableOpacity
             style={{
               backgroundColor: '#022B42',
@@ -355,7 +334,6 @@ const Dashboard = ({ route,navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Booking container */}
         <View style={{ padding: 20 }}>
           <View
             style={{
@@ -403,7 +381,6 @@ const Dashboard = ({ route,navigation }) => {
             />
           </View>
 
-          {/* Add location buttons */}
           <TouchableOpacity
             style={{
               flexDirection: 'row',
@@ -438,7 +415,6 @@ const Dashboard = ({ route,navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Footer container */}
         <View style={{ padding: 20, alignItems: 'center' }}>
           <Text
             style={{
