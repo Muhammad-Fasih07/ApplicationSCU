@@ -77,7 +77,7 @@ const DriverRouteDetailsScreen = () => {
     }
 
     try {
-      const response = await fetch('http://172.17.243.179:8082/api/routes', {
+      const response = await fetch('http://192.168.100.8:8082/api/routes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
