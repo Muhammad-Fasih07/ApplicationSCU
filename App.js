@@ -26,6 +26,8 @@ import Complaint from './Components/Complaint';
 import Privacycenter from './Components/Privacycenter';
 import DriverRoute from './Components/DriverRoute';
 import PassengerRoute from './Components/PassengerRoute';
+import PassengerRrequest from './Components/PassengerRrequest';
+import DriverRrequest from './Components/DriverRrequest';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -54,6 +56,8 @@ const App = () => {
         <Stack.Screen name="Privacycenter" component={Privacycenter} />
         <Stack.Screen name="DriverRoute" component={DriverRoute} />
         <Stack.Screen name="PassengerRoute" component={PassengerRoute} />
+        <Stack.Screen name="PassengerRrequest" component={PassengerRrequest} />
+        <Stack.Screen name="DriverRrequest" component={DriverRrequest} />
       </Stack.Navigator>
     </NavigationContainer>
   );

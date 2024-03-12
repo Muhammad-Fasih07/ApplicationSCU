@@ -9,10 +9,12 @@ import {
   SafeAreaView,
   TextInput,
   Image,
-  Linking
+  Linking,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as Animatable from 'react-native-animatable';
+import DriverRrequest from './DriverRrequest';
 
 const Dashboard = ({ route, navigation }) => {
   const { user } = route.params;
@@ -20,6 +22,7 @@ const Dashboard = ({ route, navigation }) => {
   const animatedImageRef = useRef(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [emergencyModalVisible, setEmergencyModalVisible] = useState(false);
+  const [showDriverRrequest, setShowDriverRrequest] = useState(false);
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -35,6 +38,17 @@ const Dashboard = ({ route, navigation }) => {
     Linking.openURL(`tel:${number}`);
     setEmergencyModalVisible(false);
   };
+
+  // Dummy data for FlatList (replace with your actual data)
+  const data = [];
+
+  // Render each item in the FlatList
+  const renderItem = ({ item }) => (
+    <View>
+      {/* Render your item content here */}
+      <Text>{item.text}</Text>
+    </View>
+  );
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -261,7 +275,7 @@ const Dashboard = ({ route, navigation }) => {
               fontWeight: 'bold',
             }}
           >
-             Hey, {user.name} 👋
+            Hey, {user.name} 👋
           </Text>
           <View style={{ width: 30 }} />
         </View>
@@ -423,17 +437,18 @@ const Dashboard = ({ route, navigation }) => {
           >
             Every available route in Islamabad
           </Text>
-          <TouchableOpacity style={{ marginTop: 10 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: 'bold',
-                color: '#007bff',
-              }}
-            >
-              VIEW ALL
+          {/* Route Section */}
+          <TouchableOpacity onPress={() => setShowDriverRrequest(!showDriverRrequest)} style={{ marginTop: 10 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#007bff' }}>
+              {showDriverRrequest ? 'HIDE ROUTES' : 'VIEW ALL'}
             </Text>
           </TouchableOpacity>
+
+          {showDriverRrequest && (
+            <View style={{ marginTop: 20 }}>
+              <DriverRrequest />
+            </View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

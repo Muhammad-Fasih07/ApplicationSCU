@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, FlatList, TouchableOpacity, Platform } from 'react-native';
 
-const PassengerRoute = () => {
+const DriverRrequest = () => {
   const [routes, setRoutes] = useState([]);
 
   useEffect(() => {
@@ -11,7 +11,7 @@ const PassengerRoute = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://172.17.241.87:8082/api/routes');
+      const response = await fetch('http://192.168.100.8:8082/api/passengerrouterequest');
 
       if (!response.ok) {
         console.error('Error fetching data. Status:', response.status);
@@ -33,7 +33,7 @@ const PassengerRoute = () => {
     backgroundColor: '#FDD387',
     borderRadius: 10,
     padding: 10,
-    width:'140%',
+    width:'100%',
     marginBottom: 15,
     alignSelf: 'center',
     ...getShadowStyle(), // Apply shadow styles
@@ -83,7 +83,7 @@ const PassengerRoute = () => {
   );
 };
 
-export default PassengerRoute;
+export default DriverRrequest;
 
 // Helper function to get shadow styles based on platform
 const getShadowStyle = () => {
