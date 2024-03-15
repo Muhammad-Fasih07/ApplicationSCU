@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, SafeArea } from 'react-native';
 import React, { useEffect } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 
 const Splash = ({ navigation }) => {
@@ -10,30 +10,38 @@ const Splash = ({ navigation }) => {
   }, []);
 
   return (
-    <View
-      style={{
-        backgroundColor: 'black',
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <Animatable.Text
-        style={{
-          color: '#FFDE59',
-          fontStyle: 'italic',
-          fontSize: 70,
-          fontWeight: '800',
-        }}
-        duration={2000}
-        animation="bounceIn"
-      >
-        SCU
-      </Animatable.Text>
+    <View style={styles.container}>
+      {[...Array(7)].map((_, index) => (
+        <Animatable.Text
+          key={index}
+          style={styles.logo}
+          duration={2000 + index * 200}
+          animation={{
+            from: { translateY: -800 }, // Start from above the screen
+            to: { translateY: 60 }, // End at original position
+          }}
+        >
+          SCU
+        </Animatable.Text>
+      ))}
     </View>
   );
 };
 
-export default Splash;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logo: {
+    color: '#FFDE59',
+    fontStyle: 'italic',
+    fontSize: 70,
+    fontWeight: '800',
+    marginBottom: 20, // Add some spacing between the texts
+  },
+});
 
-const styles = StyleSheet.create({});
+export default Splash;

@@ -16,7 +16,7 @@ import Dashboard from './Components/Dashboard';
 import Driverdetails from './Components/Driverdetails';
 import Driver from './Components/Driver';
 import DriverPassword from './Components/DriverPassword';
-import Dashboard2 from './Components/Dashboard2';
+import DashboardD from './Components/DashboardD';
 import Driverdoc from './Components/Driverdoc';
 import Selection from './Components/Selection';
 import DriverPhonenumber from './Components/DriverPhonenumber';
@@ -46,7 +46,7 @@ const App = () => {
         <Stack.Screen name="Driverdetails" component={Driverdetails} />
         <Stack.Screen name="Driver" component={Driver} />
         <Stack.Screen name="DriverPassword" component={DriverPassword} />
-        <Stack.Screen name="Dashboard2" component={Dashboard2} />
+       <Stack.Screen name="DashboardD" component={DashboardD} />
         <Stack.Screen name="Driverdoc" component={Driverdoc} />
         <Stack.Screen name="Selection" component={Selection} />
         <Stack.Screen name="DriverPhonenumber" component={DriverPhonenumber} />

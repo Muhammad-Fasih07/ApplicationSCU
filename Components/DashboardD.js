@@ -11,18 +11,18 @@ import {
   Linking,
   FlatList,
 } from 'react-native';
-import PassengerRoute from './PassengerRrequest';
+import PassengerRoute from './DriverRrequest';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as Animatable from 'react-native-animatable';
 
-const Dashboard = ({ route, navigation }) => {
+const DashboardD = ({ route, navigation }) => {
   // Destructuring user from route.params
   const { user } = route.params;
   const circleSize = 120;
   const animatedImageRef = useRef(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [emergencyModalVisible, setEmergencyModalVisible] = useState(false);
-  const [showPassengerRoute, setShowPassengerRoute] = useState(false);
+  const [showDriverRrequest, setShowDriverRrequest] = useState(false);
 
   // Function to toggle the drawer
   const toggleDrawer = () => {
@@ -259,7 +259,7 @@ const Dashboard = ({ route, navigation }) => {
               }}
             >
               <TouchableOpacity
-                onPress={() => navigation.navigate('PassengerRoute')}
+                onPress={() => navigation.navigate('DriverRoute')}
                 style={{
                   backgroundColor: '#022B42',
                   borderRadius: circleSize / 2,
@@ -389,13 +389,14 @@ const Dashboard = ({ route, navigation }) => {
             {/* Route Section */}
             <View style={{ padding: 20, alignItems: 'center' }}>
               <Text style={{ fontSize: 16 }}>Every available route in Islamabad</Text>
-              <TouchableOpacity onPress={() => setShowPassengerRoute(!showPassengerRoute)} style={{ marginTop: 10 }}>
+              <TouchableOpacity onPress={() => setShowDriverRrequest(!showDriverRrequest)} style={{ marginTop: 10 }}>
+                
                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#007bff' }}>
-                  {showPassengerRoute ? 'HIDE ROUTES' : 'VIEW ALL'}
+                  {showDriverRrequest ? 'HIDE ROUTES' : 'VIEW ALL'}
                 </Text>
               </TouchableOpacity>
 
-              {showPassengerRoute && (
+              {showDriverRrequest && (
                 <View style={{ marginTop: 20 }}>
                   <PassengerRoute />
                 </View>
@@ -408,4 +409,4 @@ const Dashboard = ({ route, navigation }) => {
   );
 };
 
-export default Dashboard;
+export default DashboardD;

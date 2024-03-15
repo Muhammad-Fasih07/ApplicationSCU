@@ -11,7 +11,7 @@ const DriverRrequest = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://192.168.100.8:8082/api/passengerrouterequest');
+      const response = await fetch('http://192.168.100.15:8082/api/passengerrouterequest');
 
       if (!response.ok) {
         console.error('Error fetching data. Status:', response.status);
@@ -33,7 +33,7 @@ const DriverRrequest = () => {
     backgroundColor: '#FDD387',
     borderRadius: 10,
     padding: 10,
-    width:'100%',
+    width:'120%',
     marginBottom: 15,
     alignSelf: 'center',
     ...getShadowStyle(), // Apply shadow styles

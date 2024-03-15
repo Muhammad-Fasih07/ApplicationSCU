@@ -200,7 +200,7 @@ app.post('/api/login', (req, res) => {
         return res.status(200).json({
           message: 'Driver login successful',
           user: { name, identity },
-          navigateTo: 'Dashboard2', // Modify the dashboard name as needed
+          navigateTo: 'DashboardD', // Modify the dashboard name as needed
         });
       }
 
