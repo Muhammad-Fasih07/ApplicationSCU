@@ -295,3 +295,18 @@ app.get('/' , (re, res) =>{
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+// Server-side code (Node.js example)
+const stripe = require('stripe')('your_secret_key');
+
+app.post('/create-payment-intent', async (req, res) => {
+  const { amount } = req.body;
+
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount,
+    currency: 'usd',
+  });
+
+  res.json({ clientSecret: paymentIntent.client_secret });
+});
+
