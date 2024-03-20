@@ -310,3 +310,43 @@ app.post('/create-payment-intent', async (req, res) => {
   res.json({ clientSecret: paymentIntent.client_secret });
 });
 
+
+// server.js track
+
+const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
+const server = http.createServer(app);
+const io = socketIo(server);
+
+// Store connected clients
+let clients = {};
+
+// Socket.io connection event
+io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id);
+
+  // Store client with their socket ID
+  socket.on('registerDriver', (driverId) => {
+    clients[driverId] = socket.id;
+    console.log('Driver registered:', driverId);
+  });
+
+  socket.on('disconnect', () => {
+    // Remove disconnected client from the list
+    for (const [driverId, id] of Object.entries(clients)) {
+      if (id === socket.id) {
+        delete clients[driverId];
+        console.log('Driver disconnected:', driverId);
+        break;
+      }
+    }
+  });
+});
+
+// Listen for incoming requests
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
