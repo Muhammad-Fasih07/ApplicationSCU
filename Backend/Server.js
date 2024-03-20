@@ -200,7 +200,7 @@ app.post('/api/login', (req, res) => {
         return res.status(200).json({
           message: 'Driver login successful',
           user: { name, identity },
-          navigateTo: 'Dashboard2', // Modify the dashboard name as needed
+          navigateTo: 'DashboardD', // Modify the dashboard name as needed
         });
       }
 
@@ -256,7 +256,6 @@ app.post('/api/routes', (req, res) => {
 
   const insertQuery = 'INSERT INTO Routes (picklocation, droplocation, picktime, droptime, passengercapacity) VALUES (?, ?, ?, ?, ?)';
   const values = [picklocation, droplocation, picktime, droptime, passengercapacity];
- 
 
   db.query(insertQuery, values, (err, results) => {
     if (err) {
@@ -266,9 +265,47 @@ app.post('/api/routes', (req, res) => {
 
     return res.status(201).json({ message: 'Route inserted successfully' });
   });
+});
+
+
+
+// Api for route entering for driver
+app.post('/api/passengerroutes', (req, res) => {
+  const { picklocation, droplocation, picktime, droptime } = req.body;
+
+  if (!picklocation || !droplocation || !picktime || !droptime) {
+    return res.status(400).json({ error: 'All fields (picklocation, droplocation, picktime, droptime) are required' });
+  }
+
+  const insertQuery = 'INSERT INTO passengerrouterequest (picklocation, droplocation, picktime, droptime) VALUES (?, ?, ?, ?)';
+  const values = [picklocation, droplocation, picktime, droptime];
+
+  db.query(insertQuery, values, (err, results) => {
+    if (err) {
+      console.error('Error inserting route:', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    return res.status(201).json({ message: 'Route inserted successfully' });
+  });
+});
+
 
  
+
+app.get('/api/passengerrouterequest', (req, res) => {
+  const selectQuery = 'SELECT * FROM passengerrouterequest';
+
+  db.query(selectQuery, (err, results) => {
+    if (err) {
+      console.error('Error fetching routes:', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    return res.status(200).json(results);
+  });
 });
+
 
 
 app.get('/api/routes', (req, res) => {
@@ -283,7 +320,6 @@ app.get('/api/routes', (req, res) => {
     return res.status(200).json(results);
   });
 });
-
 
 
 

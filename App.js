@@ -16,7 +16,7 @@ import Dashboard from './Components/Dashboard';
 import Driverdetails from './Components/Driverdetails';
 import Driver from './Components/Driver';
 import DriverPassword from './Components/DriverPassword';
-import Dashboard2 from './Components/Dashboard2';
+import DashboardD from './Components/DashboardD';
 import Driverdoc from './Components/Driverdoc';
 import Selection from './Components/Selection';
 import DriverPhonenumber from './Components/DriverPhonenumber';
@@ -26,6 +26,8 @@ import Complaint from './Components/Complaint';
 import Privacycenter from './Components/Privacycenter';
 import DriverRoute from './Components/DriverRoute';
 import PassengerRoute from './Components/PassengerRoute';
+import PassengerRrequest from './Components/PassengerRrequest';
+import DriverRrequest from './Components/DriverRrequest';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -44,7 +46,7 @@ const App = () => {
         <Stack.Screen name="Driverdetails" component={Driverdetails} />
         <Stack.Screen name="Driver" component={Driver} />
         <Stack.Screen name="DriverPassword" component={DriverPassword} />
-        <Stack.Screen name="Dashboard2" component={Dashboard2} />
+       <Stack.Screen name="DashboardD" component={DashboardD} />
         <Stack.Screen name="Driverdoc" component={Driverdoc} />
         <Stack.Screen name="Selection" component={Selection} />
         <Stack.Screen name="DriverPhonenumber" component={DriverPhonenumber} />
@@ -54,6 +56,8 @@ const App = () => {
         <Stack.Screen name="Privacycenter" component={Privacycenter} />
         <Stack.Screen name="DriverRoute" component={DriverRoute} />
         <Stack.Screen name="PassengerRoute" component={PassengerRoute} />
+        <Stack.Screen name="PassengerRrequest" component={PassengerRrequest} />
+        <Stack.Screen name="DriverRrequest" component={DriverRrequest} />
       </Stack.Navigator>
     </NavigationContainer>
   );

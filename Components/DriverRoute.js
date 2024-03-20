@@ -4,7 +4,7 @@ import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
-const DriverRouteDetailsScreen = () => {
+const DriverRoute = () => {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [startLocation, setStartLocation] = useState('');
   const [endLocation, setEndLocation] = useState('');
@@ -77,7 +77,7 @@ const DriverRouteDetailsScreen = () => {
     }
 
     try {
-      const response = await fetch('http://172.17.243.179:8082/api/routes', {
+      const response = await fetch('http://192.168.100.15:8082/api/routes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -257,4 +257,4 @@ const DriverRouteDetailsScreen = () => {
   );
 };
 
-export default DriverRouteDetailsScreen;
+export default DriverRoute;

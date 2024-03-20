@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import {
-  StyleSheet,
-  Text,
   View,
-  SafeAreaView,
+  Text,
   TouchableOpacity,
   Image,
   Alert,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Axios from 'axios';
@@ -16,24 +16,26 @@ import Axios from 'axios';
 const Login = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleLogin = async () => {
     try {
-      const response = await Axios.post('http://172.17.243.179:8082/api/login', {
+      const response = await Axios.post('http://192.168.100.15:8082/api/login', {
         phonenumber: phoneNumber,
         password: password,
       });
-  
+
       if (response.status === 200) {
         const { user, navigateTo } = response.data;
-  
+
         if (user && navigateTo) {
           switch (navigateTo) {
             case 'Dashboard':
               navigation.navigate('Dashboard', { user });
               break;
-            case 'Dashboard2':
-              navigation.navigate('Dashboard2', { user });
+            case 'DashboardD':
+              navigation.navigate('DashboardD', { user });
               break;
             default:
               Alert.alert('Login Failed', 'Invalid identity.', [{ text: 'OK' }]);
@@ -46,45 +48,43 @@ const Login = ({ navigation }) => {
         if (response.data && response.data.error) {
           const { error } = response.data;
           if (error === 'InvalidPhoneNumber') {
-            setErrorMessage('Invalid phone number. Please check and try again.');
+            setErrorMessage('Wrong phone number entered.');
           } else if (error === 'InvalidPassword') {
-            setErrorMessage('Invalid password. Please check and try again.');
+            setErrorMessage('Wrong password entered.');
           } else {
-            setErrorMessage('Invalid phone number or password. Please check and try again.');
+            setErrorMessage('Wrong phone number or password entered.');
           }
         } else {
           setErrorMessage('Invalid phone number or password.');
         }
-  
+
         // Clear input fields
         setPhoneNumber('');
         setPassword('');
-  
+
         // Show the error message
         showAlert();
       }
     } catch (error) {
       console.error(error);
       setErrorMessage('An error occurred during login.');
-  
+
       // Clear input fields
       setPhoneNumber('');
       setPassword('');
-  
+
       // Show the error message
       showAlert();
     }
   };
-  
+
+  const showAlert = () => {
+    Alert.alert('Login Error', errorMessage, [{ text: 'OK' }]);
+  };
 
   return (
-    <SafeAreaView>
-      <View
-        style={{
-          padding: 20,
-          marginTop: 40,
-        }}
-      >
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+      <View style={{ flex: 1, padding: 20, marginTop: 40 }}>
         <View style={{ alignItems: 'center' }}>
           <Image
             source={require('../assets/logoscu.png')}
@@ -96,27 +96,14 @@ const Login = ({ navigation }) => {
               backgroundColor: 'rgb(24,61,61)',
             }}
           />
-
-          <Text
-            style={{
-              fontWeight: 'bold',
-              fontSize: 15,
-              maxWidth: '60%',
-              textAlign: 'center',
-            }}
-          >
+          <Text style={{ fontWeight: 'bold', fontSize: 15, maxWidth: '60%', textAlign: 'center' }}>
             Welcome back you've been missed!
           </Text>
         </View>
-        <View
-          style={{
-            marginVertical: 30,
-            marginTop: 40,
-          }}
-        >
+        <View style={{ marginVertical: 30, marginTop: 40 }}>
           <TextInput
             placeholder="Email/Phonenumber"
-            placeholderTextColor={Colors.darkText}
+            placeholderTextColor={Colors.dark}
             style={{
               fontSize: 15,
               padding: 20,
@@ -127,33 +114,23 @@ const Login = ({ navigation }) => {
             value={phoneNumber}
             onChangeText={(text) => setPhoneNumber(text)}
           />
-
-          <TextInput
-            placeholder="Password"
-            placeholderTextColor={Colors.darkText}
-            secureTextEntry
-            style={{
-              fontSize: 15,
-              padding: 20,
-              backgroundColor: 'rgba(207,216,220,1.0)',
-              borderRadius: 5,
-              marginVertical: 5,
-            }}
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-          />
+          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(207,216,220,1.0)', borderRadius: 5, marginVertical: 5 }}>
+            <TextInput
+              placeholder="Password"
+              placeholderTextColor={Colors.dark}
+              secureTextEntry={!showPassword}
+              style={{ fontSize: 15, padding: 20, backgroundColor: 'rgba(207,216,220,1.0)', borderRadius: 5, flex: 1, }}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+            />
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={{ padding: 10 }}>
+              <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color="gray" />
+            </TouchableOpacity>
+          </View>
         </View>
         <View>
           <TouchableOpacity onPress={() => navigation.navigate('Forgetpassword')}>
-            <Text
-              style={{
-                fontWeight: '400',
-                color: 'black',
-                alignSelf: 'flex-end',
-              }}
-            >
-              Forget your password?
-            </Text>
+            <Text style={{ fontWeight: '400', color: 'black', alignSelf: 'flex-end' }}>Forget your password?</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
@@ -164,101 +141,32 @@ const Login = ({ navigation }) => {
             marginVertical: 30,
             borderRadius: 5,
             shadowColor: 'rgb(147, 177, 166)',
-            shadowOffset: {
-              width: 0,
-              height: 3,
-            },
+            shadowOffset: { width: 0, height: 3 },
             shadowOpacity: 0.3,
           }}
         >
-          <Text
-            style={{
-              color: 'white',
-              textAlign: 'center',
-              fontSize: 20,
-              fontWeight: 'bold',
-            }}
-          >
-            Sign in
-          </Text>
+          <Text style={{ color: 'white', textAlign: 'center', fontSize: 20, fontWeight: 'bold' }}>Sign in</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Selection')}
-          style={{
-            padding: 15,
-          }}
-        >
-          <Text
-            style={{
-              color: 'black',
-              textAlign: 'center',
-              fontSize: 15,
-              fontWeight: '400',
-            }}
-          >
-            Create new account
-          </Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Selection')} style={{ padding: 15 }}>
+          <Text style={{ color: 'black', textAlign: 'center', fontSize: 15, fontWeight: '400' }}>Create new account</Text>
         </TouchableOpacity>
-        <View
-          style={{
-            marginVertical: 30,
-          }}
-        >
-          <Text
-            style={{
-              color: 'black',
-              textAlign: 'center',
-              fontSize: 15,
-              fontWeight: '400',
-            }}
-          >
-            Or continue with
-          </Text>
-          <View
-            style={{
-              marginTop: 10,
-              flexDirection: 'row',
-              justifyContent: 'center',
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                padding: 10,
-                backgroundColor: '#022B42',
-                borderRadius: 20,
-                marginHorizontal: 10,
-              }}
-            >
-              <Ionicons name="logo-google" color={Colors.white} size={20} />
+        <View style={{ marginVertical: 30 }}>
+          <Text style={{ color: 'black', textAlign: 'center', fontSize: 15, fontWeight: '400' }}>Or continue with</Text>
+          <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'center' }}>
+            <TouchableOpacity style={{ padding: 10, backgroundColor: '#022B42', borderRadius: 20, marginHorizontal: 10 }}>
+              <Ionicons name="logo-google" color="white" size={20} />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                padding: 10,
-                backgroundColor: '#022B42',
-                borderRadius: 20,
-                marginHorizontal: 10,
-              }}
-            >
-              <Ionicons name="logo-apple" color={Colors.white} size={20} />
+            <TouchableOpacity style={{ padding: 10, backgroundColor: '#022B42', borderRadius: 20, marginHorizontal: 10 }}>
+              <Ionicons name="logo-apple" color="white" size={20} />
             </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                padding: 10,
-                backgroundColor: '#022B42',
-                borderRadius: 20,
-                marginHorizontal: 10,
-              }}
-            >
-              <Ionicons name="logo-facebook" color={Colors.white} size={20} />
+            <TouchableOpacity style={{ padding: 10, backgroundColor: '#022B42', borderRadius: 20, marginHorizontal: 10 }}>
+              <Ionicons name="logo-facebook" color="white" size={20} />
             </TouchableOpacity>
           </View>
         </View>
       </View>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 
 export default Login;
-
-const styles = StyleSheet.create({});
