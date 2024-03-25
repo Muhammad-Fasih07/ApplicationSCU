@@ -25,7 +25,7 @@ const ComplaintForm = () => {
       console.log('Data to be submitted:', { name, phonenumber, complaint });
 
       // Make a POST request to the API endpoint
-      const response = await axios.post('http://192.168.100.18:8082/api/complaints', {
+      const response = await axios.post('http://192.168.100.19:8082/api/complaints', {
         name: name,
         phonenumber: phonenumber,
         description: complaint,

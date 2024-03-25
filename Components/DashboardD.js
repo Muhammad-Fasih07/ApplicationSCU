@@ -282,6 +282,7 @@ const DashboardD = ({ route, navigation }) => {
               </TouchableOpacity>
 
               <TouchableOpacity
+              onPress={() => navigation.navigate('Carpooling')}
                 style={{
                   backgroundColor: '#022B42',
                   borderRadius: circleSize / 2,

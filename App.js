@@ -28,6 +28,7 @@ import DriverRoute from './Components/DriverRoute';
 import PassengerRoute from './Components/PassengerRoute';
 import PassengerRrequest from './Components/PassengerRrequest';
 import DriverRrequest from './Components/DriverRrequest';
+import Carpooling from './Components/Carpooling';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -58,6 +59,7 @@ const App = () => {
         <Stack.Screen name="PassengerRoute" component={PassengerRoute} />
         <Stack.Screen name="PassengerRrequest" component={PassengerRrequest} />
         <Stack.Screen name="DriverRrequest" component={DriverRrequest} />
+        <Stack.Screen name="Carpooling" component={Carpooling} />
       </Stack.Navigator>
     </NavigationContainer>
   );

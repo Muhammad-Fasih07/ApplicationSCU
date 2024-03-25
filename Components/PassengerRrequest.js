@@ -11,7 +11,7 @@ const PassengerRrequest = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://192.168.100.15:8082/api/routes');
+      const response = await fetch('http://192.168.100.19:8082/api/routes');
 
       if (!response.ok) {
         console.error('Error fetching data. Status:', response.status);

@@ -21,7 +21,7 @@ const Login = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await Axios.post('http://192.168.100.15:8082/api/login', {
+      const response = await Axios.post('http://172.17.242.205s:8082/api/login', {
         phonenumber: phoneNumber,
         password: password,
       });
@@ -119,7 +119,7 @@ const Login = ({ navigation }) => {
               placeholder="Password"
               placeholderTextColor={Colors.dark}
               secureTextEntry={!showPassword}
-              style={{ fontSize: 15, padding: 20, backgroundColor: 'rgba(207,216,220,1.0)', borderRadius: 5, flex: 1, }}
+              style={{ fontSize: 15, padding: 20, backgroundColor: 'rgba(207,216,220,1.0)', borderRadius: 15, flex: 1, }}
               value={password}
               onChangeText={(text) => setPassword(text)}
             />

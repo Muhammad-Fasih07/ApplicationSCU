@@ -269,7 +269,7 @@ app.post('/api/routes', (req, res) => {
 
 
 
-// Api for route entering for driver
+// Api for route entering for Passenger
 app.post('/api/passengerroutes', (req, res) => {
   const { picklocation, droplocation, picktime, droptime } = req.body;
 
@@ -324,6 +324,42 @@ app.get('/api/routes', (req, res) => {
 
 
 
+// Create carpooling request
+app.post('/api/carpooling', (req, res) => {
+  const {
+    type,
+    days,
+    startDate,
+    pickLocation,
+    dropLocation,
+    pickTime,
+    dropTime,
+    preference,
+    maleQuantity,
+    femaleQuantity
+  } = req.body;
+
+  const sql = `
+    INSERT INTO carpoolingdriverReq (type, days, startDate, pickLocation, dropLocation, pickTime, dropTime, preference, maleQuantity, femaleQuantity)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  const values = [type, JSON.stringify(days), startDate, pickLocation, dropLocation, pickTime, dropTime, preference, maleQuantity, femaleQuantity];
+
+  // Replace 'connection' with 'db'
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Error inserting data:', err);
+      res.status(500).json({ message: 'Internal server error' });
+      return;
+    }
+    console.log('New carpooling request added:', result);
+    res.status(201).json({ message: 'Carpooling request added successfully' });
+  });
+});
+
+
+
+
 app.get('/' , (re, res) =>{
   return res.json("scu app running")
 })
@@ -332,57 +368,4 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-// Server-side code (Node.js example)
-const stripe = require('stripe')('your_secret_key');
-
-app.post('/create-payment-intent', async (req, res) => {
-  const { amount } = req.body;
-
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount,
-    currency: 'usd',
-  });
-
-  res.json({ clientSecret: paymentIntent.client_secret });
-});
-
-
-// server.js track
-
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-const server = http.createServer(app);
-const io = socketIo(server);
-
-// Store connected clients
-let clients = {};
-
-// Socket.io connection event
-io.on('connection', (socket) => {
-  console.log('Client connected:', socket.id);
-
-  // Store client with their socket ID
-  socket.on('registerDriver', (driverId) => {
-    clients[driverId] = socket.id;
-    console.log('Driver registered:', driverId);
-  });
-
-  socket.on('disconnect', () => {
-    // Remove disconnected client from the list
-    for (const [driverId, id] of Object.entries(clients)) {
-      if (id === socket.id) {
-        delete clients[driverId];
-        console.log('Driver disconnected:', driverId);
-        break;
-      }
-    }
-  });
-});
-
-// Listen for incoming requests
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
 

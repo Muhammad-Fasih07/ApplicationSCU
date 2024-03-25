@@ -31,7 +31,7 @@ const Splash = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: '#022B42',
     justifyContent: 'center',
     alignItems: 'center',
   },
