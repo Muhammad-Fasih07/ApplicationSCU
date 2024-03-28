@@ -9,9 +9,8 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@expo/vector-icons": "^13.0.0",
-    "@expo/webpack-config": "^19.0.0",
-    "@react-native-community/datetimepicker": "7.2.0",
+    "@expo/vector-icons": "^14.0.0",
+    "@expo/webpack-config": "^0.12.52",
     "@react-native-community/geolocation": "^3.1.0",
     "@react-native-community/slider": "4.4.2",
     "@react-native-picker/picker": "2.4.10",
@@ -47,7 +46,8 @@
     "react-native-google-places-autocomplete": "^2.5.6",
     "react-native-image-picker": "^7.1.0",
     "react-native-international-phone-number": "^0.6.8",
-    "react-native-maps": "1.7.1",
+    "react-native-maps": "1.10.0",
+    "react-native-modal-datetime-picker": "^17.1.0",
     "react-native-phone-number-input": "^2.1.0",
     "react-native-places-input": "^1.1.7",
     "react-native-reanimated": "~3.3.0",
