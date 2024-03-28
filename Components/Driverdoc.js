@@ -58,7 +58,7 @@ const FileUploadScreen = ({ route }) => {
    
   
       // Make the API request to your backend endpoint for driver registration
-      const response = await axios.post('http://192.168.100.15:8082/api/registerDriver', {
+      const response = await axios.post('http://192.168.100.6:8082/api/registerDriver', {
         identity,
         type: vehicleType,
         firstName,

@@ -2,19 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const DriverRoute = () => {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [startLocation, setStartLocation] = useState('');
   const [endLocation, setEndLocation] = useState('');
-  const [pickTime, setPickTime] = useState('');
-  const [dropTime, setDropTime] = useState('');
+  const [pickTime, setPickTime] = useState(new Date());
+  const [dropTime, setDropTime] = useState(new Date());
   const [passengerCapacity, setPassengerCapacity] = useState('');
-  const [isPickTimePickerVisible, setPickTimePickerVisible] = useState(false);
-  const [isDropTimePickerVisible, setDropTimePickerVisible] = useState(false);
-  const [selectedPickTime, setSelectedPickTime] = useState('Pick Time');
-  const [selectedDropTime, setSelectedDropTime] = useState('Drop Time');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   useEffect(() => {
@@ -41,34 +37,6 @@ const DriverRoute = () => {
     }
   };
 
-  const showPickTimePicker = () => {
-    setPickTimePickerVisible(true);
-  };
-
-  const hidePickTimePicker = () => {
-    setPickTimePickerVisible(false);
-  };
-
-  const handlePickTimeConfirm = (time) => {
-    setPickTime(time.toLocaleTimeString());
-    setSelectedPickTime(time.toLocaleTimeString());
-    hidePickTimePicker();
-  };
-
-  const showDropTimePicker = () => {
-    setDropTimePickerVisible(true);
-  };
-
-  const hideDropTimePicker = () => {
-    setDropTimePickerVisible(false);
-  };
-
-  const handleDropTimeConfirm = (time) => {
-    setDropTime(time.toLocaleTimeString());
-    setSelectedDropTime(time.toLocaleTimeString());
-    hideDropTimePicker();
-  };
-
   const handleSubmit = async () => {
     if (formSubmitted) {
       // Already submitted, show an alert
@@ -85,8 +53,8 @@ const DriverRoute = () => {
         body: JSON.stringify({
           picklocation: startLocation,
           droplocation: endLocation,
-          picktime: pickTime,
-          droptime: dropTime,
+          picktime: pickTime.toLocaleTimeString(),
+          droptime: dropTime.toLocaleTimeString(),
           passengercapacity: parseInt(passengerCapacity, 10),
         }),
       });
@@ -166,9 +134,9 @@ const DriverRoute = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}
-                  onPress={showPickTimePicker}
+                  onPress={() => console.log('Show Pick Time Picker')} // Placeholder action, change as needed
                 >
-                  <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>{selectedPickTime}</Text>
+                  <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Pick Time</Text>
                 </TouchableOpacity>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
@@ -194,9 +162,9 @@ const DriverRoute = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}
-                  onPress={showDropTimePicker}
+                  onPress={() => console.log('Show Drop Time Picker')} // Placeholder action, change as needed
                 >
-                  <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>{selectedDropTime}</Text>
+                  <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Drop Time</Text>
                 </TouchableOpacity>
               </View>
               <TextInput
@@ -233,23 +201,6 @@ const DriverRoute = () => {
                 </Text>
               )}
             </View>
-
-            {/* Pick Time Picker */}
-            <DateTimePickerModal
-              isVisible={isPickTimePickerVisible}
-              mode="time"
-              onConfirm={handlePickTimeConfirm}
-              onCancel={hidePickTimePicker}
-              textColor="#022B42" // Set the clock color here
-            />
-            {/* Drop Time Picker */}
-            <DateTimePickerModal
-              isVisible={isDropTimePickerVisible}
-              mode="time"
-              onConfirm={handleDropTimeConfirm}
-              onCancel={hideDropTimePicker}
-              textColor="#022B42" // Set the clock color here
-            />
           </KeyboardAvoidingView>
         </ScrollView>
       </View>

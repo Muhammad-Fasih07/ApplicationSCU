@@ -111,7 +111,7 @@ app.post('/api/registerDriver', (req, res) => {
   }
 
   const query = `
-    INSERT INTO driver (\`identity\`, \`type\`, \`name\`, \`last-name\`, \`phonenumber\`, \`password\`, \`gender\`,
+    INSERT INTO pdriver (\`identity\`, \`type\`, \`name\`, \`last-name\`, \`phonenumber\`, \`password\`, \`gender\`,
       \`vehicle-brand\`, \`vehicle-model\`, \`license-number\`, \`vehicle-number-plate\`, \`driver-photo\`,
       \`license-photo\`, \`vehicle-photo\`, \`cnic-photo\`)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;

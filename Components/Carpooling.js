@@ -1,15 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, TextInput, Animated,Alert } from 'react-native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { View, Text, TouchableOpacity, TextInput, Animated, Alert } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const CarpoolingScreen = () => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isPickTimeVisible, setPickTimeVisibility] = useState(false);
   const [isDropTimeVisible, setDropTimeVisibility] = useState(false);
-  const [startDate, setStartDate] = useState('');
-  const [pickTime, setPickTime] = useState('');
-  const [dropTime, setDropTime] = useState('');
+  // Initialize startDate, pickTime, and dropTime with new Date() as default values
+  const [startDate, setStartDate] = useState(null); // Set initial value to null
+  const [pickTime, setPickTime] = useState(null); // Set initial value to null
+  const [dropTime, setDropTime] = useState(null); // Set initial value to null
   const [pickLocation, setPickLocation] = useState('');
   const [dropLocation, setDropLocation] = useState('');
   const [activeDays, setActiveDays] = useState({
@@ -27,7 +28,8 @@ const CarpoolingScreen = () => {
   const [choosedPreference, setChoosedPreference] = useState('');
   const [maleQuantity, setMaleQuantity] = useState(0);
   const [femaleQuantity, setFemaleQuantity] = useState(0);
-
+  const formatDate = (date) => date ? date.toLocaleDateString() : '';
+  const formatTime = (time) => time ? time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
   useEffect(() => {
     Animated.timing(animation, {
       toValue: preference,
@@ -50,19 +52,26 @@ const CarpoolingScreen = () => {
 
   const showDatePicker = () => setDatePickerVisibility(true);
   const hideDatePicker = () => setDatePickerVisibility(false);
-  const handleDateConfirm = (date) => {
-    setStartDate(date.toISOString().split('T')[0]);
-    hideDatePicker();
+  const handleDateChange = (event, selectedDate) => {
+    setDatePickerVisibility(Platform.OS === 'ios');
+    if (selectedDate) {
+      setStartDate(selectedDate);
+    }
   };
-  const handlePickTimeConfirm = (time) => {
-    setPickTime(time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-    setPickTimeVisibility(false);
+
+  const handlePickTimeChange = (event, selectedTime) => {
+    setPickTimeVisibility(Platform.OS === 'ios');
+    if (selectedTime) {
+      setPickTime(selectedTime);
+    }
   };
-  const handleDropTimeConfirm = (time) => {
-    setDropTime(time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-    setDropTimeVisibility(false);
+
+  const handleDropTimeChange = (event, selectedTime) => {
+    setDropTimeVisibility(Platform.OS === 'ios');
+    if (selectedTime) {
+      setDropTime(selectedTime);
+    }
   };
- 
 
   // Adjust male/female quantities according to preferences
   const changeMaleQuantity = (amount) => {
@@ -83,66 +92,73 @@ const CarpoolingScreen = () => {
     }
   };
 
-
   const [submitted, setSubmitted] = useState(false);
 
-const handleSubmit = () => {
-  // Check if the form has already been submitted
-  if (submitted) {
-    Alert.alert('Error', 'Form already submitted');
-    return;
-  }
+  const handleSubmit = () => {
+    // Check if the form has already been submitted
+    if (submitted) {
+      Alert.alert('Error', 'Form already submitted');
+      return;
+    }
 
-  // Check if any field is empty
-  if (!startDate || !pickTime || !dropTime || !pickLocation || !dropLocation || !choosedPreference || (maleQuantity === 0 && femaleQuantity === 0)) {
-    Alert.alert('Error', 'Please fill in all fields');
-    return;
-  }
+    // Check if any field is empty
+    if (
+      !startDate ||
+      !pickTime ||
+      !dropTime ||
+      !pickLocation ||
+      !dropLocation ||
+      !choosedPreference ||
+      (maleQuantity === 0 && femaleQuantity === 0)
+    ) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
 
-  // Filter out only the selected days (highlighted in blue)
-  const selectedDays = Object.keys(activeDays).filter((day) => activeDays[day]);
+    // Filter out only the selected days (highlighted in blue)
+    const selectedDays = Object.keys(activeDays).filter((day) => activeDays[day]);
 
-  // Prepare data for API request
-  const data = {
-    type: preference === 0 ? 'One Way' : 'Two Way',
-    days: selectedDays,
-    startDate,
-    pickLocation,
-    dropLocation,
-    pickTime,
-    dropTime,
-    preference,
-    maleQuantity,
-    femaleQuantity,
+    // Prepare data for API request
+    const data = {
+      type: preference === 0 ? 'One Way' : 'Two Way',
+      days: selectedDays,
+      startDate,
+      pickLocation,
+      dropLocation,
+      pickTime,
+      dropTime,
+      preference,
+      maleQuantity,
+      femaleQuantity,
+    };
+
+    // Send POST request to API
+    fetch('http://192.168.100.6:8082/api/carpooling', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error('Network response was not ok');
+      })
+      .then((data) => {
+        // Handle success response
+        console.log(data);
+        Alert.alert('Success', 'Carpooling request added successfully');
+        // Set submitted to true to prevent further submissions
+        setSubmitted(true);
+      })
+      .catch((error) => {
+        // Handle error
+        console.error('Error:', error);
+        Alert.alert('Error', 'Failed to add carpooling request');
+      });
   };
-
-  // Send POST request to API
-  fetch('http://172.17.242.205:8082/api/carpooling', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error('Network response was not ok');
-    })
-    .then((data) => {
-      // Handle success response
-      console.log(data);
-      Alert.alert('Success', 'Carpooling request added successfully');
-      // Set submitted to true to prevent further submissions
-      setSubmitted(true);
-    })
-    .catch((error) => {
-      // Handle error
-      console.error('Error:', error);
-      Alert.alert('Error', 'Failed to add carpooling request');
-    });
-};
 
   return (
     <View
@@ -233,21 +249,24 @@ const handleSubmit = () => {
           ))}
         </View>
       </View>
-
-      <TouchableOpacity
-        onPress={showDatePicker}
-        style={{ marginBottom: 20, padding: 18, backgroundColor: '#FDD387', borderRadius: 15 }}
-      >
-        <Text>{startDate ? startDate : 'Start ASAP'}</Text>
+      {/* DatePicker for selecting the date */}
+      <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={{ marginBottom: 20 ,borderRadius: 8,
+            padding: 12,backgroundColor:'#022B42'}}>
+        <Text style={{ fontSize: 16 ,color: 'white'}}>
+          {startDate ? formatDate(startDate) : 'Start ASAP'}
+        </Text>
       </TouchableOpacity>
-
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        onConfirm={handleDateConfirm}
-        onCancel={hideDatePicker}
-      />
-
+      {isDatePickerVisible && (
+        <DateTimePicker
+          value={startDate || new Date()}
+          mode="date"
+          display="default"
+          onChange={(event, selectedDate) => {
+            setStartDate(selectedDate);
+            setDatePickerVisibility(false);
+          }}
+        />
+      )}
       <View
         style={{
           flexDirection: 'row',
@@ -273,20 +292,25 @@ const handleSubmit = () => {
           onChangeText={setPickLocation}
         />
 
-        <TouchableOpacity
-          onPress={() => setPickTimeVisibility(true)}
-          style={{ marginBottom: 10, padding: 10, backgroundColor: '#FDD387', borderRadius: 5 }}
-        >
-          <Text>{pickTime ? pickTime : 'Pick Time'}</Text>
-        </TouchableOpacity>
-
-        <DateTimePickerModal
-          isVisible={isPickTimeVisible}
+        {/* TimePicker for selecting the pick time */}
+        
+        <TouchableOpacity onPress={() => setPickTimeVisibility(true)} style={{ marginBottom: 5,borderRadius: 5,
+            padding: 10,backgroundColor:'#FDD387' }}>
+        <Text style={{ fontSize: 16 }}>
+          {pickTime ? formatTime(pickTime) : 'Pick Time'}
+        </Text>
+      </TouchableOpacity>
+      {isPickTimeVisible && (
+        <DateTimePicker
+          value={pickTime || new Date()}
           mode="time"
-          onConfirm={handlePickTimeConfirm}
-          onCancel={() => setPickTimeVisibility(false)}
-          is24Hour={false}
+          display="default"
+          onChange={(event, selectedTime) => {
+            setPickTime(selectedTime);
+            setPickTimeVisibility(false);
+          }}
         />
+      )}
       </View>
       <View
         style={{
@@ -312,23 +336,25 @@ const handleSubmit = () => {
           value={dropLocation}
           onChangeText={setDropLocation}
         />
-
-        <TouchableOpacity
-          onPress={() => setDropTimeVisibility(true)}
-          style={{ marginBottom: 10, padding: 10, backgroundColor: '#FDD387', borderRadius: 5 }}
-        >
-          <Text>{dropTime ? dropTime : 'Drop Time'}</Text>
-        </TouchableOpacity>
-
-        <DateTimePickerModal
-          isVisible={isDropTimeVisible}
+        {/* TimePicker for selecting the drop time */}
+        <TouchableOpacity onPress={() => setDropTimeVisibility(true)} style={{ marginBottom: 10,  borderRadius: 5,
+            padding: 10,backgroundColor:'#FDD387' }}>
+        <Text style={{ fontSize: 16 }}>
+          {dropTime ? formatTime(dropTime) : 'Drop Time'}
+        </Text>
+      </TouchableOpacity>
+      {isDropTimeVisible && (
+        <DateTimePicker
+          value={dropTime || new Date()}
           mode="time"
-          onConfirm={handleDropTimeConfirm}
-          onCancel={() => setDropTimeVisibility(false)}
-          is24Hour={false}
+          display="default"
+          onChange={(event, selectedTime) => {
+            setDropTime(selectedTime);
+            setDropTimeVisibility(false);
+          }}
         />
+      )}
       </View>
-
       {/* Preference for Passenger Type (Mixed, Separate) */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', marginBottom: 20 }}>
         <Text style={{ color: 'white', backgroundColor: '#022B42', borderRadius: 5, padding: 10, marginRight: 65 }}>
@@ -357,7 +383,6 @@ const handleSubmit = () => {
           <Text style={{ color: choosedPreference === 'Separate' ? 'white' : '#022B42' }}>Separate</Text>
         </TouchableOpacity>
       </View>
-
       {/* Passenger Quantity Adjustment */}
       <View
         style={{
@@ -372,7 +397,6 @@ const handleSubmit = () => {
           shadowOpacity: 0.23,
           shadowRadius: 2.62,
           elevation: 4,
-         
         }}
       >
         {/* Male Passenger Adjustment */}
@@ -415,7 +439,6 @@ const handleSubmit = () => {
           </TouchableOpacity>
         </View>
       </View>
-
       <TouchableOpacity
         onPress={handleSubmit}
         style={{
@@ -429,7 +452,7 @@ const handleSubmit = () => {
           borderRadius: 7,
         }}
       >
-        <Text style={{ color: 'white',fontSize: 20,fontWeight: 'bold' }}>Submit</Text>
+        <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>Submit</Text>
       </TouchableOpacity>
     </View>
   );
