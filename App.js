@@ -28,7 +28,11 @@ import DriverRoute from './Components/DriverRoute';
 import PassengerRoute from './Components/PassengerRoute';
 import PassengerRrequest from './Components/PassengerRrequest';
 import DriverRrequest from './Components/DriverRrequest';
+import CarpoolingD from './Components/CarpoolingD';
 import Carpooling from './Components/Carpooling';
+import Payment from './Components/payment';
+import Carpoolingpreq from './Components/Carpoolingpreq';
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -59,7 +63,12 @@ const App = () => {
         <Stack.Screen name="PassengerRoute" component={PassengerRoute} />
         <Stack.Screen name="PassengerRrequest" component={PassengerRrequest} />
         <Stack.Screen name="DriverRrequest" component={DriverRrequest} />
+        <Stack.Screen name="CarpoolingD" component={CarpoolingD} />
         <Stack.Screen name="Carpooling" component={Carpooling} />
+        <Stack.Screen name="Payment" component={Payment} />
+        <Stack.Screen name="Carpoolingpreq" component={Carpoolingpreq} />
+        
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

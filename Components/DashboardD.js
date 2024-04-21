@@ -52,6 +52,16 @@ const DashboardD = ({ route, navigation }) => {
       <Text>{item.text}</Text>
     </View>
   );
+  const handlePickAndDropRequest = () => {
+    // Implement what happens when the Pick and Drop Request button is pressed
+    navigation.navigate('DriverRrequest');
+  };
+
+  // Function to handle Carpooling Request
+  const handleCarpoolingRequest = () => {
+    // Implement what happens when the Carpooling Request button is pressed
+    navigation.navigate('Carpoolingpreq');
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -160,7 +170,7 @@ const DashboardD = ({ route, navigation }) => {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Payment')}>
               <Text
                 style={{ fontSize: 16, marginBottom: 10, color: '#333', marginTop: 15, fontWeight: 'bold', left: 40 }}
               >
@@ -282,7 +292,7 @@ const DashboardD = ({ route, navigation }) => {
               </TouchableOpacity>
 
               <TouchableOpacity
-              onPress={() => navigation.navigate('Carpooling')}
+                onPress={() => navigation.navigate('CarpoolingD')}
                 style={{
                   backgroundColor: '#022B42',
                   borderRadius: circleSize / 2,
@@ -307,50 +317,35 @@ const DashboardD = ({ route, navigation }) => {
 
             {/* Input Section */}
             <View style={{ padding: 20 }}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: 30,
-                }}
-              >
-                <Text
+             <Text></Text>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
+                <TouchableOpacity
+                  onPress={handlePickAndDropRequest}
                   style={{
-                    fontSize: 18,
-                    fontWeight: 'bold',
+                    width: '49%',
+                    backgroundColor: '#022B42',
+                    padding: 11,
+                    borderRadius: 10,
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
-                  Let's Go!
-                </Text>
-                <Icon name="arrow-drop-down" size={20} />
-              </View>
+                  <Text style={{ color: 'white', fontSize: 13,fontWeight: 'bold' }}>P&D Request</Text>
+                </TouchableOpacity>
 
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <TextInput
+                <TouchableOpacity
+                  onPress={handleCarpoolingRequest}
                   style={{
-                    borderColor: '#ddd',
-                    borderWidth: 1,
-                    padding: 10,
-                    borderColor: '#022B42',
-                    borderRadius: 5,
-                    marginBottom: 10,
-                    width: '48%',
+                    width: '49%',
+                    backgroundColor: '#022B42',
+                    padding: 11,
+                    borderRadius: 10,
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
-                  placeholder="My current location"
-                />
-                <TextInput
-                  style={{
-                    borderColor: '#ddd',
-                    borderWidth: 1,
-                    padding: 10,
-                    borderColor: '#022B42',
-                    borderRadius: 5,
-                    marginBottom: 10,
-                    width: '48%',
-                  }}
-                  placeholder="Where to?"
-                />
+                >
+                  <Text style={{ color: 'white', fontSize: 13,fontWeight: 'bold' }}>Carpooling Request</Text>
+                </TouchableOpacity>
               </View>
 
               <TouchableOpacity
@@ -391,7 +386,6 @@ const DashboardD = ({ route, navigation }) => {
             <View style={{ padding: 20, alignItems: 'center' }}>
               <Text style={{ fontSize: 16 }}>Every available route in Islamabad</Text>
               <TouchableOpacity onPress={() => setShowDriverRrequest(!showDriverRrequest)} style={{ marginTop: 10 }}>
-                
                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#007bff' }}>
                   {showDriverRrequest ? 'HIDE ROUTES' : 'VIEW ALL'}
                 </Text>

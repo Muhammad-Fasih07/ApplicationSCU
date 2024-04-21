@@ -11,7 +11,7 @@ const PassengerRrequest = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://192.168.100.19:8082/api/routes');
+      const response = await fetch('http://192.168.100.12:8082/api/routes');
 
       if (!response.ok) {
         console.error('Error fetching data. Status:', response.status);
@@ -33,7 +33,7 @@ const PassengerRrequest = () => {
     backgroundColor: '#FDD387',
     borderRadius: 10,
     padding: 10,
-    width:'120%',
+    width:'90%',
     marginBottom: 15,
     alignSelf: 'center',
     ...getShadowStyle(), // Apply shadow styles
@@ -42,7 +42,7 @@ const PassengerRrequest = () => {
   return (
     <View style={{ flex: 1, padding: 16, backgroundColor: 'white' }}>
       <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
-        <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#022B42' }}>
+        <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#022B42' }}>
           
         </Text>
       </View>
@@ -58,6 +58,7 @@ const PassengerRrequest = () => {
               }}
               style={containerStyle}
             >
+              
               <Text style={{ fontSize: 16, color: '#555555', marginBottom: 10 }}>
                 Pickup: {item.picklocation}
               </Text>

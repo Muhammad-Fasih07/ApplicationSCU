@@ -324,7 +324,8 @@ app.get('/api/routes', (req, res) => {
 
 
 
-// Create carpooling request
+// Create carpooling driver request
+
 app.post('/api/carpooling', (req, res) => {
   const {
     type,
@@ -354,6 +355,55 @@ app.post('/api/carpooling', (req, res) => {
     }
     console.log('New carpooling request added:', result);
     res.status(201).json({ message: 'Carpooling request added successfully' });
+  });
+});
+
+
+
+
+// Create carpooling passenger request
+app.post('/api/carpoolingp', (req, res) => {
+  const {
+    type,
+    days,
+    startDate,
+    pickLocation,
+    dropLocation,
+    pickTime,
+    dropTime,
+    preference,
+    maleQuantity,
+    femaleQuantity
+  } = req.body;
+
+  const sql = `
+    INSERT INTO carpoolingpassengerreq (type, days, startDate, pickLocation, dropLocation, pickTime, dropTime, preference, maleQuantity, femaleQuantity)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  const values = [type, JSON.stringify(days), startDate, pickLocation, dropLocation, pickTime, dropTime, preference, maleQuantity, femaleQuantity];
+
+  // Replace 'connection' with 'db'
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Error inserting data:', err);
+      res.status(500).json({ message: 'Internal server error' });
+      return;
+    }
+    console.log('New carpooling request added:', result);
+    res.status(201).json({ message: 'Carpooling request added successfully' });
+  });
+});
+
+app.get('/api/carpoolingp', (req, res) => {
+  const selectQuery = 'SELECT * FROM carpoolingpassengerreq';
+
+  db.query(selectQuery, (err, results) => {
+    if (err) {
+      console.error('Error fetching routes:', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    return res.status(200).json(results);
   });
 });
 

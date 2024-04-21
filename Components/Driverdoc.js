@@ -4,6 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 
+
 const FileUploadScreen = ({ route }) => {
   const [driverPhoto, setDriverPhoto] = useState(null);
   const [licensePhoto, setLicensePhoto] = useState(null);

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, FlatList, TouchableOpacity, Platform } from 'react-native';
 
-const DriverRrequest = () => {
-  const [routes, setRoutes] = useState([]);
+const PassengerRrequest = () => {
+  const [carpoolingp, setcarpoolingp] = useState([]);
 
   useEffect(() => {
     // Fetch data from your API
@@ -11,7 +11,7 @@ const DriverRrequest = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://192.168.100.12:8082/api/passengerrouterequest');
+      const response = await fetch('http://192.168.100.12:8082/api/carpoolingp');
 
       if (!response.ok) {
         console.error('Error fetching data. Status:', response.status);
@@ -19,7 +19,7 @@ const DriverRrequest = () => {
       }
 
       const data = await response.json();
-      setRoutes(data);
+      setcarpoolingp(data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -40,13 +40,13 @@ const DriverRrequest = () => {
   };
 
   return (
-    <View style={{ flex: 1, padding: 16, backgroundColor: 'white'  }}>
+    <View style={{ flex: 1, padding: 16, backgroundColor: 'white' }}>
       <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
         <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#022B42' }}>
-        Passenger Route Request
+          
         </Text>
       </View>
-      {routes.length > 0 ? (
+      {carpoolingp.length > 0 ? (
         <FlatList
           data={routes}
           keyExtractor={(item) => item.id.toString()}
@@ -58,6 +58,7 @@ const DriverRrequest = () => {
               }}
               style={containerStyle}
             >
+              
               <Text style={{ fontSize: 16, color: '#555555', marginBottom: 10 }}>
                 Pickup: {item.picklocation}
               </Text>
@@ -83,7 +84,7 @@ const DriverRrequest = () => {
   );
 };
 
-export default DriverRrequest;
+export default PassengerRrequest;
 
 // Helper function to get shadow styles based on platform
 const getShadowStyle = () => {

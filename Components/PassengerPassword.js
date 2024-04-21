@@ -31,7 +31,7 @@ const Register = ({ navigation, route }) => {
     } else {
       try {
         // Send the registration data to the API
-        const response = await fetch('http://192.168.100.15:8082/api/register', {
+        const response = await fetch('http://172.17.242.86:8082/api/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -133,7 +133,7 @@ const CarpoolingScreen = () => {
     };
 
     // Send POST request to API
-    fetch('http://192.168.100.12:8082/api/carpoolingp', {
+    fetch('http://192.168.100.12:8082/api/carpooling', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
