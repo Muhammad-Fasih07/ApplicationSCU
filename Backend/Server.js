@@ -111,8 +111,8 @@ app.post('/api/registerDriver', (req, res) => {
   }
 
   const query = `
-    INSERT INTO pdriver (\`identity\`, \`type\`, \`name\`, \`last-name\`, \`phonenumber\`, \`password\`, \`gender\`,
-      \`vehicle-brand\`, \`vehicle-model\`, \`license-number\`, \`vehicle-number-plate\`, \`driver-photo\`,
+    INSERT INTO pdriver (\`identity\`, \`type\`, \`name\`, \`lastname\`, \`phonenumber\`, \`password\`, \`gender\`,
+      \`vehicle-brand\`, \`vehicle-model\`, \`license-number\`, \`vehicle-number-plate\`, \`driverphoto\`,
       \`license-photo\`, \`vehicle-photo\`, \`cnic-photo\`)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
   
@@ -172,12 +172,12 @@ app.post('/api/login', (req, res) => {
 
     if (passengerResults.length > 0) {
       const passenger = passengerResults[0];
-      const { name, identity /* ... other fields */ } = passenger;
+      const { id,name, identity /* ... other fields */ } = passenger;
 
       // Return passenger details along with success message and navigate to dashboard1
       return res.status(200).json({
         message: 'Passenger login successful',
-        user: { name, identity },
+        user: { id,name, identity },
         navigateTo: 'Dashboard', // Modify the dashboard name as needed
       });
     }
@@ -194,12 +194,12 @@ app.post('/api/login', (req, res) => {
 
       if (driverResults.length > 0) {
         const driver = driverResults[0];
-        const { name, identity /* ... other fields */ } = driver;
+        const { id,name, identity,lastname,gender,driverphoto /* ... other fields */ } = driver;
 
         // Return driver details along with success message and navigate to dashboard2
         return res.status(200).json({
           message: 'Driver login successful',
-          user: { name, identity },
+          user: { id,name, identity,lastname,gender,driverphoto },
           navigateTo: 'DashboardD', // Modify the dashboard name as needed
         });
       }
@@ -404,6 +404,51 @@ app.get('/api/carpoolingp', (req, res) => {
     }
 
     return res.status(200).json(results);
+  });
+});
+
+
+
+// API endpoint to fetch driver data by ID
+app.get('/driver/:id', (req, res) => {
+  const { id } = req.params;
+  const sqlQuery = 'SELECT name, lastname, type, gender FROM driver WHERE id = ?';
+  
+  db.query(sqlQuery, [id], (err, result) => {
+    if (err) {
+      console.error('Error fetching driver:', err);
+      return res.status(500).json({ message: 'Error fetching driver data', error: err });
+    }
+    if (result.length > 0) {
+      res.json(result[0]);
+    } else {
+      res.status(404).json({ message: 'Driver not found' });
+    }
+  });
+});
+
+
+// API endpoint to update driver data by ID
+app.put('/driver/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, lastname, type, gender } = req.body;
+
+  if (!name || !lastname || !type || !gender) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  const sqlQuery = 'UPDATE driver SET name = ?, lastname = ?, type = ?, gender = ? WHERE id = ?';
+
+  db.query(sqlQuery, [name, lastname, type, gender, id], (err, result) => {
+    if (err) {
+      console.error('Error updating driver:', err);
+      return res.status(500).json({ message: 'Error updating driver data', error: err });
+    }
+    if (result.affectedRows > 0) {
+      res.json({ message: 'Driver updated successfully' });
+    } else {
+      res.status(404).json({ message: 'Driver not found' });
+    }
   });
 });
 

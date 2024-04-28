@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, Platform } from 'react-native';
-
+import { Text, View, FlatList, TouchableOpacity, Platform, ScrollView } from 'react-native';
+import { API_BASE_URL } from '../src/env';  // Adjust the path as necessary
 const PassengerRrequest = () => {
   const [carpoolingp, setcarpoolingp] = useState([]);
 
@@ -11,7 +11,7 @@ const PassengerRrequest = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://192.168.100.12:8082/api/carpoolingp');
+      const response = await fetch(`${API_BASE_URL}/api/carpoolingp`);
 
       if (!response.ok) {
         console.error('Error fetching data. Status:', response.status);
@@ -42,13 +42,13 @@ const PassengerRrequest = () => {
   return (
     <View style={{ flex: 1, padding: 16, backgroundColor: 'white' }}>
       <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
-        <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#022B42' }}>
-          
+        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#022B42' }}>
+          Passenger Carpooling Request
         </Text>
       </View>
       {carpoolingp.length > 0 ? (
         <FlatList
-          data={routes}
+          data={carpoolingp}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -60,17 +60,27 @@ const PassengerRrequest = () => {
             >
               
               <Text style={{ fontSize: 16, color: '#555555', marginBottom: 10 }}>
-                Pickup: {item.picklocation}
+                Pickup: {item.pickLocation}
               </Text>
               <Text style={{ fontSize: 16, color: '#555555', marginBottom: 10 }}>
-                Drop-off: {item.droplocation}
+                Drop-off: {item.dropLocation}
               </Text>
               <Text style={{ fontSize: 16, color: '#555555', marginBottom: 10 }}>
-                Pick Time: {item.picktime}
+                Pick Time: {item.pickTime}
               </Text>
               <Text style={{ fontSize: 16, color: '#555555', marginBottom: 10 }}>
-                Drop Time: {item.droptime}
+                Drop Time: {item.dropTime}
               </Text>
+              <Text style={{ fontSize: 16, color: '#555555', marginBottom: 10 }}>
+                Type: {item.type}
+              </Text>
+              <Text style={{ fontSize: 16, color: '#555555', marginBottom: 10 }}>
+                MaleQuantity: {item.maleQuantity}
+              </Text>
+              <Text style={{ fontSize: 16, color: '#555555', marginBottom: 10 }}>
+                FemaleQuantity: {item.femaleQuantity}
+              </Text>
+              
               
             </TouchableOpacity>
           )}

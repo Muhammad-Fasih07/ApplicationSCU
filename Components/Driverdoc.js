@@ -3,7 +3,7 @@ import { View, Button, Image, TouchableOpacity, Text, Alert } from 'react-native
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
-
+import { API_BASE_URL } from '../src/env';  // Adjust the path as necessary
 
 const FileUploadScreen = ({ route }) => {
   const [driverPhoto, setDriverPhoto] = useState(null);
@@ -59,7 +59,7 @@ const FileUploadScreen = ({ route }) => {
    
   
       // Make the API request to your backend endpoint for driver registration
-      const response = await axios.post('http://192.168.100.6:8082/api/registerDriver', {
+      const response = await axios.post(`${API_BASE_URL}/api/registerDriver`, {
         identity,
         type: vehicleType,
         firstName,

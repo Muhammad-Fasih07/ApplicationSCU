@@ -8,11 +8,13 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Axios from 'axios';
+import { API_BASE_URL } from '../src/env';  // Adjust the path as necessary
+
 const { width, height } = Dimensions.get('window');
 
 // This function adjusts font size based on screen size
@@ -25,26 +27,21 @@ const getFontSize = (size) => {
   return size; // default size for average screens
 };
 
-
 const Login = ({ navigation }) => {
-
-  
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
- 
   const handleLogin = async () => {
     try {
-      const response = await Axios.post('http://172.17.242.86:8082/api/login', {
+      const response = await Axios.post(`${API_BASE_URL}/api/login`, {
         phonenumber: phoneNumber,
         password: password,
       });
-  
       if (response.status === 200) {
         const { user, navigateTo } = response.data;
-  
+
         if (user && navigateTo) {
           switch (navigateTo) {
             case 'Dashboard':
@@ -76,23 +73,23 @@ const Login = ({ navigation }) => {
       }
     }
   };
-  
+
   const handleErrorResponse = (response) => {
     // Assuming the server response contains an error field for specific error messages
-    const errorMessage = response.data && response.data.error 
-                         ? response.data.error 
-                         : 'Error: please check your Credentials. Please try again.';
+    const errorMessage =
+      response.data && response.data.error
+        ? response.data.error
+        : 'Error: please check your Credentials. Please try again.';
     showAlert(errorMessage, 'Login Error');
   };
-  
+
   const showAlert = (message, title) => {
     Alert.alert(title, message, [{ text: 'OK' }]);
   };
-  
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1, padding: width < 360 ? 10 : 15, marginTop: width < 360 ? 0 : 0 }}
     >
       <View style={{ flex: 1, padding: 20, marginTop: 40 }}>
@@ -107,7 +104,15 @@ const Login = ({ navigation }) => {
               backgroundColor: 'rgb(24,61,61)',
             }}
           />
-          <Text style={{ fontWeight: 'bold', fontSize: getFontSize(15), marginBottom: 15, maxWidth: '60%', textAlign: 'center' }}>
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: getFontSize(15),
+              marginBottom: 15,
+              maxWidth: '60%',
+              textAlign: 'center',
+            }}
+          >
             Welcome back you've been missed!
           </Text>
         </View>
@@ -125,12 +130,26 @@ const Login = ({ navigation }) => {
             value={phoneNumber}
             onChangeText={(text) => setPhoneNumber(text)}
           />
-          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(207,216,220,1.0)', borderRadius: 5, marginVertical: 5 }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: 'rgba(207,216,220,1.0)',
+              borderRadius: 5,
+              marginVertical: 5,
+            }}
+          >
             <TextInput
               placeholder="Password"
               placeholderTextColor={Colors.dark}
               secureTextEntry={!showPassword}
-              style={{ fontSize: getFontSize(15), padding: 20, backgroundColor: 'rgba(207,216,220,1.0)', borderRadius: 15, flex: 1, }}
+              style={{
+                fontSize: getFontSize(15),
+                padding: 20,
+                backgroundColor: 'rgba(207,216,220,1.0)',
+                borderRadius: 15,
+                flex: 1,
+              }}
               value={password}
               onChangeText={(text) => setPassword(text)}
             />
@@ -156,21 +175,33 @@ const Login = ({ navigation }) => {
             shadowOpacity: 0.3,
           }}
         >
-          <Text style={{ color: 'white', textAlign: 'center', fontSize: getFontSize(20), fontWeight: 'bold' }}>Sign in</Text>
+          <Text style={{ color: 'white', textAlign: 'center', fontSize: getFontSize(20), fontWeight: 'bold' }}>
+            Sign in
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Selection')} style={{ padding: 15 }}>
-          <Text style={{ color: 'black', textAlign: 'center', fontSize: getFontSize(15), fontWeight: '400' }}>Create new account</Text>
+          <Text style={{ color: 'black', textAlign: 'center', fontSize: getFontSize(15), fontWeight: '400' }}>
+            Create new account
+          </Text>
         </TouchableOpacity>
         <View style={{ marginVertical: 30 }}>
-          <Text style={{ color: 'black', textAlign: 'center', fontSize: getFontSize(15), fontWeight: '400' }}>Or continue with</Text>
+          <Text style={{ color: 'black', textAlign: 'center', fontSize: getFontSize(15), fontWeight: '400' }}>
+            Or continue with
+          </Text>
           <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'center' }}>
-            <TouchableOpacity style={{ padding: 10, backgroundColor: '#022B42', borderRadius: 20, marginHorizontal: 10 }}>
+            <TouchableOpacity
+              style={{ padding: 10, backgroundColor: '#022B42', borderRadius: 20, marginHorizontal: 10 }}
+            >
               <Ionicons name="logo-google" color="white" size={20} />
             </TouchableOpacity>
-            <TouchableOpacity style={{ padding: 10, backgroundColor: '#022B42', borderRadius: 20, marginHorizontal: 10 }}>
+            <TouchableOpacity
+              style={{ padding: 10, backgroundColor: '#022B42', borderRadius: 20, marginHorizontal: 10 }}
+            >
               <Ionicons name="logo-apple" color="white" size={20} />
             </TouchableOpacity>
-            <TouchableOpacity style={{ padding: 10, backgroundColor: '#022B42', borderRadius: 20, marginHorizontal: 10 }}>
+            <TouchableOpacity
+              style={{ padding: 10, backgroundColor: '#022B42', borderRadius: 20, marginHorizontal: 10 }}
+            >
               <Ionicons name="logo-facebook" color="white" size={20} />
             </TouchableOpacity>
           </View>

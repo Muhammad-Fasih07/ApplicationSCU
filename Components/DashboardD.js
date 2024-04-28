@@ -11,7 +11,6 @@ import {
   Linking,
   FlatList,
 } from 'react-native';
-import PassengerRoute from './DriverRrequest';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as Animatable from 'react-native-animatable';
 
@@ -145,6 +144,9 @@ const DashboardD = ({ route, navigation }) => {
             </TouchableOpacity>
 
             {/* User Information */}
+            <TouchableOpacity
+            onPress={() => navigation.navigate('Editprofile', { user: user })}
+            >
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20, marginTop: 30, left: 30 }}>
               <Image
                 source={require('../assets/userlogo.png')}
@@ -152,11 +154,14 @@ const DashboardD = ({ route, navigation }) => {
               />
               <Text style={{ fontSize: 16, color: '#333', fontWeight: 'bold' }}>{user.name}</Text>
             </View>
+            </TouchableOpacity>
 
             {/* Drawer Items */}
+
+
             <TouchableOpacity>
               <Text
-                style={{ fontSize: 16, marginBottom: 10, color: '#333', marginTop: 30, fontWeight: 'bold', left: 40 }}
+                style={{ fontSize: 16, marginBottom: 10, color: '#333', marginTop: 15, fontWeight: 'bold', left: 40 }}
               >
                 Your Trip
               </Text>
@@ -218,7 +223,7 @@ const DashboardD = ({ route, navigation }) => {
         data={data}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-        style={{ backgroundColor: '#fff' }}
+        style={{ backgroundColor: '#F5F5DC' }}
         ListHeaderComponent={() => (
           <>
             {/* Header Section */}
@@ -235,7 +240,7 @@ const DashboardD = ({ route, navigation }) => {
               </TouchableOpacity>
               <Text
                 style={{
-                  fontSize: 24,
+                  fontSize: 22,
                   fontWeight: 'bold',
                 }}
               >
@@ -317,7 +322,7 @@ const DashboardD = ({ route, navigation }) => {
 
             {/* Input Section */}
             <View style={{ padding: 20 }}>
-             <Text></Text>
+              <Text></Text>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
                 <TouchableOpacity
                   onPress={handlePickAndDropRequest}
@@ -330,7 +335,7 @@ const DashboardD = ({ route, navigation }) => {
                     justifyContent: 'center',
                   }}
                 >
-                  <Text style={{ color: 'white', fontSize: 13,fontWeight: 'bold' }}>P&D Request</Text>
+                  <Text style={{ color: 'white', fontSize: 13, fontWeight: 'bold' }}>P&D Request</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -344,7 +349,7 @@ const DashboardD = ({ route, navigation }) => {
                     justifyContent: 'center',
                   }}
                 >
-                  <Text style={{ color: 'white', fontSize: 13,fontWeight: 'bold' }}>Carpooling Request</Text>
+                  <Text style={{ color: 'white', fontSize: 13, fontWeight: 'bold' }}>Carpooling Request</Text>
                 </TouchableOpacity>
               </View>
 
@@ -382,7 +387,7 @@ const DashboardD = ({ route, navigation }) => {
               </TouchableOpacity>
             </View>
 
-            {/* Route Section */}
+            {/* Route Section
             <View style={{ padding: 20, alignItems: 'center' }}>
               <Text style={{ fontSize: 16 }}>Every available route in Islamabad</Text>
               <TouchableOpacity onPress={() => setShowDriverRrequest(!showDriverRrequest)} style={{ marginTop: 10 }}>
@@ -396,7 +401,7 @@ const DashboardD = ({ route, navigation }) => {
                   <PassengerRoute />
                 </View>
               )}
-            </View>
+            </View> */}
           </>
         )}
       />

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+
 const Register = ({ navigation, route }) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState('');
@@ -44,6 +45,7 @@ const Register = ({ navigation, route }) => {
         alignItems: 'center',
         paddingHorizontal: 20,
         paddingTop: 50,
+        backgroundColor: '#F5F5DC',
       }}
     >
       <View

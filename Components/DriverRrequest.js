@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, FlatList, TouchableOpacity, Platform } from 'react-native';
-
+import { API_BASE_URL } from '../src/env';  // Adjust the path as necessary
 const DriverRrequest = () => {
   const [routes, setRoutes] = useState([]);
 
@@ -11,7 +11,7 @@ const DriverRrequest = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://192.168.100.12:8082/api/passengerrouterequest');
+      const response = await fetch(`${API_BASE_URL}/api/passengerrouterequest`);
 
       if (!response.ok) {
         console.error('Error fetching data. Status:', response.status);

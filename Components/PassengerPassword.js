@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { API_BASE_URL } from '../src/env';  // Adjust the path as necessary
 
 const Register = ({ navigation, route }) => {
   const [password, setPassword] = useState('');
@@ -31,7 +32,7 @@ const Register = ({ navigation, route }) => {
     } else {
       try {
         // Send the registration data to the API
-        const response = await fetch('http://172.17.242.86:8082/api/register', {
+        const response = await fetch(`${API_BASE_URL}/api/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -62,7 +63,9 @@ const Register = ({ navigation, route }) => {
 
   return (
     <View
-      style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center', paddingHorizontal: 20, paddingTop: 50 }}
+      style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center', paddingHorizontal: 20, paddingTop: 50,
+    backgroundColor: '#F5F5DC',
+    }}
     >
      
 

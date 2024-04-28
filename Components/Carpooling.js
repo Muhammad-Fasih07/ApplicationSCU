@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Animated, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import { API_BASE_URL } from '../src/env';  // Adjust the path as necessary
 
 const CarpoolingScreen = () => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -133,7 +134,7 @@ const CarpoolingScreen = () => {
     };
 
     // Send POST request to API
-    fetch('http://192.168.100.12:8082/api/carpoolingp', {
+    fetch(`${API_BASE_URL}/api/carpoolingp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
 import axios from 'axios';
-
+import { API_BASE_URL } from '../src/env';  // Adjust the path as necessary
 const ComplaintForm = () => {
   const [name, setName] = useState('');
   const [phonenumber, setPhoneNumber] = useState('');
@@ -25,7 +25,7 @@ const ComplaintForm = () => {
       console.log('Data to be submitted:', { name, phonenumber, complaint });
 
       // Make a POST request to the API endpoint
-      const response = await axios.post('http://192.168.100.19:8082/api/complaints', {
+      const response = await axios.post(`${API_BASE_URL}/api/complaints`, {
         name: name,
         phonenumber: phonenumber,
         description: complaint,

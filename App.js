@@ -32,7 +32,7 @@ import CarpoolingD from './Components/CarpoolingD';
 import Carpooling from './Components/Carpooling';
 import Payment from './Components/payment';
 import Carpoolingpreq from './Components/Carpoolingpreq';
-
+import Editprofile from './Components/Editprofile';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -67,6 +67,7 @@ const App = () => {
         <Stack.Screen name="Carpooling" component={Carpooling} />
         <Stack.Screen name="Payment" component={Payment} />
         <Stack.Screen name="Carpoolingpreq" component={Carpoolingpreq} />
+        <Stack.Screen name="Editprofile" component={Editprofile} />
         
         
       </Stack.Navigator>
