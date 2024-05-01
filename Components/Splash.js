@@ -11,7 +11,7 @@ const Splash = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {[...Array(7)].map((_, index) => (
+      {[...Array(4)].map((_, index) => (
         <Animatable.Text
           key={index}
           style={styles.logo}

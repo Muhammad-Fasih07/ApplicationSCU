@@ -1,106 +1,151 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, Image, StyleSheet, ScrollView } from 'react-native';
 import axios from 'axios';
+import { Picker } from '@react-native-picker/picker';
 import { API_BASE_URL } from '../src/env';  // Adjust the path as necessary
-const ComplaintForm = () => {
-  const [name, setName] = useState('');
-  const [phonenumber, setPhoneNumber] = useState('');
-  const [complaint, setComplaint] = useState('');
 
-  /**
-   * Handle the form submission.
-   *
-   * @return {Promise<void>} Returns a Promise that resolves when the submission is complete.
-   */
+const ComplaintForm = ({ route }) => {
+  const { user } = route.params;
+  const [name, setName] = useState(user.name || '');
+  const [phonenumber, setPhoneNumber] = useState(user.phonenumber || '');
+  const [complaint, setComplaint] = useState('');
+  const [reason, setReason] = useState('');
+
+  const reasons = [
+    'Rude behavior',
+    'Late arrival',
+    'Unsafe driving',
+    'Overcharging',
+    'Not following route',
+    'Refused to take the ride',
+    'Unprofessional conduct',
+    'Vehicle cleanliness',
+    'Failed to show up',
+    'Other'
+  ];
+
   const handleSubmit = async () => {
-    // Check if any of the required fields are empty
-    if (!name.trim() || !phonenumber.trim() || !complaint.trim()) {
-      // Display an error message if any of the fields are empty
-      Alert.alert('Error', 'Name, phone number, and complaint are required fields');
+    if (!name.trim() || !phonenumber.trim() || !complaint.trim() || !reason) {
+      Alert.alert('Error', 'All fields are required');
       return;
     }
 
     try {
-      // Log the data before making the request
-      console.log('Data to be submitted:', { name, phonenumber, complaint });
-
-      // Make a POST request to the API endpoint
       const response = await axios.post(`${API_BASE_URL}/api/complaints`, {
-        name: name,
-        phonenumber: phonenumber,
+        name,
+        phonenumber,
         description: complaint,
+        reason
       });
 
       if (response.status === 201) {
-        // Display a success message if the complaint is successfully submitted
         Alert.alert('Complaint Submitted', 'Your complaint has been submitted successfully.');
-        // Clear the form fields after successful submission if needed
         setName('');
         setPhoneNumber('');
         setComplaint('');
+        setReason('');
       } else {
-        // Display an error message if the API request fails
         Alert.alert('Error', 'An error occurred while submitting your complaint.');
       }
     } catch (error) {
-      // Display an error message if there is an error submitting the complaint
       console.error('Error submitting complaint:', error);
       Alert.alert('Error', 'An error occurred while submitting your complaint.');
     }
   };
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <View style={{ alignItems: 'center' }}>
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
         <Image
-          source={require('../assets/logoscu.png')} // Replace with the path to your image
-          style={{
-            width: '60%',
-            height: 150,
-            marginBottom: 80,
-            borderRadius: 40, // Add border radius to make it rounded
-          }}
-          resizeMode="center" // You can adjust the resizeMode as needed
+          source={require('../assets/logoscu.png')}
+          style={styles.logo}
+          resizeMode="center"
         />
       </View>
 
       <TextInput
-        style={{ borderWidth: 2, borderColor: '#022B42', borderRadius: 20, padding: 10, marginBottom: 20 }}
+        style={styles.input}
         placeholder="Enter your name"
         value={name}
-        onChangeText={(text) => setName(text)}
+        onChangeText={setName}
       />
 
       <TextInput
-        style={{ borderWidth: 2, borderColor: '#022B42', borderRadius: 20, padding: 10, marginBottom: 20 }}
+        style={styles.input}
         placeholder="Enter your Phone number"
         value={phonenumber}
-        onChangeText={(text) => setPhoneNumber(text)}
-        keyboardType="phone-pad" // Use "phone-pad" instead of "phone-number"
+        onChangeText={setPhoneNumber}
+        keyboardType="phone-pad"
       />
 
       <TextInput
-        style={{ borderWidth: 2, borderColor: '#022B42', borderRadius: 20, padding: 10, marginBottom: 20, height: 200 }}
+        style={[styles.input, styles.textArea]}
         placeholder="Enter your complaint"
         value={complaint}
-        onChangeText={(text) => setComplaint(text)}
+        onChangeText={setComplaint}
         multiline
       />
 
-      <TouchableOpacity
-        style={{
-          backgroundColor: '#022B42',
-          borderRadius: 20,
-          padding: 15,
-          marginTop: 80,
-          alignItems: 'center',
-        }}
-        onPress={handleSubmit}
+      <Picker
+        selectedValue={reason}
+        style={styles.picker}
+        onValueChange={(itemValue, itemIndex) => itemIndex !== 0 && setReason(itemValue)}
       >
-        <Text style={{ color: '#fff', fontSize: 18, fontWeight: 'bold' }}>Submit Complaint</Text>
+        <Picker.Item label="Select a reason for complaint" value="" />
+        {reasons.map((reason, index) => (
+          <Picker.Item key={index} label={reason} value={reason} />
+        ))}
+      </Picker>
+
+      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <Text style={styles.buttonText}>Submit Complaint</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 50,
+  },
+  logo: {
+    width: '60%',
+    height: 150,
+    borderRadius: 40,
+  },
+  input: {
+    borderWidth: 2,
+    borderColor: '#022B42',
+    borderRadius: 20,
+    padding: 10,
+    marginBottom: 20,
+    fontSize: 16,
+  },
+  textArea: {
+    height: 200,
+  },
+  picker: {
+    height: 50,
+    width: '100%',
+    marginBottom: 20,
+  },
+  button: {
+    backgroundColor: '#022B42',
+    borderRadius: 20,
+    padding: 15,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
 
 export default ComplaintForm;

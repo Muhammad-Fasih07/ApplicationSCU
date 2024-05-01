@@ -2,12 +2,15 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const ContactUsScreen = ({ navigation }) => {
+const ContactUsScreen = ({ navigation,route}) => {
+
+  
   const phoneNumber = '03117443034'; // Replace with your phone number
 
   const handleCallPress = () => {
     Linking.openURL(`tel:${phoneNumber}`);
   };
+  const { user } = route.params;
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f5f5f5', alignItems: 'center', justifyContent: 'center' }}>
@@ -44,7 +47,7 @@ const ContactUsScreen = ({ navigation }) => {
           <Text style={{ color: '#fff', fontSize: 18, marginTop: 8, textAlign: 'center' }}>Call</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Complaint')}
+          onPress={() => navigation.navigate('Complaint',{ user: user })}
           style={{
             width: 200,
             height: 200,

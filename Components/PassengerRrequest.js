@@ -33,7 +33,7 @@ const PassengerRrequest = () => {
     backgroundColor: '#FDD387',
     borderRadius: 10,
     padding: 10,
-    width:'90%',
+    width:'140%',
     marginBottom: 15,
     alignSelf: 'center',
     ...getShadowStyle(), // Apply shadow styles
@@ -49,7 +49,8 @@ const PassengerRrequest = () => {
       {routes.length > 0 ? (
         <FlatList
           data={routes}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
+
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => {

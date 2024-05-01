@@ -8,7 +8,6 @@ import { API_BASE_URL } from '../src/env';  // Adjust the path as necessary
 const FileUploadScreen = ({ route }) => {
   const [driverPhoto, setDriverPhoto] = useState(null);
   const [licensePhoto, setLicensePhoto] = useState(null);
-  const [vehiclePhoto, setVehiclePhoto] = useState(null);
   const [cnicPhoto, setCnicPhoto] = useState(null);
   const navigation = useNavigation();
 
@@ -19,10 +18,7 @@ const FileUploadScreen = ({ route }) => {
     vehicleType,
     phonenumber,
     password,
-    vehicleBrand,
-    vehicleModel,
     licenseNumber,
-    carNumberPlate,
     identity,
   } = route.params ;
 
@@ -41,9 +37,6 @@ const FileUploadScreen = ({ route }) => {
           break;
         case 'license':
           setLicensePhoto(result.assets[0].uri);
-          break;
-        case 'vehicle':
-          setVehiclePhoto(result.assets[0].uri);
           break;
         case 'cnic':
           setCnicPhoto(result.assets[0].uri);
@@ -67,13 +60,9 @@ const FileUploadScreen = ({ route }) => {
         phoneNumber: phonenumber,
         password,
         gender,
-        vehicleBrand,
-        vehicleModel,
         licenseNumber,
-        vehicleNumberPlate: carNumberPlate,
         driverPhoto,
         licensePhoto,
-        vehiclePhoto,
         cnicPhoto,
       });
   
@@ -134,24 +123,7 @@ const FileUploadScreen = ({ route }) => {
           <Button title="Select License Photo" color="#022B42" onPress={() => pickImage('license')} />
         )}
       </TouchableOpacity>
-      <TouchableOpacity
-        style={{
-          marginBottom: 20,
-        }}
-        onPress={() => pickImage('vehicle')}
-      >
-        {vehiclePhoto ? (
-          <Image
-            source={{ uri: vehiclePhoto }}
-            style={{
-              width: 170,
-              height: 110,
-            }}
-          />
-        ) : (
-          <Button title="Select Vehicle Photo" color="#022B42" onPress={() => pickImage('vehicle')} />
-        )}
-      </TouchableOpacity>
+      
       <TouchableOpacity
         style={{
           marginBottom: 20,

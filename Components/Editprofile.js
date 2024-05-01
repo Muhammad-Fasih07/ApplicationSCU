@@ -8,24 +8,23 @@ import { API_BASE_URL } from '../src/env'; // Ensure this points to your API ser
 const EditProfileScreen = ({ route }) => {
   const { user } = route.params; // Assuming user object is passed in params with id
 
-  const [profileImage, setProfileImage] = useState(user?.profileImageUrl || 'https://via.placeholder.com/150');
-  const [username, setUsername] = useState(user?.name || '');
+  const [profileImage, setProfileImage] = useState(user?.driverphoto || 'https://via.placeholder.com/150');
+  const [firstName, setFirstName] = useState(user?.name || '');
   const [lastName, setLastName] = useState(user?.lastname || '');
   const [type, setType] = useState(user?.type || '');
   const [gender, setGender] = useState(user?.gender || '');
   const [editMode, setEditMode] = useState(false);
 
-  // Fetch profile data
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/driver/${user.id}`);
-        const { name, lastname, type, gender, profileImageUrl } = response.data;
-        setUsername(name);
+        const response = await axios.get(`${API_BASE_URL}/driver/${user.d_id}`);
+        const { name, lastname, type, gender, driverphoto } = response.data;
+        setFirstName(name);
         setLastName(lastname);
         setType(type);
         setGender(gender);
-        setProfileImage(profileImageUrl);
+        setProfileImage(driverphoto);
       } catch (error) {
         console.error('Failed to fetch driver data:', error);
         Alert.alert('Error', 'Failed to fetch profile data');
@@ -33,12 +32,9 @@ const EditProfileScreen = ({ route }) => {
     };
 
     fetchProfile();
-  }, [user.id]);
-
- 
+  }, [user.d_id]);
 
   useEffect(() => {
-    // Request permissions to access the media library and camera
     (async () => {
       const libraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
       const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
@@ -49,13 +45,28 @@ const EditProfileScreen = ({ route }) => {
   }, []);
 
   const handleUpdateProfile = async () => {
-    // Update profile details
+    // Regular expression to match only alphabets
+    const alphabetRegex = /^[a-zA-Z]+$/;
+  
+    // Check if first name contains only alphabets
+    if (!alphabetRegex.test(firstName)) {
+      Alert.alert('Error', 'First name should contain only alphabets');
+      return;
+    }
+  
+    // Check if last name contains only alphabets
+    if (!alphabetRegex.test(lastName)) {
+      Alert.alert('Error', 'Last name should contain only alphabets');
+      return;
+    }
+  
     try {
-      const response = await axios.put(`${API_BASE_URL}/driver/${user.id}`, {
-        name: username,
+      const response = await axios.put(`${API_BASE_URL}/driver/${user.d_id}`, {
+        name: firstName,
         lastname: lastName,
         type: type,
-        gender: gender
+        gender: gender,
+        driverphoto: profileImage // Adding driverphoto field
       });
       if (response.data) {
         Alert.alert('Success', 'Profile updated successfully');
@@ -66,32 +77,48 @@ const EditProfileScreen = ({ route }) => {
       Alert.alert('Error', 'Failed to update profile');
     }
   };
+  
+  
 
   const handleTakePhoto = async () => {
-    // Take photo with camera
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
+  
     if (!result.cancelled) {
-      setProfileImage(result.uri);
+      setProfileImage(result.uri); // Update profileImage state with the new URI
     }
   };
-
+  
   const handleChooseFromGallery = async () => {
-    // Choose photo from gallery
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
+  
     if (!result.cancelled) {
-      setProfileImage(result.uri);
+      setProfileImage(result.uri); // Update profileImage state with the new URI
+    }
+  };
+  
+
+  const handleEditProfileImage = () => {
+    if (editMode) {
+      Alert.alert(
+        'Change Profile Picture',
+        'Select source:',
+        [
+          { text: 'Camera', onPress: handleTakePhoto },
+          { text: 'Gallery', onPress: handleChooseFromGallery },
+          { text: 'Cancel', style: 'cancel' },
+        ],
+        { cancelable: true }
+      );
     }
   };
 
@@ -102,24 +129,22 @@ const EditProfileScreen = ({ route }) => {
       <View style={styles.profileImageContainer}>
         <Image source={{ uri: profileImage }} style={styles.profileImage} />
         {editMode && (
-          <View style={styles.iconContainer}>
-            <TouchableOpacity onPress={handleTakePhoto} style={styles.icon}>
-              <MaterialCommunityIcons name="camera" size={30} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleChooseFromGallery} style={styles.icon}>
-              <MaterialCommunityIcons name="image" size={30} color="#fff" />
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity onPress={handleEditProfileImage} style={styles.editIcon}>
+            <MaterialCommunityIcons name="pencil" size={24} color="#fff" />
+          </TouchableOpacity>
         )}
+        <TouchableOpacity onPress={handleEditProfileImage} style={styles.imageIcon}>
+          <MaterialCommunityIcons name="camera" size={24} color="#fff" />
+        </TouchableOpacity>
       </View>
 
       {editMode ? (
         <>
           <TextInput
             style={styles.input}
-            placeholder="Username"
-            value={username}
-            onChangeText={setUsername}
+            placeholder="First Name"
+            value={firstName}
+            onChangeText={setFirstName}
             autoCapitalize="none"
           />
           <TextInput
@@ -146,7 +171,7 @@ const EditProfileScreen = ({ route }) => {
         </>
       ) : (
         <>
-          <Text style={styles.infoText}>Username: {username}</Text>
+          <Text style={styles.infoText}>First Name: {firstName}</Text>
           <Text style={styles.infoText}>Last Name: {lastName}</Text>
           <Text style={styles.infoText}>Type: {type}</Text>
           <Text style={styles.infoText}>Gender: {gender}</Text>
@@ -182,21 +207,21 @@ const styles = StyleSheet.create({
     height: 140,
     borderRadius: 70,
   },
-  iconContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    width: '100%',
+  editIcon: {
     position: 'absolute',
-    bottom: -20,
-  },
-  icon: {
-    width: 50,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
+    bottom: 5,
+    right: 5,
     backgroundColor: 'rgba(0,0,0,0.6)',
-    borderRadius: 25,
-    padding: 8,
+    borderRadius: 12,
+    padding: 5,
+  },
+  imageIcon: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    borderRadius: 12,
+    padding: 5,
   },
   input: {
     width: '90%',

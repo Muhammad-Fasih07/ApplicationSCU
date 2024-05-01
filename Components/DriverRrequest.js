@@ -49,7 +49,8 @@ const DriverRrequest = () => {
       {routes.length > 0 ? (
         <FlatList
           data={routes}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
+
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => {
