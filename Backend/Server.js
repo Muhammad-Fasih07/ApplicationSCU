@@ -162,12 +162,12 @@ app.post('/api/login', (req, res) => {
 
     if (passengerResults.length > 0) {
       const passenger = passengerResults[0];
-      const { pid,name, identity /* ... other fields */ } = passenger;
+      const { pid,name, identity,phonenumber,photo /* ... other fields */ } = passenger;
 
       // Return passenger details along with success message and navigate to dashboard1
       return res.status(200).json({
         message: 'Passenger login successful',
-        user: { pid,name, identity },
+        user: { pid,name, identity,phonenumber,photo },
         navigateTo: 'Dashboard', // Modify the dashboard name as needed
       });
     }
@@ -215,18 +215,45 @@ app.post('/api/login', (req, res) => {
 
 
 
-// API endpoint to insert a complaint with a reason field
+// API endpoint to insert a complaint with a passenger ID (pid) field
 app.post('/api/complaints', (req, res) => {
-  const { name, phonenumber, description, reason } = req.body;  // Include the reason field
+  const { name, phonenumber, description, reason, pid } = req.body;  // Include the passenger ID
 
   // Check if all required fields are provided
-  if (!name || !phonenumber || !description || !reason) {
-    return res.status(400).json({ error: 'Name, phone number, description, and reason are required fields.' });
+  if (!pid || !name || !phonenumber || !description || !reason) {
+    return res.status(400).json({ error: 'Name, phone number, description, reason, and passenger ID are required fields.' });
   }
 
-  // SQL insert query to include the reason
-  const insertQuery = 'INSERT INTO usercomplaint (name, phonenumber, description, reason) VALUES (?, ?, ?, ?)';
-  const values = [name, phonenumber, description, reason];
+  // SQL insert query to include the passenger ID
+  const insertQuery = 'INSERT INTO usercomplaint (pid, name, phonenumber, description, reason) VALUES (?, ?, ?, ?, ?)';
+  const values = [pid, name, phonenumber, description, reason];
+
+  // Execute the query
+  db.query(insertQuery, values, (err, results) => {
+    if (err) {
+      console.error('Error inserting complaint:', err);  // Log the error details
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    // If the insertion is successful
+    return res.status(201).json({ message: 'Complaint inserted successfully' });
+  });
+});
+
+
+// API endpoint to insert a complaint with a driver ID (d_id) field
+app.post('/api/complaintsD', (req, res) => {
+  const { name, phonenumber, description, reason, d_id } = req.body;  // Include the passenger ID
+
+  // Check if all required fields are provided
+  if (!d_id || !name || !phonenumber || !description || !reason) {
+    return res.status(400).json({ error: 'Name, phone number, description, reason, and passenger ID are required fields.' });
+  }
+
+  // SQL insert query to include the passenger ID
+  const insertQuery = 'INSERT INTO drivercomplaint (d_id, name, phonenumber, description, reason) VALUES (?, ?, ?, ?, ?)';
+const values = [d_id, name, phonenumber, description, reason];
+
 
   // Execute the query
   db.query(insertQuery, values, (err, results) => {
@@ -447,6 +474,75 @@ app.put('/driver/:d_id', (req, res) => {
     }
   });
 });
+
+
+// API endpoint to fetch passenger data by ID
+app.get('/passenger/:pid', (req, res) => {
+  const { pid } = req.params;
+  const sqlQuery = 'SELECT name, identity, photo FROM passenger WHERE pid = ?';
+  
+  db.query(sqlQuery, [pid], (err, result) => {
+    if (err) {
+      console.error('Error fetching passenger:', err);
+      return res.status(500).json({ message: 'Error fetching driver data', error: err });
+    }
+    if (result.length > 0) {
+      res.json(result[0]);
+    } else {
+      res.status(404).json({ message: 'passenger not found' });
+    }
+  });
+});
+
+
+
+// API endpoint to update passenger data by ID
+app.put('/passenger/:pid', (req, res) => {
+  const { pid } = req.params;
+  const { name, identity, photo } = req.body;
+
+  if (!name || !identity || !photo) {
+    console.error('Missing fields:', { name, identity, photo });
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  const sqlQuery = 'UPDATE passenger SET name = ?, identity = ?, photo = ? WHERE pid = ?';
+  db.query(sqlQuery, [name, identity, photo, pid], (err, result) => {
+    if (err) {
+      console.error('Error updating passenger:', err);
+      return res.status(500).json({ message: 'Error updating passenger data', error: err });
+    }
+    if (result.affectedRows > 0) {
+      res.json({ message: 'Passenger updated successfully' });
+    } else {
+      res.status(404).json({ message: 'Passenger not found' });
+    }
+  });
+});
+
+
+app.post('/api/vehicles', (req, res) => {
+  const { vehicle_brand, vehicle_model, vehicle_number_plate, vehicle_photo, d_id } = req.body;
+
+  if (!vehicle_brand || !vehicle_model || !vehicle_number_plate || !vehicle_photo || !d_id) {
+    return res.status(400).json({ message: 'Please provide all required fields.' });
+  }
+
+  const query = 'INSERT INTO vehicle (d_id, vehicle_brand, vehicle_model, vehicle_number_plate, vehicle_photo) VALUES (?, ?, ?, ?, ?)';
+  const values = [d_id, vehicle_brand, vehicle_model, vehicle_number_plate, vehicle_photo];
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      console.error('Error inserting vehicle:', err.message); // Log more specific error message
+      return res.status(500).json({ message: 'Internal Server Error', error: err.message });
+    }
+  
+    console.log('Vehicle registered successfully');
+    res.status(201).json({ message: 'Vehicle registered successfully' });
+  });
+  
+});
+
 
 
 

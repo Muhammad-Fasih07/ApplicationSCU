@@ -134,14 +134,17 @@ const Dashboard = ({ route, navigation }) => {
               <Icon name="close" size={30} />
             </TouchableOpacity>
 
+            
             {/* User Information */}
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20, marginTop: 30, left: 30 }}>
-              <Image
-                source={require('../assets/userlogo.png')}
-                style={{ width: 50, height: 50, borderRadius: 25, marginRight: 20 }}
-              />
-              <Text style={{ fontSize: 16, color: '#333', fontWeight: 'bold' }}>{user.name}</Text>
-            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('EditprofileP', { user: user })}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20, marginTop: 30, left: 30 }}>
+                <Image
+                  source={user.photo ? { uri: user.photo } : require('../assets/userlogo.png')}
+                  style={{ width: 100, height: 100, borderRadius: 345, marginRight: 20 }}
+                />
+                <Text style={{ fontSize: 16, color: '#333', fontWeight: 'bold' }}>{user.name}</Text>
+              </View>
+            </TouchableOpacity>
 
             {/* Drawer Items */}
             <TouchableOpacity>
@@ -168,7 +171,7 @@ const Dashboard = ({ route, navigation }) => {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.navigate('Contactus')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Contactus',{ user: user })}>
               <Text
                 style={{ fontSize: 16, marginBottom: 10, color: '#333', marginTop: 15, fontWeight: 'bold', left: 40 }}
               >

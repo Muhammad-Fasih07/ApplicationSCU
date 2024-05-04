@@ -179,7 +179,7 @@ const DashboardD = ({ route, navigation }) => {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.navigate('Contactus',{ user: user })}>
+            <TouchableOpacity onPress={() => navigation.navigate('ContactusD',{ user: user })}>
               <Text
                 style={{ fontSize: 16, marginBottom: 10, color: '#333', marginTop: 15, fontWeight: 'bold', left: 40 }}
               >
@@ -192,6 +192,15 @@ const DashboardD = ({ route, navigation }) => {
                 style={{ fontSize: 16, marginBottom: 10, color: '#333', marginTop: 15, fontWeight: 'bold', left: 40 }}
               >
                 Setting
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Vehicleinfo', { user: user })}>
+              <Text
+                style={{ fontSize: 16, marginBottom: 10, color: '#333', marginTop: 15, fontWeight: 'bold', left: 40 }}
+              >
+                Vehicle Verfication
               </Text>
             </TouchableOpacity>
 

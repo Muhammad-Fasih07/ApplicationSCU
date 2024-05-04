@@ -34,7 +34,9 @@ import Payment from './Components/payment';
 import Carpoolingpreq from './Components/Carpoolingpreq';
 import Editprofile from './Components/Editprofile';
 import Vehicleinfo from './Components/Vehicleinfo';
-
+import EditprofileP from './Components/EditprofileP';
+import ComplaintD from './Components/ComplaintD';
+import ContactusD from './Components/ContactusD';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -71,7 +73,10 @@ const App = () => {
         <Stack.Screen name="Carpoolingpreq" component={Carpoolingpreq} />
         <Stack.Screen name="Editprofile" component={Editprofile} />
         <Stack.Screen name="Vehicleinfo" component={Vehicleinfo} />
-        
+        <Stack.Screen name="EditprofileP" component={EditprofileP} />
+        <Stack.Screen name="ComplaintD" component={ComplaintD} />
+        <Stack.Screen name="ContactusD" component={ContactusD} />
+
         
       </Stack.Navigator>
     </NavigationContainer>

@@ -13,18 +13,17 @@ const ComplaintForm = ({ route }) => {
   
 
   const reasons = [
-    'Rude behavior',
-    'Late arrival',
-    'Unsafe driving',
-    'Overcharging',
-    'Not following route',
-    'Refused to take the ride',
-    'Unprofessional conduct',
-    'Vehicle cleanliness',
-    'Failed to show up',
+    'Aggressive or Violent Behavior',
+    'Non-Payment or Fare Evasion',
+    'Damage to Vehicle',
+    'Disruptive or Disorderly Conduct',
+    'Intoxication or Substance Abuse',
+    'Verbal Abuse or Harassment',
+    'Refusal to Follow Safety Instructions',
+    'Excessive Mess or Vandalism',
+    'Failure to Provide Accurate Information',
     'Other'
   ];
-
   const handleSubmit = async () => {
     if (!name.trim() || !phonenumber.trim() || !complaint.trim() || !reason) {
       Alert.alert('Error', 'All fields are required');
@@ -32,12 +31,12 @@ const ComplaintForm = ({ route }) => {
     }
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/complaints`, {
+      const response = await axios.post(`${API_BASE_URL}/api/complaintsD`, {
         name,
         phonenumber,
         description: complaint,
         reason,
-        pid: user.pid, // Use passengerId from route params
+        d_id: user.d_id, // Use passengerId from route params
       });
 
       if (response.status === 201) {
@@ -151,3 +150,11 @@ const styles = StyleSheet.create({
 });
 
 export default ComplaintForm;
+
+
+
+
+
+
+
+
