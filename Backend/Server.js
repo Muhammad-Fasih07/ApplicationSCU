@@ -1,38 +1,36 @@
-
-const mysql = require("mysql");
+const mysql = require('mysql');
 const express = require('express');
-const bodyParser = require( "body-parser");
+const bodyParser = require('body-parser');
 const app = express();
 const port = 8082;
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "applicationscu",
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'applicationscu',
 });
 
 db.connect((err) => {
   if (err) {
-    console.error("Error connecting to MySQL:", err);
+    console.error('Error connecting to MySQL:', err);
     return;
   }
-  console.log("Connected to MySQL database");
+  console.log('Connected to MySQL database');
 });
 
 // Define your route handlers and SQL queries here
 
 // Close the MySQL connection when the server stops
-process.on("SIGINT", () => {
+process.on('SIGINT', () => {
   db.end((err) => {
     if (err) {
-      console.error("Error closing MySQL connection:", err);
+      console.error('Error closing MySQL connection:', err);
     }
-    console.log("MySQL connection closed");
+    console.log('MySQL connection closed');
     process.exit();
   });
 });
-
 
 // Middleware to parse JSON
 app.use(bodyParser.json());
@@ -43,11 +41,10 @@ app.use(express.json());
 //Parser
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
 // API endpoint to handle Passenger registration
 app.post('/api/register', (req, res) => {
-  const { identity, phonenumber, name, password } = req.body;  // Include identity in the request body
-  console.log(req.body);  // Log req.body, not reqBody
+  const { identity, phonenumber, name, password } = req.body; // Include identity in the request body
+  console.log(req.body); // Log req.body, not reqBody
 
   if (!identity || !phonenumber || !name || !password) {
     return res.status(400).json({ message: 'Please provide all required fields.' });
@@ -67,9 +64,6 @@ app.post('/api/register', (req, res) => {
   });
 });
 
-
-
-
 // API endpoint to handle driver registration
 app.post('/api/registerDriver', (req, res) => {
   const {
@@ -83,7 +77,7 @@ app.post('/api/registerDriver', (req, res) => {
     licenseNumber,
     driverPhoto,
     licensePhoto,
-    cnicPhoto
+    cnicPhoto,
   } = req.body;
 
   console.log(req.body); // Log req.body
@@ -109,7 +103,7 @@ app.post('/api/registerDriver', (req, res) => {
         \`license-number\`,  \`driverphoto\`,
       \`license-photo\`,  \`cnic-photo\`)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  
+
   const values = [
     identity,
     type,
@@ -121,7 +115,7 @@ app.post('/api/registerDriver', (req, res) => {
     licenseNumber,
     driverPhoto,
     licensePhoto,
-    cnicPhoto
+    cnicPhoto,
   ];
 
   db.query(query, values, (err, result) => {
@@ -134,10 +128,6 @@ app.post('/api/registerDriver', (req, res) => {
     res.status(201).json({ message: 'Driver registered successfully', p_id: result.insertId });
   });
 });
-
-
-
-
 
 // Login API endpoint
 app.post('/api/login', (req, res) => {
@@ -162,12 +152,12 @@ app.post('/api/login', (req, res) => {
 
     if (passengerResults.length > 0) {
       const passenger = passengerResults[0];
-      const { pid,name, identity,phonenumber,photo /* ... other fields */ } = passenger;
+      const { pid, name, identity, phonenumber, photo /* ... other fields */ } = passenger;
 
       // Return passenger details along with success message and navigate to dashboard1
       return res.status(200).json({
         message: 'Passenger login successful',
-        user: { pid,name, identity,phonenumber,photo },
+        user: { pid, name, identity, phonenumber, photo },
         navigateTo: 'Dashboard', // Modify the dashboard name as needed
       });
     }
@@ -184,12 +174,12 @@ app.post('/api/login', (req, res) => {
 
       if (driverResults.length > 0) {
         const driver = driverResults[0];
-        const { d_id,name, identity,lastname,gender,driverphoto,phonenumber /* ... other fields */ } = driver;
+        const { d_id, name, identity, lastname, gender, driverphoto, phonenumber /* ... other fields */ } = driver;
 
         // Return driver details along with success message and navigate to dashboard2
         return res.status(200).json({
           message: 'Driver login successful',
-          user: {d_id,name, identity,lastname,gender,driverphoto,phonenumber },
+          user: { d_id, name, identity, lastname, gender, driverphoto, phonenumber },
           navigateTo: 'DashboardD', // Modify the dashboard name as needed
         });
       }
@@ -200,28 +190,15 @@ app.post('/api/login', (req, res) => {
   });
 });
 
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
 // API endpoint to insert a complaint with a passenger ID (pid) field
 app.post('/api/complaints', (req, res) => {
-  const { name, phonenumber, description, reason, pid } = req.body;  // Include the passenger ID
+  const { name, phonenumber, description, reason, pid } = req.body; // Include the passenger ID
 
   // Check if all required fields are provided
   if (!pid || !name || !phonenumber || !description || !reason) {
-    return res.status(400).json({ error: 'Name, phone number, description, reason, and passenger ID are required fields.' });
+    return res
+      .status(400)
+      .json({ error: 'Name, phone number, description, reason, and passenger ID are required fields.' });
   }
 
   // SQL insert query to include the passenger ID
@@ -231,7 +208,7 @@ app.post('/api/complaints', (req, res) => {
   // Execute the query
   db.query(insertQuery, values, (err, results) => {
     if (err) {
-      console.error('Error inserting complaint:', err);  // Log the error details
+      console.error('Error inserting complaint:', err); // Log the error details
       return res.status(500).json({ error: 'Internal server error' });
     }
 
@@ -240,25 +217,26 @@ app.post('/api/complaints', (req, res) => {
   });
 });
 
-
 // API endpoint to insert a complaint with a driver ID (d_id) field
 app.post('/api/complaintsD', (req, res) => {
-  const { name, phonenumber, description, reason, d_id } = req.body;  // Include the passenger ID
+  const { name, phonenumber, description, reason, d_id } = req.body; // Include the passenger ID
 
   // Check if all required fields are provided
   if (!d_id || !name || !phonenumber || !description || !reason) {
-    return res.status(400).json({ error: 'Name, phone number, description, reason, and passenger ID are required fields.' });
+    return res
+      .status(400)
+      .json({ error: 'Name, phone number, description, reason, and passenger ID are required fields.' });
   }
 
   // SQL insert query to include the passenger ID
-  const insertQuery = 'INSERT INTO drivercomplaint (d_id, name, phonenumber, description, reason) VALUES (?, ?, ?, ?, ?)';
-const values = [d_id, name, phonenumber, description, reason];
-
+  const insertQuery =
+    'INSERT INTO drivercomplaint (d_id, name, phonenumber, description, reason) VALUES (?, ?, ?, ?, ?)';
+  const values = [d_id, name, phonenumber, description, reason];
 
   // Execute the query
   db.query(insertQuery, values, (err, results) => {
     if (err) {
-      console.error('Error inserting complaint:', err);  // Log the error details
+      console.error('Error inserting complaint:', err); // Log the error details
       return res.status(500).json({ error: 'Internal server error' });
     }
 
@@ -266,18 +244,19 @@ const values = [d_id, name, phonenumber, description, reason];
     return res.status(201).json({ message: 'Complaint inserted successfully' });
   });
 });
-
-
 
 // Api for route entering for driver
 app.post('/api/routes', (req, res) => {
   const { picklocation, droplocation, picktime, droptime, passengercapacity } = req.body;
 
   if (!picklocation || !droplocation || !picktime || !droptime || !passengercapacity) {
-    return res.status(400).json({ error: 'All fields (picklocation, droplocation, picktime, droptime, passengercapacity) are required' });
+    return res
+      .status(400)
+      .json({ error: 'All fields (picklocation, droplocation, picktime, droptime, passengercapacity) are required' });
   }
 
-  const insertQuery = 'INSERT INTO pddriverroutei (picklocation, droplocation, picktime, droptime, passengercapacity) VALUES (?, ?, ?, ?, ?)';
+  const insertQuery =
+    'INSERT INTO pddriverroutei (picklocation, droplocation, picktime, droptime, passengercapacity) VALUES (?, ?, ?, ?, ?)';
   const values = [picklocation, droplocation, picktime, droptime, passengercapacity];
 
   db.query(insertQuery, values, (err, results) => {
@@ -290,8 +269,6 @@ app.post('/api/routes', (req, res) => {
   });
 });
 
-
-
 // Api for route entering for Passenger
 app.post('/api/passengerroutes', (req, res) => {
   const { picklocation, droplocation, picktime, droptime } = req.body;
@@ -300,7 +277,8 @@ app.post('/api/passengerroutes', (req, res) => {
     return res.status(400).json({ error: 'All fields (picklocation, droplocation, picktime, droptime) are required' });
   }
 
-  const insertQuery = 'INSERT INTO pdpassengerrouter (picklocation, droplocation, picktime, droptime) VALUES (?, ?, ?, ?)';
+  const insertQuery =
+    'INSERT INTO pdpassengerrouter (picklocation, droplocation, picktime, droptime) VALUES (?, ?, ?, ?)';
   const values = [picklocation, droplocation, picktime, droptime];
 
   db.query(insertQuery, values, (err, results) => {
@@ -312,9 +290,6 @@ app.post('/api/passengerroutes', (req, res) => {
     return res.status(201).json({ message: 'Route inserted successfully' });
   });
 });
-
-
- 
 
 app.get('/api/passengerrouterequest', (req, res) => {
   const selectQuery = 'SELECT * FROM pdpassengerrouter';
@@ -329,8 +304,6 @@ app.get('/api/passengerrouterequest', (req, res) => {
   });
 });
 
-
-
 app.get('/api/routes', (req, res) => {
   const selectQuery = 'SELECT * FROM pddriverroutei';
 
@@ -343,9 +316,6 @@ app.get('/api/routes', (req, res) => {
     return res.status(200).json(results);
   });
 });
-
-
-
 
 // Create carpooling driver request
 
@@ -360,14 +330,25 @@ app.post('/api/carpooling', (req, res) => {
     dropTime,
     preference,
     maleQuantity,
-    femaleQuantity
+    femaleQuantity,
   } = req.body;
 
   const sql = `
     INSERT INTO carpoolingdriverReq (type, days, startDate, pickLocation, dropLocation, pickTime, dropTime, preference, maleQuantity, femaleQuantity)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
-  const values = [type, JSON.stringify(days), startDate, pickLocation, dropLocation, pickTime, dropTime, preference, maleQuantity, femaleQuantity];
+  const values = [
+    type,
+    JSON.stringify(days),
+    startDate,
+    pickLocation,
+    dropLocation,
+    pickTime,
+    dropTime,
+    preference,
+    maleQuantity,
+    femaleQuantity,
+  ];
 
   // Replace 'connection' with 'db'
   db.query(sql, values, (err, result) => {
@@ -381,9 +362,6 @@ app.post('/api/carpooling', (req, res) => {
   });
 });
 
-
-
-
 // Create carpooling passenger request
 app.post('/api/carpoolingp', (req, res) => {
   const {
@@ -396,14 +374,25 @@ app.post('/api/carpoolingp', (req, res) => {
     dropTime,
     preference,
     maleQuantity,
-    femaleQuantity
+    femaleQuantity,
   } = req.body;
 
   const sql = `
     INSERT INTO carpoolingpassengerreq (type, days, startDate, pickLocation, dropLocation, pickTime, dropTime, preference, maleQuantity, femaleQuantity)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
-  const values = [type, JSON.stringify(days), startDate, pickLocation, dropLocation, pickTime, dropTime, preference, maleQuantity, femaleQuantity];
+  const values = [
+    type,
+    JSON.stringify(days),
+    startDate,
+    pickLocation,
+    dropLocation,
+    pickTime,
+    dropTime,
+    preference,
+    maleQuantity,
+    femaleQuantity,
+  ];
 
   // Replace 'connection' with 'db'
   db.query(sql, values, (err, result) => {
@@ -430,13 +419,11 @@ app.get('/api/carpoolingp', (req, res) => {
   });
 });
 
-
-
 // API endpoint to fetch driver data by ID
 app.get('/driver/:d_id', (req, res) => {
   const { d_id } = req.params;
   const sqlQuery = 'SELECT name, lastname, type, gender, driverphoto FROM driver WHERE d_id = ?';
-  
+
   db.query(sqlQuery, [d_id], (err, result) => {
     if (err) {
       console.error('Error fetching driver:', err);
@@ -449,7 +436,6 @@ app.get('/driver/:d_id', (req, res) => {
     }
   });
 });
-
 
 // API endpoint to update driver data by ID
 app.put('/driver/:d_id', (req, res) => {
@@ -475,12 +461,11 @@ app.put('/driver/:d_id', (req, res) => {
   });
 });
 
-
 // API endpoint to fetch passenger data by ID
 app.get('/passenger/:pid', (req, res) => {
   const { pid } = req.params;
   const sqlQuery = 'SELECT name, identity, photo FROM passenger WHERE pid = ?';
-  
+
   db.query(sqlQuery, [pid], (err, result) => {
     if (err) {
       console.error('Error fetching passenger:', err);
@@ -493,8 +478,6 @@ app.get('/passenger/:pid', (req, res) => {
     }
   });
 });
-
-
 
 // API endpoint to update passenger data by ID
 app.put('/passenger/:pid', (req, res) => {
@@ -520,7 +503,6 @@ app.put('/passenger/:pid', (req, res) => {
   });
 });
 
-
 app.post('/api/vehicles', (req, res) => {
   const { vehicle_brand, vehicle_model, vehicle_number_plate, vehicle_photo, d_id } = req.body;
 
@@ -528,7 +510,8 @@ app.post('/api/vehicles', (req, res) => {
     return res.status(400).json({ message: 'Please provide all required fields.' });
   }
 
-  const query = 'INSERT INTO vehicle (d_id, vehicle_brand, vehicle_model, vehicle_number_plate, vehicle_photo) VALUES (?, ?, ?, ?, ?)';
+  const query =
+    'INSERT INTO vehicle (d_id, vehicle_brand, vehicle_model, vehicle_number_plate, vehicle_photo) VALUES (?, ?, ?, ?, ?)';
   const values = [d_id, vehicle_brand, vehicle_model, vehicle_number_plate, vehicle_photo];
 
   db.query(query, values, (err, result) => {
@@ -542,17 +525,53 @@ app.post('/api/vehicles', (req, res) => {
   });
 });
 
+// Endpoint to create a new route
+app.post('/pickdroproutes', (req, res) => {
+  const { source, destination, pickupPoints, dropoffPoints, pickupTime, dropoffTime, d_id } = req.body;
 
+  // Validate the required fields
+  if (!source || !destination || !pickupPoints || !dropoffPoints || !pickupTime || !dropoffTime || !d_id) {
+    return res.status(400).json({ message: 'Please provide all required fields.' });
+  }
 
+  try {
+    // Ensure that pickupPoints and dropoffPoints are valid JSON arrays
+    const pickupPointsJSON = JSON.stringify(pickupPoints);
+    const dropoffPointsJSON = JSON.stringify(dropoffPoints);
 
+    const query = `
+      INSERT INTO pickdroproute (d_id, source, destination, pickuppoints, dropoffpoints, pickuptime, dropofftime)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
 
+    const values = [
+      d_id,
+      source,
+      destination,
+      pickupPointsJSON,
+      dropoffPointsJSON,
+      pickupTime,
+      dropoffTime,
+    ];
 
-app.get('/' , (re, res) =>{
-  return res.json("scu app running")
-})
+    db.query(query, values, (error, results) => {
+      if (error) {
+        console.error('Error inserting route:', error);
+        res.status(500).json({ message: 'Error inserting route' });
+        return;
+      }
+      res.status(201).json({ message: 'Route created successfully', routeId: results.insertId });
+    });
+  } catch (err) {
+    console.error('Error processing request:', err);
+    res.status(500).json({ message: 'Error processing your request' });
+  }
+});
+
+app.get('/', (re, res) => {
+  return res.json('scu app running');
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-

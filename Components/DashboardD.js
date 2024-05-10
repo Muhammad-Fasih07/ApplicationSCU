@@ -279,7 +279,7 @@ const DashboardD = ({ route, navigation }) => {
               }}
             >
               <TouchableOpacity
-                onPress={() => navigation.navigate('Pick')}
+                onPress={() => navigation.navigate('Pick',{ user: user })}
                 style={{
                   backgroundColor: '#022B42',
                   borderRadius: circleSize / 2,
