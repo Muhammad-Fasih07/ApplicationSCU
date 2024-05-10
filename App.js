@@ -1,5 +1,4 @@
 import 'react-native-gesture-handler';
-import { Link } from 'react-router-dom';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -37,6 +36,8 @@ import Vehicleinfo from './Components/Vehicleinfo';
 import EditprofileP from './Components/EditprofileP';
 import ComplaintD from './Components/ComplaintD';
 import ContactusD from './Components/ContactusD';
+import Pick from './Components/Pick';
+import RouteScreen from './Components/RouteScreen';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -76,7 +77,10 @@ const App = () => {
         <Stack.Screen name="EditprofileP" component={EditprofileP} />
         <Stack.Screen name="ComplaintD" component={ComplaintD} />
         <Stack.Screen name="ContactusD" component={ContactusD} />
+        <Stack.Screen name="Pick" component={Pick} />
+        <Stack.Screen name="RouteScreen" component={ RouteScreen} />
 
+       
         
       </Stack.Navigator>
     </NavigationContainer>

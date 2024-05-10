@@ -533,15 +533,15 @@ app.post('/api/vehicles', (req, res) => {
 
   db.query(query, values, (err, result) => {
     if (err) {
-      console.error('Error inserting vehicle:', err.message); // Log more specific error message
+      if (err.code === 'ER_DUP_ENTRY') {
+        return res.status(409).json({ message: 'Driver has already submitted vehicle data.' });
+      }
       return res.status(500).json({ message: 'Internal Server Error', error: err.message });
     }
-  
-    console.log('Vehicle registered successfully');
     res.status(201).json({ message: 'Vehicle registered successfully' });
   });
-  
 });
+
 
 
 

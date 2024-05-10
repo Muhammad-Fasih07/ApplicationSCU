@@ -279,7 +279,7 @@ const DashboardD = ({ route, navigation }) => {
               }}
             >
               <TouchableOpacity
-                onPress={() => navigation.navigate('DriverRoute')}
+                onPress={() => navigation.navigate('Pick')}
                 style={{
                   backgroundColor: '#022B42',
                   borderRadius: circleSize / 2,

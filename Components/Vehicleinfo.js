@@ -31,7 +31,7 @@ const Vehicleinfo = ({ navigation, route }) => {
       Alert.alert('Error', 'Form already submitted. Please try again.');
       return;
     }
-
+  
     try {
       const response = await fetch(`${API_BASE_URL}/api/vehicles`, {
         method: 'POST',
@@ -44,28 +44,27 @@ const Vehicleinfo = ({ navigation, route }) => {
           vehicle_number_plate: carNumberPlate,
           vehicle_photo: vehiclePhoto,
           d_id: user.d_id, // Use driverId from route params
-          
         }),
       });
-
+  
+      const data = await response.json(); // Make sure to handle JSON response correctly
+  
       if (response.ok) {
         console.log('Vehicle inserted successfully!');
         setFormSubmitted(true);
         Alert.alert('Success', 'Vehicle added successfully!', [
-          {
-            text: 'OK',
-            onPress: () => navigation.goBack(), // Adjust based on your navigation needs
-          },
+          { text: 'OK', onPress: () => navigation.goBack() },
         ]);
       } else {
-        console.error('Error inserting vehicle');
-        Alert.alert('Error', 'Error adding vehicle. Please try again.');
+        console.error('Error inserting vehicle', data.message);
+        Alert.alert('Error', data.message);  // Use the custom message from the backend
       }
     } catch (error) {
       console.error('Error:', error);
-      Alert.alert('Error', 'Error adding vehicle. Please try again.');
+      Alert.alert('Error', 'Network error, please try again later.');
     }
   };
+  
   return (
     <View
       style={{
