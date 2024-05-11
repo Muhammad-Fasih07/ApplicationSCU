@@ -16,6 +16,8 @@ import * as Animatable from 'react-native-animatable';
 
 const DashboardD = ({ route, navigation }) => {
   // Destructuring user from route.params
+ 
+  
   const { user } = route.params;
   const circleSize = 120;
   const animatedImageRef = useRef(null);
@@ -148,7 +150,9 @@ const DashboardD = ({ route, navigation }) => {
                 <Image
                   source={user.driverphoto ? { uri: user.driverphoto } : require('../assets/userlogo.png')}
                   style={{ width: 100, height: 100, borderRadius: 345, marginRight: 20 }}
+                  onError={(e) => console.log('Failed to load image:', e.nativeEvent.error)}
                 />
+
                 <Text style={{ fontSize: 16, color: '#333', fontWeight: 'bold' }}>{user.name}</Text>
               </View>
             </TouchableOpacity>
@@ -179,7 +183,7 @@ const DashboardD = ({ route, navigation }) => {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.navigate('ContactusD',{ user: user })}>
+            <TouchableOpacity onPress={() => navigation.navigate('ContactusD', { user: user })}>
               <Text
                 style={{ fontSize: 16, marginBottom: 10, color: '#333', marginTop: 15, fontWeight: 'bold', left: 40 }}
               >
@@ -195,8 +199,7 @@ const DashboardD = ({ route, navigation }) => {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Vehicleinfo', { user: user })}>
+            <TouchableOpacity onPress={() => navigation.navigate('Vehicleinfo', { user: user })}>
               <Text
                 style={{ fontSize: 16, marginBottom: 10, color: '#333', marginTop: 15, fontWeight: 'bold', left: 40 }}
               >
@@ -279,7 +282,7 @@ const DashboardD = ({ route, navigation }) => {
               }}
             >
               <TouchableOpacity
-                onPress={() => navigation.navigate('Pick',{ user: user })}
+                onPress={() => navigation.navigate('Pick', { user: user })}
                 style={{
                   backgroundColor: '#022B42',
                   borderRadius: circleSize / 2,

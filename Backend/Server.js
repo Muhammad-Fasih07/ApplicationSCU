@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const port = 8082;
+const cors = require('cors');
 
 const db = mysql.createConnection({
   host: 'localhost',
@@ -34,6 +35,7 @@ process.on('SIGINT', () => {
 
 // Middleware to parse JSON
 app.use(bodyParser.json());
+app.use(cors());
 
 //JSON Parser
 app.use(express.json());
@@ -423,7 +425,6 @@ app.get('/api/carpoolingp', (req, res) => {
 app.get('/driver/:d_id', (req, res) => {
   const { d_id } = req.params;
   const sqlQuery = 'SELECT name, lastname, type, gender, driverphoto FROM driver WHERE d_id = ?';
-
   db.query(sqlQuery, [d_id], (err, result) => {
     if (err) {
       console.error('Error fetching driver:', err);
@@ -447,8 +448,7 @@ app.put('/driver/:d_id', (req, res) => {
   }
 
   const sqlQuery = 'UPDATE driver SET name = ?, lastname = ?, type = ?, gender = ?, driverphoto = ? WHERE d_id = ?';
-
-  db.query(sqlQuery, [name, lastname, type, gender, d_id, driverphoto], (err, result) => {
+  db.query(sqlQuery, [name, lastname, type, gender, driverphoto, d_id], (err, result) => {
     if (err) {
       console.error('Error updating driver:', err);
       return res.status(500).json({ message: 'Error updating driver data', error: err });
@@ -527,46 +527,55 @@ app.post('/api/vehicles', (req, res) => {
 
 // Endpoint to create a new route
 app.post('/pickdroproutes', (req, res) => {
-  const { source, destination, pickupPoints, dropoffPoints, pickupTime, dropoffTime, d_id } = req.body;
+  const { source, destination, pickupPoints, dropoffPoints, pickupTime, dropoffTime } = req.body;
 
-  // Validate the required fields
-  if (!source || !destination || !pickupPoints || !dropoffPoints || !pickupTime || !dropoffTime || !d_id) {
-    return res.status(400).json({ message: 'Please provide all required fields.' });
-  }
+  // Extract just the titles or addresses from pickup and dropoff points
+  const formattedPickupPoints = pickupPoints.map(point => point.title || point.address);
+  const formattedDropoffPoints = dropoffPoints.map(point => point.title || point.address);
 
-  try {
-    // Ensure that pickupPoints and dropoffPoints are valid JSON arrays
-    const pickupPointsJSON = JSON.stringify(pickupPoints);
-    const dropoffPointsJSON = JSON.stringify(dropoffPoints);
+  // Serialize the filtered data to JSON strings
+  const pickupPointsJSON = JSON.stringify(formattedPickupPoints);
+  const dropoffPointsJSON = JSON.stringify(formattedDropoffPoints);
 
-    const query = `
-      INSERT INTO pickdroproute (d_id, source, destination, pickuppoints, dropoffpoints, pickuptime, dropofftime)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `;
+  const query = `
+    INSERT INTO pickdroproute (source, destination, pickuppoints, dropoffpoints, pickuptime, dropofftime)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
 
-    const values = [
-      d_id,
-      source,
-      destination,
-      pickupPointsJSON,
-      dropoffPointsJSON,
-      pickupTime,
-      dropoffTime,
-    ];
+  const values = [source, destination, pickupPointsJSON, dropoffPointsJSON, pickupTime, dropoffTime];
 
-    db.query(query, values, (error, results) => {
-      if (error) {
-        console.error('Error inserting route:', error);
-        res.status(500).json({ message: 'Error inserting route' });
-        return;
-      }
-      res.status(201).json({ message: 'Route created successfully', routeId: results.insertId });
-    });
-  } catch (err) {
-    console.error('Error processing request:', err);
-    res.status(500).json({ message: 'Error processing your request' });
-  }
+  db.query(query, values, (error, results, fields) => {
+    if (error) {
+      console.error('Error inserting route:', error);
+      res.status(500).json({ message: 'Error inserting route' });
+      return;
+    }
+    res.status(201).json({ message: 'Route created successfully', routeId: results.insertId });
+  });
 });
+
+
+// API endpoint to fetch data from the pickdroproute table
+app.get('/pickdroproute', (req, res) => {
+  const query = 'SELECT * FROM pickdroproute';
+  db.query(query, (error, results) => {
+    if (error) {
+      console.error('Error querying the database:', error);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+
+    // Deserialize the JSON strings for pickuppoints and dropoffpoints
+    const routes = results.map(route => ({
+      ...route,
+      pickuppoints: JSON.parse(route.pickuppoints),
+      dropoffpoints: JSON.parse(route.dropoffpoints)
+    }));
+
+    res.json(routes);
+  });
+});
+
 
 app.get('/', (re, res) => {
   return res.json('scu app running');

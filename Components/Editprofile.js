@@ -3,10 +3,10 @@ import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Alert } fro
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
-import { API_BASE_URL } from '../src/env'; // Ensure this points to your API server
+import { API_BASE_URL } from '../src/env';
 
 const EditProfileScreen = ({ route }) => {
-  const { user } = route.params; // Assuming user object is passed in params with id
+  const { user } = route.params;
 
   const [profileImage, setProfileImage] = useState(user?.driverphoto || 'https://via.placeholder.com/150');
   const [firstName, setFirstName] = useState(user?.name || '');
@@ -45,28 +45,19 @@ const EditProfileScreen = ({ route }) => {
   }, []);
 
   const handleUpdateProfile = async () => {
-    // Regular expression to match only alphabets
     const alphabetRegex = /^[a-zA-Z]+$/;
-  
-    // Check if first name contains only alphabets
-    if (!alphabetRegex.test(firstName)) {
-      Alert.alert('Error', 'First name should contain only alphabets');
+    if (!alphabetRegex.test(firstName) || !alphabetRegex.test(lastName)) {
+      Alert.alert('Error', 'Names should contain only alphabets');
       return;
     }
-  
-    // Check if last name contains only alphabets
-    if (!alphabetRegex.test(lastName)) {
-      Alert.alert('Error', 'Last name should contain only alphabets');
-      return;
-    }
-  
+
     try {
       const response = await axios.put(`${API_BASE_URL}/driver/${user.d_id}`, {
         name: firstName,
         lastname: lastName,
         type: type,
         gender: gender,
-        driverphoto: profileImage // Adding driverphoto field
+        driverphoto: profileImage
       });
       if (response.data) {
         Alert.alert('Success', 'Profile updated successfully');
@@ -77,97 +68,50 @@ const EditProfileScreen = ({ route }) => {
       Alert.alert('Error', 'Failed to update profile');
     }
   };
-  
-  
 
-  const handleTakePhoto = async () => {
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-  
-    if (!result.cancelled) {
-      setProfileImage(result.uri); // Update profileImage state with the new URI
+  const handleImageSelection = async (type) => {
+    let result;
+    if (type === 'camera') {
+      result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+    } else {
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
     }
-  };
-  
-  const handleChooseFromGallery = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-  
-    if (!result.cancelled) {
-      setProfileImage(result.uri); // Update profileImage state with the new URI
-    }
-  };
-  
 
-  const handleEditProfileImage = () => {
-    if (editMode) {
-      Alert.alert(
-        'Change Profile Picture',
-        'Select source:',
-        [
-          { text: 'Camera', onPress: handleTakePhoto },
-          { text: 'Gallery', onPress: handleChooseFromGallery },
-          { text: 'Cancel', style: 'cancel' },
-        ],
-        { cancelable: true }
-      );
+    if (!result.cancelled) {
+      setProfileImage(result.uri);
     }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{editMode ? 'Edit Profile' : 'Profile'}</Text>
-      
       <View style={styles.profileImageContainer}>
         <Image source={{ uri: profileImage }} style={styles.profileImage} />
         {editMode && (
-          <TouchableOpacity onPress={handleEditProfileImage} style={styles.editIcon}>
-            <MaterialCommunityIcons name="pencil" size={24} color="#fff" />
+          <TouchableOpacity onPress={() => handleImageSelection('camera')} style={styles.editIcon}>
+            <MaterialCommunityIcons name="camera" size={24} color="#fff" />
           </TouchableOpacity>
         )}
-        <TouchableOpacity onPress={handleEditProfileImage} style={styles.imageIcon}>
-          <MaterialCommunityIcons name="camera" size={24} color="#fff" />
-        </TouchableOpacity>
       </View>
-
       {editMode ? (
         <>
-          <TextInput
-            style={styles.input}
-            placeholder="First Name"
-            value={firstName}
-            onChangeText={setFirstName}
-            autoCapitalize="none"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Last Name"
-            value={lastName}
-            onChangeText={setLastName}
-            autoCapitalize="none"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Type (e.g., Driver)"
-            value={type}
-            onChangeText={setType}
-            autoCapitalize="none"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Gender"
-            value={gender}
-            onChangeText={setGender}
-            autoCapitalize="none"
-          />
+          <TextInput style={styles.input} placeholder="First Name" value={firstName} onChangeText={setFirstName} autoCapitalize="none" />
+          <TextInput style={styles.input} placeholder="Last Name" value={lastName} onChangeText={setLastName} autoCapitalize="none" />
+          <TextInput style={styles.input} placeholder="Type" value={type} onChangeText={setType} autoCapitalize="none" />
+          <TextInput style={styles.input} placeholder="Gender" value={gender} onChangeText={setGender} autoCapitalize="none" />
+          <TouchableOpacity onPress={handleUpdateProfile} style={styles.button}>
+            <Text style={styles.buttonText}>Save Changes</Text>
+          </TouchableOpacity>
         </>
       ) : (
         <>
@@ -175,16 +119,14 @@ const EditProfileScreen = ({ route }) => {
           <Text style={styles.infoText}>Last Name: {lastName}</Text>
           <Text style={styles.infoText}>Type: {type}</Text>
           <Text style={styles.infoText}>Gender: {gender}</Text>
+          <TouchableOpacity onPress={() => setEditMode(true)} style={styles.button}>
+            <Text style={styles.buttonText}>Edit Profile</Text>
+          </TouchableOpacity>
         </>
       )}
-
-      <TouchableOpacity onPress={editMode ? handleUpdateProfile : () => setEditMode(true)} style={styles.button}>
-        <Text style={styles.buttonText}>{editMode ? 'Save Changes' : 'Edit Profile'}</Text>
-      </TouchableOpacity>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

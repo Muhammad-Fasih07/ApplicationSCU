@@ -38,6 +38,10 @@ import ComplaintD from './Components/ComplaintD';
 import ContactusD from './Components/ContactusD';
 import Pick from './Components/Pick';
 import RouteScreen from './Components/RouteScreen';
+import Passengerpickroute from './Components/Passengerpickroute';
+import Passengerdroproute from './Components/Passengerdroproute';
+import PDbooking from './Components/PDbooking';
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -79,6 +83,9 @@ const App = () => {
         <Stack.Screen name="ContactusD" component={ContactusD} />
         <Stack.Screen name="Pick" component={Pick} />
         <Stack.Screen name="RouteScreen" component={ RouteScreen} />
+        <Stack.Screen name="Passengerpickroute" component={Passengerpickroute} />
+        <Stack.Screen name="Passengerdroproute" component={Passengerdroproute} />
+        <Stack.Screen name="PDbooking" component={PDbooking} />
 
        
         
