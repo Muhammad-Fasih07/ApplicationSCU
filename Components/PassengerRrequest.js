@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet,Platform } from 'react-native';
-import { API_BASE_URL } from '../src/env'; // Adjust the path as necessary
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+  Dimensions,
+  Platform
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
+import { API_BASE_URL } from '../src/env'; // Ensure this is correctly pointing to your environment settings
 
 // Helper function to get shadow styles based on platform
 const getShadowStyle = () => {
@@ -20,9 +29,10 @@ const getShadowStyle = () => {
   }
 };
 
+const screen = Dimensions.get('window'); // Get device dimensions
 
 const PassengerRequest = () => {
-  const navigation = useNavigation(); // This hooks up navigation object
+  const navigation = useNavigation();
   const [routes, setRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,7 +58,11 @@ const PassengerRequest = () => {
 
   const renderRouteItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('Passengerpickroute', { selectedRoute: item })}
+      onPress={() => navigation.navigate('Passengerpickroute', {
+        selectedRoute: item,
+        source: item.source,
+        destination: item.destination
+      })}
       style={styles.containerStyle}
     >
       <View style={styles.routeContainer}>
@@ -58,16 +72,17 @@ const PassengerRequest = () => {
       </View>
       <View style={styles.textContainer}>
         <Text style={styles.boldTextStyle}>Source:</Text>
-        <Text style={styles.textStyle}>{item.source}</Text>
-        <Text style={styles.boldTextStyle}>Pickup time:</Text>
-        <Text style={styles.textStyle}>{item.pickuptime}</Text>
+        <Text style={styles.textStyle}>{item.source || 'N/A'}</Text>
+        <Text style={styles.boldTextStyle}>Pickup Time:</Text>
+        <Text style={styles.textStyle}>{item.pickuptime || 'N/A'}</Text>
         <Text style={styles.boldTextStyle}>Destination:</Text>
-        <Text style={styles.textStyle}>{item.destination}</Text>
-        <Text style={styles.boldTextStyle}>Dropoff time:</Text>
-        <Text style={styles.textStyle}>{item.dropofftime}</Text>
+        <Text style={styles.textStyle}>{item.destination || 'N/A'}</Text>
+        <Text style={styles.boldTextStyle}>Dropoff Time:</Text>
+        <Text style={styles.textStyle}>{item.dropofftime || 'N/A'}</Text>
       </View>
     </TouchableOpacity>
   );
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Routes</Text>
@@ -87,6 +102,7 @@ const PassengerRequest = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -109,19 +125,18 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(2,43,66,0.8)',
     borderWidth: 3,
     flexDirection: 'row',
-    width: '650%',  // Adjusted to a normal percentage
+    width: screen.width * 0.9,
     alignSelf: 'center',
-    transform: [{ scale: 0.8 }] // Adjust this value to scale up (e.g., 1.1) or down (e.g., 0.9)
   },
   textStyle: {
     fontSize: 14,
-    color: '#555555',
+    color: '#555',
     marginBottom: 5,
   },
   boldTextStyle: {
     fontSize: 15,
-    color: '#555555',
     fontWeight: 'bold',
+    color: '#555',
     marginBottom: 5,
   },
   routeContainer: {
@@ -146,7 +161,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 18,
-    color: '#555555',
+    color: '#555',
     textAlign: 'center',
     marginTop: 20,
   },

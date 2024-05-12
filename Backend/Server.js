@@ -524,36 +524,48 @@ app.post('/api/vehicles', (req, res) => {
     res.status(201).json({ message: 'Vehicle registered successfully' });
   });
 });
-
 // Endpoint to create a new route
 app.post('/pickdroproutes', (req, res) => {
   const { source, destination, pickupPoints, dropoffPoints, pickupTime, dropoffTime } = req.body;
 
-  // Extract just the titles or addresses from pickup and dropoff points
-  const formattedPickupPoints = pickupPoints.map(point => point.title || point.address);
-  const formattedDropoffPoints = dropoffPoints.map(point => point.title || point.address);
+  try {
+    // Prepare the full details for pickup and dropoff points
+    const formattedPickupPoints = pickupPoints.map(point => ({
+      title: point.title,
+      address: point.address,
+      realName: point.realName
+    }));
+    const formattedDropoffPoints = dropoffPoints.map(point => ({
+      title: point.title,
+      address: point.address,
+      realName: point.realName
+    }));
 
-  // Serialize the filtered data to JSON strings
-  const pickupPointsJSON = JSON.stringify(formattedPickupPoints);
-  const dropoffPointsJSON = JSON.stringify(formattedDropoffPoints);
+    // Serialize the filtered data to JSON strings
+    const pickupPointsJSON = JSON.stringify(formattedPickupPoints);
+    const dropoffPointsJSON = JSON.stringify(formattedDropoffPoints);
 
-  const query = `
-    INSERT INTO pickdroproute (source, destination, pickuppoints, dropoffpoints, pickuptime, dropofftime)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `;
+    // Insert the data into the database
+    const query = `
+      INSERT INTO pickdroproute (source, destination, pickuppoints, dropoffpoints, pickuptime, dropofftime)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
 
-  const values = [source, destination, pickupPointsJSON, dropoffPointsJSON, pickupTime, dropoffTime];
+    const values = [source, destination, pickupPointsJSON, dropoffPointsJSON, pickupTime, dropoffTime];
 
-  db.query(query, values, (error, results, fields) => {
-    if (error) {
-      console.error('Error inserting route:', error);
-      res.status(500).json({ message: 'Error inserting route' });
-      return;
-    }
-    res.status(201).json({ message: 'Route created successfully', routeId: results.insertId });
-  });
+    db.query(query, values, (error, results, fields) => {
+      if (error) {
+        console.error('Error inserting route:', error);
+        res.status(500).json({ message: 'Error inserting route' });
+        return;
+      }
+      res.status(201).json({ message: 'Route created successfully', routeId: results.insertId });
+    });
+  } catch (err) {
+    console.error('Error processing request:', err);
+    res.status(400).json({ message: 'Invalid JSON data received' });
+  }
 });
-
 
 // API endpoint to fetch data from the pickdroproute table
 app.get('/pickdroproute', (req, res) => {

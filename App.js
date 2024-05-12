@@ -29,7 +29,6 @@ import PassengerRrequest from './Components/PassengerRrequest';
 import DriverRrequest from './Components/DriverRrequest';
 import CarpoolingD from './Components/CarpoolingD';
 import Carpooling from './Components/Carpooling';
-import Payment from './Components/payment';
 import Carpoolingpreq from './Components/Carpoolingpreq';
 import Editprofile from './Components/Editprofile';
 import Vehicleinfo from './Components/Vehicleinfo';
@@ -41,6 +40,8 @@ import RouteScreen from './Components/RouteScreen';
 import Passengerpickroute from './Components/Passengerpickroute';
 import Passengerdroproute from './Components/Passengerdroproute';
 import PDbooking from './Components/PDbooking';
+import Paymenttype from './Components/Paymenttype';
+import Payment from './Components/Payment';
 
 const Stack = createStackNavigator();
 
@@ -74,7 +75,6 @@ const App = () => {
         <Stack.Screen name="DriverRrequest" component={DriverRrequest} />
         <Stack.Screen name="CarpoolingD" component={CarpoolingD} />
         <Stack.Screen name="Carpooling" component={Carpooling} />
-        <Stack.Screen name="Payment" component={Payment} />
         <Stack.Screen name="Carpoolingpreq" component={Carpoolingpreq} />
         <Stack.Screen name="Editprofile" component={Editprofile} />
         <Stack.Screen name="Vehicleinfo" component={Vehicleinfo} />
@@ -86,6 +86,9 @@ const App = () => {
         <Stack.Screen name="Passengerpickroute" component={Passengerpickroute} />
         <Stack.Screen name="Passengerdroproute" component={Passengerdroproute} />
         <Stack.Screen name="PDbooking" component={PDbooking} />
+        <Stack.Screen name="Payment" component={Payment} />
+        <Stack.Screen name="Paymenttype" component={Paymenttype} />
+
 
        
         

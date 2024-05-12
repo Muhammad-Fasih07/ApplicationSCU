@@ -7,8 +7,6 @@ import {
   Button,
   Alert,
   TouchableOpacity,
-  TouchableWithoutFeedback,
-  Animated,
   FlatList,
 } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -25,7 +23,9 @@ const RouteScreen = ({ navigation }) => {
       latitude: details.geometry.location.lat,
       longitude: details.geometry.location.lng,
       address: details.formatted_address,
+      realName: details.name, // Store the real name of the location
     };
+    
     const points = type === 'pickup' ? pickupPoints : dropOffPoints;
     const setPoints = type === 'pickup' ? setPickupPoints : setDropOffPoints;
 
@@ -61,13 +61,18 @@ const RouteScreen = ({ navigation }) => {
           key: API_KEY,
           language: 'en',
         }}
+        styles={{
+          textInput: styles.textInput
+        }}
       />
       <FlatList
         data={pickupPoints}
         keyExtractor={(item, index) => `pickup-${index}`}
         renderItem={({ item, index }) => (
           <View style={styles.locationItem}>
-            <Text style={[styles.locationText, { color: 'black' }]}>{item.address}</Text>
+            <Text style={[styles.locationText, { color: 'black' }]}>
+              {item.realName} - {item.address}
+            </Text>
             <TouchableOpacity onPress={() => handleRemoveLocation(index, 'pickup')}>
               <Text style={styles.removeText}>Remove</Text>
             </TouchableOpacity>
@@ -83,13 +88,18 @@ const RouteScreen = ({ navigation }) => {
           key: API_KEY,
           language: 'en',
         }}
+        styles={{
+          textInput: styles.textInput
+        }}
       />
       <FlatList
         data={dropOffPoints}
         keyExtractor={(item, index) => `dropoff-${index}`}
         renderItem={({ item, index }) => (
           <View style={styles.locationItem}>
-            <Text style={[styles.locationText, { color: 'black' }]}>{item.address}</Text>
+            <Text style={[styles.locationText, { color: 'black' }]}>
+              {item.realName} - {item.address}
+            </Text>
             <TouchableOpacity onPress={() => handleRemoveLocation(index, 'dropoff')}>
               <Text style={styles.removeText}>Remove</Text>
             </TouchableOpacity>
@@ -97,12 +107,8 @@ const RouteScreen = ({ navigation }) => {
         )}
       />
       <View style={styles.buttonContainer}>
-  <Button
-    title="Go to Pick Screen"
-    onPress={navigateToPick}
-  />
-</View>
-
+        <Button title="Go to Pick Screen" onPress={navigateToPick} />
+      </View>
     </View>
   );
 };
@@ -113,26 +119,34 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: 'rgba(2,43,66,0.7)',
   },
+  textInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    paddingLeft: 10,
+    borderRadius: 10,
+    fontSize: 16,
+  },
   locationItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 2,
-    borderBottomWidth: 2,
-    borderBottomColor: 'yellow',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'lightgray',
     backgroundColor: 'white',
   },
-
   locationText: {
     flex: 1,
-    fontSize: 12.5,
+    fontSize: 15,
   },
   removeText: {
     color: 'red',
   },
   buttonContainer: {
-    backgroundColor: 'rgba(2,43,66,1)', // Change the button color here
-    borderRadius: 5, // Add borderRadius to make it look like a button
-    marginTop: 20, // Adjust spacing if needed
+    backgroundColor: 'rgba(2,43,66,1)',
+    borderRadius: 5,
+    marginTop: 20,
+    padding: 10,
   },
 });
 

@@ -47,6 +47,14 @@ const Pick = ({ route, navigation }) => {
   const [fetchingLocation, setFetchingLocation] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
+
+
+  const toLocalISOString = (date) => {
+    const offset = date.getTimezoneOffset() * 60000; // offset in milliseconds
+    const localISOTime = (new Date(date - offset)).toISOString().slice(0, -1);
+    return localISOTime;
+  };
+
   useEffect(() => {
     requestPermissionsAndLocate();
   }, []);
@@ -201,18 +209,18 @@ const Pick = ({ route, navigation }) => {
     setStartLocation({
       latitude: details.geometry.location.lat,
       longitude: details.geometry.location.lng,
-      title: details.formatted_address // Capture the full address
+      title: details.formatted_address, // Existing formatted address
+      realName: details.name || 'Unknown Location' // Adding real name from the details
     });
-    
   };
-
+  
   const addDropoffPoint = (details) => {
     setEndLocation({
       latitude: details.geometry.location.lat,
       longitude: details.geometry.location.lng,
-      title: details.formatted_address // Capture the full address
+      title: details.formatted_address, // Existing formatted address
+      realName: details.name || 'Unknown Location' // Adding real name from the details
     });
-    
   };
   
 
@@ -281,34 +289,23 @@ const Pick = ({ route, navigation }) => {
   
     setFormSubmitted(true); // Prevent multiple submissions
   
-    // Reverse geocode and enrich pickup points
-    const enrichedPickupPoints = await Promise.all(pickupPoints.map(async (point) => {
-      const address = await reverseGeocode(point.latitude, point.longitude);
-      return {
-        ...point,
-        title: address // Replace title with the fetched address
-      };
-    }));
-  
-    // Reverse geocode and enrich dropoff points
-    const enrichedDropOffPoints = await Promise.all(dropOffPoints.map(async (point) => {
-      const address = await reverseGeocode(point.latitude, point.longitude);
-      return {
-        ...point,
-        title: address // Replace title with the fetched address
-      };
-    }));
-  
+    // Prepare data, including the new realName fields
     const requestData = {
       source: startLocation ? startLocation.title : null,
       destination: endLocation ? endLocation.title : null,
-      pickupPoints: enrichedPickupPoints,
-      dropoffPoints: enrichedDropOffPoints,
-      pickupTime: pickupTime ? pickupTime.toISOString() : null,
-      dropoffTime: dropOffTime ? dropOffTime.toISOString() : null,
+      pickupPoints: pickupPoints.map(point => ({
+        ...point,
+        title: point.title,
+        realName: point.realName // Ensure realName is included
+      })),
+      dropoffPoints: dropOffPoints.map(point => ({
+        ...point,
+        title: point.title,
+        realName: point.realName // Ensure realName is included
+      })),
+      pickupTime: pickupTime ? toLocalISOString(pickupTime) : null,
+      dropoffTime: dropOffTime ? toLocalISOString(dropOffTime) : null,
     };
-  
-    console.log("Sending data:", requestData);
   
     try {
       const response = await fetch(`${API_BASE_URL}/pickdroproutes`, {
@@ -325,12 +322,25 @@ const Pick = ({ route, navigation }) => {
       }
   
       const data = await response.json();
-      console.log('Route created successfully!', data);
       Alert.alert('Success', 'Route created successfully!', [{ text: 'OK', onPress: () => navigation.goBack() }]);
     } catch (error) {
       console.error('Error creating route:', error.message);
       Alert.alert('Error', error.message);
       setFormSubmitted(false); // Allow re-submission if there's an error
+    }
+  };
+  
+  const onPickupTimeChange = (event, selectedDate) => {
+    setShowPickupTimePicker(false);
+    if (selectedDate) {
+      setPickupTime(new Date(selectedDate));
+    }
+  };
+
+  const onDropOffTimeChange = (event, selectedDate) => {
+    setShowDropOffTimePicker(false);
+    if (selectedDate) {
+      setDropOffTime(new Date(selectedDate));
     }
   };
   
@@ -473,33 +483,23 @@ const Pick = ({ route, navigation }) => {
             </TouchableOpacity>
           </View>
           {showPickupTimePicker && (
-            <DateTimePicker
-              value={pickupTime || new Date()}
-              mode="time"
-              is24Hour={true}
-              display="default"
-              onChange={(event, selectedDate) => {
-                setShowPickupTimePicker(false);
-                if (selectedDate) {
-                  setPickupTime(selectedDate);
-                }
-              }}
-            />
-          )}
-          {showDropOffTimePicker && (
-            <DateTimePicker
-              value={dropOffTime || new Date()}
-              mode="time"
-              is24Hour={true}
-              display="default"
-              onChange={(event, selectedDate) => {
-                setShowDropOffTimePicker(false);
-                if (selectedDate) {
-                  setDropOffTime(selectedDate);
-                }
-              }}
-            />
-          )}
+      <DateTimePicker
+        value={pickupTime || new Date()}
+        mode="time"
+        is24Hour={true}
+        display="default"
+        onChange={onPickupTimeChange} // Use the new handler
+      />
+    )}
+    {showDropOffTimePicker && (
+      <DateTimePicker
+        value={dropOffTime || new Date()}
+        mode="time"
+        is24Hour={true}
+        display="default"
+        onChange={onDropOffTimeChange} // Use the new handler
+      />
+    )}
           <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
             <Text style={styles.submitButtonText}>Submit Route</Text>
           </TouchableOpacity>

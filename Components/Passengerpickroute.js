@@ -6,18 +6,25 @@ const Passengerpickroute = ({ route }) => {
   const { selectedRoute } = route.params;
   const navigation = useNavigation();
 
-  const handlePickupPointPress = (address) => {
-    console.log('Pickup point selected:', address);
-    navigation.navigate('Passengerdroproute', { selectedRoute });
+  const handlePickupPointPress = (pickupPoint) => {
+    console.log('Pickup point selected:', pickupPoint.realName);
+    // Navigate with the pickup point's real name as a parameter
+    navigation.navigate('Passengerdroproute', {
+      selectedRoute,
+      pickupPoint: pickupPoint.realName || 'Unknown location'
+    });
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>{selectedRoute.name} - Pickup Points</Text>
       {selectedRoute.pickuppoints ? (
-        selectedRoute.pickuppoints.map((address, index) => (
-          <TouchableOpacity key={index} style={styles.button} onPress={() => handlePickupPointPress(address)}>
-            <Text style={styles.buttonText}>{address}</Text>
+        selectedRoute.pickuppoints.map((pickupPoint, index) => (
+          <TouchableOpacity key={index} style={styles.button} onPress={() => handlePickupPointPress(pickupPoint)}>
+            {/* Combine realName and address for display */}
+            <Text style={styles.buttonText}>
+              {pickupPoint.realName ? `${pickupPoint.realName} - ${pickupPoint.address}` : 'Unknown location'}
+            </Text>
           </TouchableOpacity>
         ))
       ) : (

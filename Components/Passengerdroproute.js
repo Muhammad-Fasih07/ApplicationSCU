@@ -3,21 +3,30 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const Passengerdroproute = ({ route }) => {
-  const { selectedRoute } = route.params;
+  const { selectedRoute, pickupPoint } = route.params;
   const navigation = useNavigation();
 
-  const handleDropoffPointPress = (address) => {
-    console.log('Drop-off point selected:', address);
-    navigation.navigate('PDbooking', { selectedRoute });
+  const handleDropoffPointPress = (dropOffPoint) => {
+    console.log('Drop-off point selected:', dropOffPoint.realName || 'Unknown drop-off location');
+    navigation.navigate('PDbooking', {
+      selectedRoute, 
+      pickupPoint, 
+      dropOffPoint: dropOffPoint.realName || 'Unknown drop-off location'
+    });
   };
-
+  
   return (
     <View style={styles.container}>
       <Text style={styles.header}>{selectedRoute.name} - Dropoff Points</Text>
       {selectedRoute.dropoffpoints ? (
-        selectedRoute.dropoffpoints.map((address, index) => (
-          <TouchableOpacity key={index} style={styles.button} onPress={() => handleDropoffPointPress(address)}>
-            <Text style={styles.buttonText}>{address}</Text>
+        selectedRoute.dropoffpoints.map((dropOffPoint, index) => (
+          <TouchableOpacity key={index} style={styles.button} onPress={() => handleDropoffPointPress(dropOffPoint)}>
+            {/* Combine realName and address for display */}
+            <Text style={styles.buttonText}>
+              {dropOffPoint.realName && dropOffPoint.address 
+                ? `${dropOffPoint.realName} - ${dropOffPoint.address}`
+                : 'Unknown location'}
+            </Text>
           </TouchableOpacity>
         ))
       ) : (
