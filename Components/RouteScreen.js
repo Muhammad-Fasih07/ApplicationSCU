@@ -12,7 +12,9 @@ import {
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { API_KEY } from '../src/env';
 
-const RouteScreen = ({ navigation }) => {
+const RouteScreen = ({ navigation,route }) => {
+
+  const {user } = route.params;
   const [pickupPoints, setPickupPoints] = useState([]);
   const [dropOffPoints, setDropOffPoints] = useState([]);
   const pickupSearchRef = useRef(null);
@@ -44,7 +46,7 @@ const RouteScreen = ({ navigation }) => {
 
   const navigateToPick = () => {
     if (pickupPoints.length > 0 && dropOffPoints.length > 0) {
-      navigation.navigate('Pick', { pickupPoints, dropOffPoints });
+      navigation.navigate('Pick', { pickupPoints, dropOffPoints, user });
     } else {
       Alert.alert('Insufficient Locations', 'Please add at least one pickup and one drop-off location.');
     }
@@ -116,7 +118,7 @@ const RouteScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 25,
     backgroundColor: 'rgba(2,43,66,0.7)',
   },
   textInput: {
@@ -137,7 +139,8 @@ const styles = StyleSheet.create({
   },
   locationText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 12,
+    
   },
   removeText: {
     color: 'red',

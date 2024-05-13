@@ -19,6 +19,12 @@ const DashboardD = ({ route, navigation }) => {
  
   
   const { user } = route.params;
+
+
+  console.log("User data on DashboardD:", user);
+
+  // Function to navigate to Pick
+ 
   const circleSize = 120;
   const animatedImageRef = useRef(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -30,6 +36,8 @@ const DashboardD = ({ route, navigation }) => {
     setDrawerOpen(!drawerOpen);
   };
 
+
+  
   // Function to animate the image
   const animateImage = () => {
     if (animatedImageRef.current) {
@@ -62,6 +70,13 @@ const DashboardD = ({ route, navigation }) => {
   const handleCarpoolingRequest = () => {
     // Implement what happens when the Carpooling Request button is pressed
     navigation.navigate('Carpoolingpreq');
+  };
+  const goToPick = () => {
+    if (!user) {
+      Alert.alert("Error", "User data is missing.");
+      return;
+    }
+    navigation.navigate('Pick', { user });
   };
 
   return (
@@ -282,7 +297,7 @@ const DashboardD = ({ route, navigation }) => {
               }}
             >
               <TouchableOpacity
-                onPress={() => navigation.navigate('Pick', { user: user })}
+                onPress={goToPick} 
                 style={{
                   backgroundColor: '#022B42',
                   borderRadius: circleSize / 2,

@@ -1,66 +1,95 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { CardField, useStripe } from '@stripe/stripe-react-native';
 
 const Payment = () => {
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiryDate, setExpiryDate] = useState('');
-  const [cvv, setCvv] = useState('');
-  const [nickname, setNickname] = useState('');
+  const { confirmPayment } = useStripe();
+  const [cardDetails, setCardDetails] = useState();
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleFormSubmit = () => {
-    // Add payment processing logic here
-    alert('Card added successfully!');
-    // Reset form fields
-    setCardNumber('');
-    setExpiryDate('');
-    setCvv('');
-    setNickname('');
+  const handlePayPress = async () => {
+    setIsProcessing(true);
+    if (!cardDetails?.complete) {
+      Alert.alert("Incomplete Card Details", "Please enter complete card details.");
+      setIsProcessing(false);
+      return;
+    }
+
+    try {
+      const clientSecret = await fetchPaymentIntentClientSecret();
+      if (!clientSecret) {
+        setIsProcessing(false);
+        return;
+      }
+
+      const { error } = await confirmPayment(clientSecret, {
+        type: 'Card',
+        billingDetails: {},
+      });
+
+      setIsProcessing(false);
+      if (error) {
+        Alert.alert("Payment Failed", `Payment failed: ${error.message}`);
+      } else {
+        Alert.alert("Payment Successful", "Payment successful");
+      }
+    } catch (error) {
+      console.error('Error handling payment:', error);
+      setIsProcessing(false);
+      Alert.alert("Error", "An error occurred while processing payment. Please try again later.");
+    }
+  };
+
+  const fetchPaymentIntentClientSecret = async () => {
+    try {
+      const response = await fetch('http://192.168.100.8:8082/create-payment-intent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Add any additional headers as required
+        },
+        body: JSON.stringify({
+          // Add any parameters required for fetching client secret
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch client secret');
+      }
+
+      const data = await response.json();
+      return data.clientSecret; // Assuming your server responds with 'clientSecret' field
+    } catch (error) {
+      console.error('Error fetching client secret:', error);
+      return null;
+    }
   };
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>Add Card</Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Card number"
-        value={cardNumber}
-        onChangeText={setCardNumber}
-        keyboardType="numeric"
+      <Text style={styles.header}>Pay with Card</Text>
+      <CardField
+        postalCodeEnabled={true}
+        placeholder={{
+          number: "4242 4242 4242 4242",
+        }}
+        cardStyle={{
+          backgroundColor: '#FFFFFF',
+          textColor: '#000000',
+          borderRadius: 8,
+          fontSize: 16,
+          placeholderColor: '#9e9e9e',
+        }}
+        style={styles.cardContainer}
+        onCardChange={(cardDetails) => setCardDetails(cardDetails)}
       />
-
-      <View style={styles.row}>
-        <TextInput
-          style={[styles.input, styles.inputHalf]}
-          placeholder="Expiry date"
-          value={expiryDate}
-          onChangeText={setExpiryDate}
-        />
-
-        <TextInput
-          style={[styles.input, styles.inputHalf]}
-          placeholder="CVV"
-          value={cvv}
-          onChangeText={setCvv}
-          keyboardType="numeric"
-        />
-      </View>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Nickname (optional)"
-        value={nickname}
-        onChangeText={setNickname}
-      />
-
-      {/* 
-       */}
-
-      <TouchableOpacity style={styles.button} onPress={handleFormSubmit}>
-        <Text style={styles.buttonText}>Add Card</Text>
+      <TouchableOpacity style={styles.button} onPress={handlePayPress} disabled={isProcessing}>
+        {isProcessing ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Pay Now</Text>
+        )}
       </TouchableOpacity>
-
-      <Text style={styles.infoText}>All payment information is stored securely</Text>
     </ScrollView>
   );
 };
@@ -77,50 +106,28 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  input: {
+  cardContainer: {
     height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
+    marginVertical: 30,
+    paddingHorizontal: 10,
     borderRadius: 10,
-    padding: 15,
-    fontSize: 16,
-    marginBottom: 15,
-  },
-  inputHalf: {
-    flex: 1,
-    marginRight: 10,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  cardTypeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  cardType: {
-    width: 50,
-    height: 30,
-    resizeMode: 'contain',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
   },
   button: {
     backgroundColor: '#407bff',
     borderRadius: 25,
     paddingVertical: 15,
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: '600',
-  },
-  infoText: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
   },
 });
 

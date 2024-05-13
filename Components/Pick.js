@@ -19,8 +19,19 @@ import polyline from '@mapbox/polyline';
 import { API_KEY, API_BASE_URL } from '../src/env';
 
 const Pick = ({ route, navigation }) => {
+  console.log("Received route params in Pick:", route.params);
   
-  const {pickupPoints = [], dropOffPoints = [] } = route.params;
+  const {user,pickupPoints = [], dropOffPoints = [] } = route.params;
+
+  if (!user) {
+    console.error('User object is undefined in Pick component');
+    Alert.alert('Error', 'User data is missing, cannot proceed.');
+    navigation.goBack(); // Go back or navigate to a fallback screen
+    return null; // Prevent further rendering of the component
+  }
+  
+  
+
   const [currentPosition, setCurrentPosition] = useState({
     latitude: 30.3753,
     longitude: 69.3451,
@@ -48,6 +59,8 @@ const Pick = ({ route, navigation }) => {
   const [formSubmitted, setFormSubmitted] = useState(false);
 
 
+
+ 
 
   const toLocalISOString = (date) => {
     const offset = date.getTimezoneOffset() * 60000; // offset in milliseconds
@@ -209,24 +222,24 @@ const Pick = ({ route, navigation }) => {
     setStartLocation({
       latitude: details.geometry.location.lat,
       longitude: details.geometry.location.lng,
-      title: details.formatted_address, // Existing formatted address
-      realName: details.name || 'Unknown Location' // Adding real name from the details
+      address: details.formatted_address, // Using formatted address as address
+      realName: details.name || 'Unknown Location' // Using the name from details or a placeholder
     });
   };
   
   const addDropoffPoint = (details) => {
     setEndLocation({
       latitude: details.geometry.location.lat,
-      longitude: details.geometry.location.lng,
-      title: details.formatted_address, // Existing formatted address
-      realName: details.name || 'Unknown Location' // Adding real name from the details
+        longitude: details.geometry.location.lng,
+        address: details.formatted_address, // Using formatted address as address
+        realName: details.name || 'Unknown Location' // Using the name from details or a placeholder
     });
   };
   
 
   const handleAddPoint = () => {
     // Navigate to RouteScreen and pass pickupPoints and dropOffPoints
-    navigation.navigate('RouteScreen', { pickupPoints, dropOffPoints });
+    navigation.navigate('RouteScreen', { pickupPoints, dropOffPoints,user });
   };
 
   const handleSelectRoute = (index) => {
@@ -283,52 +296,56 @@ const Pick = ({ route, navigation }) => {
 
   const handleSubmit = async () => {
     if (formSubmitted) {
-      Alert.alert('Error', 'Form already submitted. Please wait or try again later.');
-      return;
+        Alert.alert('Error', 'Form already submitted. Please wait or try again later.');
+        return;
     }
-  
-    setFormSubmitted(true); // Prevent multiple submissions
-  
-    // Prepare data, including the new realName fields
+    
+    setFormSubmitted(true);
+
+    // Prepare data using address and realName
     const requestData = {
-      source: startLocation ? startLocation.title : null,
-      destination: endLocation ? endLocation.title : null,
-      pickupPoints: pickupPoints.map(point => ({
-        ...point,
-        title: point.title,
-        realName: point.realName // Ensure realName is included
-      })),
-      dropoffPoints: dropOffPoints.map(point => ({
-        ...point,
-        title: point.title,
-        realName: point.realName // Ensure realName is included
-      })),
-      pickupTime: pickupTime ? toLocalISOString(pickupTime) : null,
-      dropoffTime: dropOffTime ? toLocalISOString(dropOffTime) : null,
+        source: startLocation ? startLocation.address : null,
+        destination: endLocation ? endLocation.address : null,
+        pickupPoints: pickupPoints.map(point => ({
+            latitude: point.latitude,
+            longitude: point.longitude,
+            address: point.address,
+            realName: point.realName
+        })),
+        dropoffPoints: dropOffPoints.map(point => ({
+            latitude: point.latitude,
+            longitude: point.longitude,
+            address: point.address,
+            realName: point.realName
+        })),
+        pickupTime: pickupTime ? toLocalISOString(pickupTime) : null,
+        dropoffTime: dropOffTime ? toLocalISOString(dropOffTime) : null,
+        d_id: user.d_id, // Ensure this line correctly accesses the user's d_id
     };
-  
+
     try {
-      const response = await fetch(`${API_BASE_URL}/pickdroproutes`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Unknown error occurred');
-      }
-  
-      const data = await response.json();
-      Alert.alert('Success', 'Route created successfully!', [{ text: 'OK', onPress: () => navigation.goBack() }]);
+        const response = await fetch(`${API_BASE_URL}/pickdroproutes`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Unknown error occurred');
+        }
+
+        const data = await response.json();
+        Alert.alert('Success', 'Route created successfully!', [{ text: 'OK', onPress: () => navigation.goBack() }]);
     } catch (error) {
-      console.error('Error creating route:', error.message);
-      Alert.alert('Error', error.message);
-      setFormSubmitted(false); // Allow re-submission if there's an error
+        console.error('Error creating route:', error.message);
+        Alert.alert('Error', error.message);
+        setFormSubmitted(false); // Allow re-submission if there's an error
     }
-  };
+};
+
   
   const onPickupTimeChange = (event, selectedDate) => {
     setShowPickupTimePicker(false);

@@ -9,10 +9,12 @@ const Vehicleinfo = ({ navigation, route }) => {
   const [vehicleModel, setVehicleModel] = useState('');
   const [carNumberPlate, setVehicleNumberPlate] = useState('');
   const [vehiclePhoto, setvehiclePhoto] = useState(null);
+  const [vehicleCC, setVehicleCC] = useState('');
+  const [vehicleType, setVehicleType] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
- 
 
-  const {user } = route.params;
+  const { user } = route.params;
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -31,7 +33,7 @@ const Vehicleinfo = ({ navigation, route }) => {
       Alert.alert('Error', 'Form already submitted. Please try again.');
       return;
     }
-  
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/vehicles`, {
         method: 'POST',
@@ -43,28 +45,28 @@ const Vehicleinfo = ({ navigation, route }) => {
           vehicle_model: vehicleModel,
           vehicle_number_plate: carNumberPlate,
           vehicle_photo: vehiclePhoto,
-          d_id: user.d_id, // Use driverId from route params
+          vehicle_cc: vehicleCC,
+          vehicle_type: vehicleType, // Add vehicle type field
+          d_id: user.d_id,
         }),
       });
-  
-      const data = await response.json(); // Make sure to handle JSON response correctly
-  
+
+      const data = await response.json();
+
       if (response.ok) {
         console.log('Vehicle inserted successfully!');
         setFormSubmitted(true);
-        Alert.alert('Success', 'Vehicle added successfully!', [
-          { text: 'OK', onPress: () => navigation.goBack() },
-        ]);
+        Alert.alert('Success', 'Vehicle added successfully!', [{ text: 'OK', onPress: () => navigation.goBack() }]);
       } else {
         console.error('Error inserting vehicle', data.message);
-        Alert.alert('Error', data.message);  // Use the custom message from the backend
+        Alert.alert('Error', data.message);
       }
     } catch (error) {
       console.error('Error:', error);
       Alert.alert('Error', 'Network error, please try again later.');
     }
   };
-  
+
   return (
     <View
       style={{
@@ -81,7 +83,7 @@ const Vehicleinfo = ({ navigation, route }) => {
         style={{
           width: '30%',
           height: 80,
-          marginBottom: 20,
+          marginBottom: 10,
           borderRadius: 20,
           backgroundColor: 'rgb(24,61,61)',
         }}
@@ -90,7 +92,7 @@ const Vehicleinfo = ({ navigation, route }) => {
         Vehicle Details
       </Text>
 
-      <View style={{ borderBottomWidth: 1, borderColor: 'gray', width: '90%', marginBottom: 20 }}>
+      <View style={{ borderBottomWidth: 1, borderColor: 'gray', width: '90%', marginBottom: 10 }}>
         <Picker
           selectedValue={vehicleBrand}
           style={{ width: '100%', height: 50 }}
@@ -118,7 +120,7 @@ const Vehicleinfo = ({ navigation, route }) => {
         </Picker>
       </View>
 
-      <View style={{ borderBottomWidth: 1, borderColor: 'gray', width: '90%', marginBottom: 20 }}>
+      <View style={{ borderBottomWidth: 1, borderColor: 'gray', width: '90%', marginBottom: 10 }}>
         <Picker
           selectedValue={vehicleModel}
           style={{ width: '100%', height: 50 }}
@@ -137,7 +139,7 @@ const Vehicleinfo = ({ navigation, route }) => {
           height: 50,
           borderBottomWidth: 1,
           borderColor: 'gray',
-          marginBottom: 20,
+          marginBottom: 10,
           paddingHorizontal: 10,
           fontSize: 18,
         }}
@@ -146,10 +148,43 @@ const Vehicleinfo = ({ navigation, route }) => {
         onChangeText={setVehicleNumberPlate}
       />
 
+      <View style={{ borderBottomWidth: 1, borderColor: 'gray', width: '90%', marginBottom: 10 }}>
+        <Picker
+          selectedValue={vehicleCC}
+          style={{ width: '100%', height: 50 }}
+          onValueChange={(itemValue, itemIndex) => setVehicleCC(itemValue)}
+        >
+          <Picker.Item label="Select Vehicle CC" value="" />
+          <Picker.Item label="660 cc" value="660" />
+          <Picker.Item label="800 cc" value="800" />
+          <Picker.Item label="1000 cc" value="1000" />
+          <Picker.Item label="1200 cc" value="1200" />
+          <Picker.Item label="1500 cc" value="1500" />
+          <Picker.Item label="1800 cc" value="1800" />
+          <Picker.Item label="2000 cc" value="2000" />
+          <Picker.Item label="2500 cc" value="2500" />
+          <Picker.Item label="3000 cc" value="3000" />
+          <Picker.Item label="Other" value="other" />
+        </Picker>
+      </View>
+
+      <View style={{ borderBottomWidth: 1, borderColor: 'gray', width: '90%', marginBottom: 10 }}>
+        <Picker
+          selectedValue={vehicleType}
+          style={{ width: '100%', height: 50 }}
+          onValueChange={(itemValue, itemIndex) => setVehicleType(itemValue)}
+        >
+          <Picker.Item label="Select Vehicle Type" value="" />
+          <Picker.Item label="Car" value="Car" />
+          <Picker.Item label="Carry" value="Carry" />
+          <Picker.Item label="Van" value="Van" />
+        </Picker>
+      </View>
+
       <TouchableOpacity
         style={{
           marginBottom: 30,
-          marginTop: 20,
+          marginTop: 10,
         }}
         onPress={() => pickImage('vehicle')}
       >
@@ -174,7 +209,7 @@ const Vehicleinfo = ({ navigation, route }) => {
           paddingVertical: 15,
           borderRadius: 25,
           alignItems: 'center',
-          marginTop: 20,
+          marginTop: 10,
         }}
       >
         <Text style={{ color: 'white', fontSize: 16 }}>Submit</Text>

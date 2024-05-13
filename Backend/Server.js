@@ -4,6 +4,9 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = 8082;
 const cors = require('cors');
+require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
 
 const db = mysql.createConnection({
   host: 'localhost',
@@ -43,6 +46,31 @@ app.use(express.json());
 //Parser
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const storeItems = new Map([
+  [1, { priceInCents: 10000, name: "Learn React Today" }],
+  [2, { priceInCents: 20000, name: "Learn CSS Today" }],
+])
+app.post('/create-payment-intent', async (req, res) => {
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: req.body.amount,
+      currency: 'usd',  // Make sure this matches your frontend
+      payment_method_types: ['card'],
+    });
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+
+
+
+
+
 // API endpoint to handle Passenger registration
 app.post('/api/register', (req, res) => {
   const { identity, phonenumber, name, password } = req.body; // Include identity in the request body
@@ -70,7 +98,6 @@ app.post('/api/register', (req, res) => {
 app.post('/api/registerDriver', (req, res) => {
   const {
     identity,
-    type,
     firstName,
     lastName,
     phoneNumber,
@@ -86,7 +113,6 @@ app.post('/api/registerDriver', (req, res) => {
 
   if (
     !identity ||
-    !type ||
     !firstName ||
     !lastName ||
     !phoneNumber ||
@@ -101,14 +127,13 @@ app.post('/api/registerDriver', (req, res) => {
   }
 
   const query = `
-    INSERT INTO driver (\`identity\`, \`type\`, \`name\`, \`lastname\`, \`phonenumber\`, \`password\`, \`gender\`,
+    INSERT INTO driver (\`identity\`, \`name\`, \`lastname\`, \`phonenumber\`, \`password\`, \`gender\`,
         \`license-number\`,  \`driverphoto\`,
       \`license-photo\`,  \`cnic-photo\`)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   const values = [
     identity,
-    type,
     firstName,
     lastName,
     phoneNumber,
@@ -503,16 +528,18 @@ app.put('/passenger/:pid', (req, res) => {
   });
 });
 
-app.post('/api/vehicles', (req, res) => {
-  const { vehicle_brand, vehicle_model, vehicle_number_plate, vehicle_photo, d_id } = req.body;
 
-  if (!vehicle_brand || !vehicle_model || !vehicle_number_plate || !vehicle_photo || !d_id) {
+//APi end point for vehicle registration of Driver
+
+app.post('/api/vehicles', (req, res) => {
+  const { vehicle_brand, vehicle_model,vehicle_type, vehicle_number_plate, vehicle_photo, vehicle_cc, d_id } = req.body;
+
+  if (!vehicle_brand || !vehicle_model || !vehicle_type ||!vehicle_number_plate || !vehicle_photo || !vehicle_cc || !d_id) {
     return res.status(400).json({ message: 'Please provide all required fields.' });
   }
 
-  const query =
-    'INSERT INTO vehicle (d_id, vehicle_brand, vehicle_model, vehicle_number_plate, vehicle_photo) VALUES (?, ?, ?, ?, ?)';
-  const values = [d_id, vehicle_brand, vehicle_model, vehicle_number_plate, vehicle_photo];
+  const query = 'INSERT INTO vehicle (d_id, vehicle_brand, vehicle_model, vehicle_type, vehicle_number_plate, vehicle_photo, vehicle_cc) VALUES (?, ?, ?, ?, ?, ?, ?)';
+  const values = [d_id, vehicle_brand, vehicle_model, vehicle_type, vehicle_number_plate, vehicle_photo, vehicle_cc];
 
   db.query(query, values, (err, result) => {
     if (err) {
@@ -524,19 +551,52 @@ app.post('/api/vehicles', (req, res) => {
     res.status(201).json({ message: 'Vehicle registered successfully' });
   });
 });
+
+
+//API end point for fetching Vehicle Details
+app.get('/api/vehicles', (req, res) => {
+  const query = 'SELECT * FROM vehicle';
+
+  db.query(query, (err, results) => {
+      if (err) {
+          console.error('Error retrieving vehicle data:', err);
+          return res.status(500).json({ message: 'Internal Server Error', error: err.message });
+      }
+
+      if (results.length === 0) {
+          return res.status(404).json({ message: 'No vehicle records found.' });
+      }
+
+      res.status(200).json({
+          message: 'Vehicle records retrieved successfully',
+          data: results
+      });
+  });
+});
+
+
+
+
+
 // Endpoint to create a new route
 app.post('/pickdroproutes', (req, res) => {
-  const { source, destination, pickupPoints, dropoffPoints, pickupTime, dropoffTime } = req.body;
+  console.log(req.body); // Log the entire body to see what you receive
 
+  const { source, destination, pickupPoints, dropoffPoints, pickupTime, dropoffTime, d_id } = req.body;
+
+  if (!source || !destination || !pickupPoints || !dropoffPoints || !pickupTime || !dropoffTime || !d_id) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+  
   try {
     // Prepare the full details for pickup and dropoff points
     const formattedPickupPoints = pickupPoints.map(point => ({
-      title: point.title,
+      
       address: point.address,
       realName: point.realName
     }));
     const formattedDropoffPoints = dropoffPoints.map(point => ({
-      title: point.title,
+      
       address: point.address,
       realName: point.realName
     }));
@@ -547,11 +607,11 @@ app.post('/pickdroproutes', (req, res) => {
 
     // Insert the data into the database
     const query = `
-      INSERT INTO pickdroproute (source, destination, pickuppoints, dropoffpoints, pickuptime, dropofftime)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO pickdroproute (source, destination, pickuppoints, dropoffpoints, pickuptime, dropofftime, d_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
 
-    const values = [source, destination, pickupPointsJSON, dropoffPointsJSON, pickupTime, dropoffTime];
+    const values = [source, destination, pickupPointsJSON, dropoffPointsJSON, pickupTime, dropoffTime, d_id];
 
     db.query(query, values, (error, results, fields) => {
       if (error) {
@@ -567,26 +627,33 @@ app.post('/pickdroproutes', (req, res) => {
   }
 });
 
-// API endpoint to fetch data from the pickdroproute table
+function safeParse(jsonString) {
+  try {
+    return JSON.parse(jsonString);
+  } catch (e) {
+    console.error('Failed to parse JSON:', jsonString, e);
+    return null; // or however you want to handle errors
+  }
+}
+
 app.get('/pickdroproute', (req, res) => {
   const query = 'SELECT * FROM pickdroproute';
   db.query(query, (error, results) => {
     if (error) {
       console.error('Error querying the database:', error);
-      res.status(500).json({ error: 'Internal server error' });
-      return;
+      return res.status(500).json({ error: 'Internal server error' });
     }
 
-    // Deserialize the JSON strings for pickuppoints and dropoffpoints
     const routes = results.map(route => ({
       ...route,
-      pickuppoints: JSON.parse(route.pickuppoints),
-      dropoffpoints: JSON.parse(route.dropoffpoints)
+      pickuppoints: safeParse(route.pickuppoints),
+      dropoffpoints: safeParse(route.dropoffpoints)
     }));
 
     res.json(routes);
   });
 });
+
 
 
 app.get('/', (re, res) => {

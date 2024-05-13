@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+
 const PaymentMethodsScreen = ({navigation}) => {
   return (
     <View style={styles.container}>

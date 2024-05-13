@@ -15,7 +15,6 @@ const FileUploadScreen = ({ route }) => {
     firstName,
     lastName,
     gender,
-    vehicleType,
     phonenumber,
     password,
     licenseNumber,
@@ -54,7 +53,6 @@ const FileUploadScreen = ({ route }) => {
       // Make the API request to your backend endpoint for driver registration
       const response = await axios.post(`${API_BASE_URL}/api/registerDriver`, {
         identity,
-        type: vehicleType,
         firstName,
         lastName,
         phoneNumber: phonenumber,

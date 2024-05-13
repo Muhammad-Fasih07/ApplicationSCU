@@ -11,7 +11,7 @@ const DriverPhonenumber = ({ navigation, route }) => {
   };
 
   const handleSubmit = () => {
-    const phoneRegex = /^\d{10}$/;
+    const phoneRegex = /^\d{11}$/;
 
     if (!phoneRegex.test(phonenumber)) {
       Alert.alert('Invalid Phone Number', 'Please enter a valid Pakistani phone number.');
