@@ -1,5 +1,7 @@
 const mysql = require('mysql');
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
 const bodyParser = require('body-parser');
 const app = express();
 const port = 8082;
@@ -64,6 +66,26 @@ app.post('/create-payment-intent', async (req, res) => {
 });
 
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
+const upload = multer({ storage: storage });
+
+app.post('/upload', upload.single('photo'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send({ message: 'No file uploaded' });
+  }
+  const fileUrl = `http://localhost:${port}/uploads/${req.file.filename}`;
+  res.send({ url: fileUrl });
+});
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 
@@ -449,7 +471,7 @@ app.get('/api/carpoolingp', (req, res) => {
 // API endpoint to fetch driver data by ID
 app.get('/driver/:d_id', (req, res) => {
   const { d_id } = req.params;
-  const sqlQuery = 'SELECT name, lastname, type, gender, driverphoto FROM driver WHERE d_id = ?';
+  const sqlQuery = 'SELECT name, lastname, gender, driverphoto FROM driver WHERE d_id = ?';
   db.query(sqlQuery, [d_id], (err, result) => {
     if (err) {
       console.error('Error fetching driver:', err);
@@ -463,17 +485,18 @@ app.get('/driver/:d_id', (req, res) => {
   });
 });
 
+
 // API endpoint to update driver data by ID
 app.put('/driver/:d_id', (req, res) => {
   const { d_id } = req.params;
-  const { name, lastname, type, gender, driverphoto } = req.body;
+  const { name, lastname, gender, driverphoto } = req.body;
 
-  if (!name || !lastname || !type || !gender || !driverphoto) {
+  if (!name || !lastname || !gender || !driverphoto) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  const sqlQuery = 'UPDATE driver SET name = ?, lastname = ?, type = ?, gender = ?, driverphoto = ? WHERE d_id = ?';
-  db.query(sqlQuery, [name, lastname, type, gender, driverphoto, d_id], (err, result) => {
+  const sqlQuery = 'UPDATE driver SET name = ?, lastname = ?, gender = ?, driverphoto = ? WHERE d_id = ?';
+  db.query(sqlQuery, [name, lastname, gender, driverphoto, d_id], (err, result) => {
     if (err) {
       console.error('Error updating driver:', err);
       return res.status(500).json({ message: 'Error updating driver data', error: err });
@@ -485,6 +508,8 @@ app.put('/driver/:d_id', (req, res) => {
     }
   });
 });
+
+
 
 // API endpoint to fetch passenger data by ID
 app.get('/passenger/:pid', (req, res) => {
@@ -655,6 +680,94 @@ app.get('/pickdroproute', (req, res) => {
 });
 
 
+// Endpoint to save pick&Drop booking
+app.post('/api/bookings', (req, res) => {
+  const { pickupPoint, dropOffPoint, seats, fare, pid } = req.body;
+
+  if (!pickupPoint || !dropOffPoint || !seats || !fare || !pid) {
+    res.status(400).send('Missing required fields');
+    return;
+  }
+
+  const query = 'INSERT INTO bookings (pickupPoint, dropOffPoint, seats, fare, pid, status) VALUES (?, ?, ?, ?, ?, "pending")';
+
+  db.query(query, [pickupPoint, dropOffPoint, seats, fare, pid], (err, result) => {
+    if (err) {
+      console.error('Error saving booking:', err);
+      res.status(500).send('Server error');
+      return;
+    }
+    res.status(200).send('Booking saved successfully');
+  });
+});
+
+
+app.get('/api/bookings/pending', (req, res) => {
+  const query = 'SELECT * FROM bookings WHERE status = "pending"';
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching pending bookings:', err);
+      res.status(500).send('Server error');
+      return;
+    }
+    res.status(200).json(results);
+  });
+});
+
+app.put('/api/bookings/:id/status', (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  const query = 'UPDATE bookings SET status = ? WHERE id = ?';
+
+  db.query(query, [status, id], (err, result) => {
+    if (err) {
+      console.error('Error updating booking status:', err);
+      res.status(500).send('Server error');
+      return;
+    }
+    res.status(200).send('Booking status updated successfully');
+  });
+});
+
+
+
+// Fetch all messages
+app.get('/api/chat', (req, res) => {
+  const sql = `
+    SELECT m.id, m.message, m.created_at, u.name as userName
+    FROM messages m
+    JOIN users u ON m.userId = u.id
+    ORDER BY m.created_at ASC
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Error fetching messages:', err);
+      return res.status(500).json({ error: 'Error fetching messages' });
+    }
+    res.json(results);
+  });
+});
+
+// Add a new message
+app.post('/api/chat', (req, res) => {
+  const { userId, message } = req.body;
+
+  // Validate input
+  if (!userId || !message) {
+    return res.status(400).json({ error: 'User ID and message are required' });
+  }
+
+  const sql = 'INSERT INTO messages (userId, message) VALUES (?, ?)';
+  db.query(sql, [userId, message], (err, result) => {
+    if (err) {
+      console.error('Error inserting message:', err);
+      return res.status(500).json({ error: 'Error inserting message' });
+    }
+    res.status(201).json({ id: result.insertId });
+  });
+});
 
 app.get('/', (re, res) => {
   return res.json('scu app running');

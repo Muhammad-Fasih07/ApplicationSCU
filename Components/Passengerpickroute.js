@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const Passengerpickroute = ({ route }) => {
+  const { user } = route.params;
   const { selectedRoute } = route.params;
   const navigation = useNavigation();
 
@@ -10,7 +11,7 @@ const Passengerpickroute = ({ route }) => {
     console.log('Pickup point selected:', pickupPoint.realName);
     // Navigate with the pickup point's real name as a parameter
     navigation.navigate('Passengerdroproute', {
-      selectedRoute,
+      selectedRoute,user,
       pickupPoint: pickupPoint.realName || 'Unknown location'
     });
   };

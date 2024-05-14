@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import { API_BASE_URL } from '../src/env'; // Ensure this points to your API server
 
-const EditProfileScreen = ({ route }) => {
-  const { user } = route.params; // Assuming user object is passed in params with id
+const EditProfileScreenP = ({ route, navigation }) => {
+  const { user } = route.params;
+
+  if (!user) {
+    Alert.alert("Error", "User data is missing.");
+    return null;
+  }
 
   const [profileImage, setProfileImage] = useState(user?.photo || 'https://via.placeholder.com/150');
   const [firstName, setFirstName] = useState(user?.name || '');
   const [identity, setIdentity] = useState(user?.identity || '');
+  const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`${API_BASE_URL}/passenger/${user.pid}`);
         const { name, identity, photo } = response.data;
@@ -24,6 +31,8 @@ const EditProfileScreen = ({ route }) => {
       } catch (error) {
         console.error('Failed to fetch passenger data:', error);
         Alert.alert('Error', 'Failed to fetch profile data');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -33,12 +42,9 @@ const EditProfileScreen = ({ route }) => {
   useEffect(() => {
     (async () => {
       const libraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (libraryStatus.status !== 'granted') {
-        Alert.alert('Permission Required', 'Please grant photo library permissions to use this feature');
-      }
       const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
-      if (cameraStatus.status !== 'granted') {
-        Alert.alert('Permission Required', 'Please grant camera permissions to use this feature');
+      if (libraryStatus.status !== 'granted' || cameraStatus.status !== 'granted') {
+        Alert.alert('Permission Required', 'Please grant camera and photo library permissions to use this feature');
       }
     })();
   }, []);
@@ -49,6 +55,7 @@ const EditProfileScreen = ({ route }) => {
       return;
     }
 
+    setLoading(true);
     try {
       const response = await axios.put(`${API_BASE_URL}/passenger/${user.pid}`, {
         name: firstName,
@@ -58,36 +65,60 @@ const EditProfileScreen = ({ route }) => {
       if (response.data) {
         Alert.alert('Success', 'Profile updated successfully');
         setEditMode(false);
+        navigation.navigate('Dashboard', { user: { ...user, name: firstName, identity, photo: profileImage } });
       }
     } catch (error) {
       console.error('Failed to update passenger data:', error);
       Alert.alert('Error', 'Failed to update profile');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleTakePhoto = async () => {
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.cancelled && result.uri) {
-      setProfileImage(result.uri);
+  const handleImageSelection = async (type) => {
+    let result;
+    if (type === 'camera') {
+      result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+    } else {
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
     }
-  };
 
-  const handleChooseFromGallery = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    if (!result.cancelled) {
+      const localUri = result.uri;
+      const filename = localUri.split('/').pop();
+      const match = /\.(\w+)$/.exec(filename);
+      const type = match ? `image/${match[1]}` : `image`;
 
-    if (!result.cancelled && result.uri) {
-      setProfileImage(result.uri);
+      const formData = new FormData();
+      formData.append('photo', { uri: localUri, name: filename, type });
+
+      try {
+        setLoading(true);
+        const uploadResponse = await axios.post(`${API_BASE_URL}/upload`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        if (uploadResponse.data && uploadResponse.data.url) {
+          setProfileImage(uploadResponse.data.url);
+          Alert.alert('Success', 'Picture updated successfully');
+        }
+      } catch (error) {
+        console.error('Failed to upload image:', error);
+        Alert.alert('Error', 'Failed to upload image');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -97,8 +128,8 @@ const EditProfileScreen = ({ route }) => {
         'Change Profile Picture',
         'Select source:',
         [
-          { text: 'Camera', onPress: handleTakePhoto },
-          { text: 'Gallery', onPress: handleChooseFromGallery },
+          { text: 'Camera', onPress: () => handleImageSelection('camera') },
+          { text: 'Gallery', onPress: () => handleImageSelection('gallery') },
           { text: 'Cancel', style: 'cancel' },
         ],
         { cancelable: true }
@@ -107,18 +138,17 @@ const EditProfileScreen = ({ route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
+      {loading && <ActivityIndicator size="large" color="#0066cc" />}
       <Text style={styles.title}>{editMode ? 'Edit Profile' : 'Profile'}</Text>
-      
       <View style={styles.profileImageContainer}>
         <Image source={{ uri: profileImage }} style={styles.profileImage} />
         {editMode && (
           <TouchableOpacity onPress={handleEditProfileImage} style={styles.editIcon}>
-            <MaterialCommunityIcons name="pencil" size={24} color="#fff" />
+            <MaterialCommunityIcons name="camera" size={24} color="#fff" />
           </TouchableOpacity>
         )}
       </View>
-
       {editMode ? (
         <>
           <TextInput
@@ -127,18 +157,21 @@ const EditProfileScreen = ({ route }) => {
             value={firstName}
             onChangeText={setFirstName}
             autoCapitalize="none"
+            placeholderTextColor="#888"
           />
-         
           <TextInput
             style={styles.input}
             placeholder="Identity"
             value={identity}
             onChangeText={setIdentity}
             autoCapitalize="none"
+            placeholderTextColor="#888"
           />
-          
           <TouchableOpacity onPress={handleUpdateProfile} style={styles.button}>
             <Text style={styles.buttonText}>Save Changes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setEditMode(false)} style={styles.cancelButton}>
+            <Text style={styles.buttonText}>Cancel</Text>
           </TouchableOpacity>
         </>
       ) : (
@@ -150,7 +183,7 @@ const EditProfileScreen = ({ route }) => {
           </TouchableOpacity>
         </>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -158,13 +191,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#f5f5f5',
     padding: 20,
+    paddingBottom: 50,
   },
   title: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: 'bold',
+    color: '#022B42',
     marginBottom: 20,
   },
   profileImageContainer: {
@@ -175,6 +209,8 @@ const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 70,
+    borderWidth: 2,
+    borderColor: '#022B42',
   },
   editIcon: {
     position: 'absolute',
@@ -187,26 +223,39 @@ const styles = StyleSheet.create({
   input: {
     width: '90%',
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderWidth: 1,
+    borderColor: '#022B42',
+    borderRadius: 10,
     marginBottom: 10,
     fontSize: 16,
+    backgroundColor: '#fff',
   },
   infoText: {
-    fontSize: 16,
+    fontSize: 18,
+    color: '#333',
     marginBottom: 10,
   },
   button: {
     marginTop: 20,
-    backgroundColor: '#0066cc',
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: '#022B42',
+    padding: 15,
+    borderRadius: 10,
+    width: '90%',
+    alignItems: 'center',
+  },
+  cancelButton: {
+    marginTop: 10,
+    backgroundColor: '#F44336',
+    padding: 15,
+    borderRadius: 10,
+    width: '90%',
+    alignItems: 'center',
   },
   buttonText: {
     color: 'white',
     fontSize: 18,
-    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });
 
-export default EditProfileScreen;
+export default EditProfileScreenP;

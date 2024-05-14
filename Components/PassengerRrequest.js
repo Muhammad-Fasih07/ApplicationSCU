@@ -31,7 +31,8 @@ const getShadowStyle = () => {
 
 const screen = Dimensions.get('window'); // Get device dimensions
 
-const PassengerRequest = () => {
+const PassengerRequest = ({route}) => {
+  const { user } = route.params;
   const navigation = useNavigation();
   const [routes, setRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -61,7 +62,8 @@ const PassengerRequest = () => {
       onPress={() => navigation.navigate('Passengerpickroute', {
         selectedRoute: item,
         source: item.source,
-        destination: item.destination
+        destination: item.destination,
+        user: user
       })}
       style={styles.containerStyle}
     >

@@ -1,33 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import { API_BASE_URL } from '../src/env';
 
-const EditProfileScreen = ({ route }) => {
+const EditProfileScreen = ({ route, navigation }) => {
   const { user } = route.params;
+
+  if (!user) {
+    Alert.alert("Error", "User data is missing.");
+    return null;
+  }
 
   const [profileImage, setProfileImage] = useState(user?.driverphoto || 'https://via.placeholder.com/150');
   const [firstName, setFirstName] = useState(user?.name || '');
   const [lastName, setLastName] = useState(user?.lastname || '');
-  const [type, setType] = useState(user?.type || '');
   const [gender, setGender] = useState(user?.gender || '');
+  const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`${API_BASE_URL}/driver/${user.d_id}`);
-        const { name, lastname, type, gender, driverphoto } = response.data;
+        const { name, lastname, gender, driverphoto } = response.data;
         setFirstName(name);
         setLastName(lastname);
-        setType(type);
         setGender(gender);
         setProfileImage(driverphoto);
       } catch (error) {
         console.error('Failed to fetch driver data:', error);
-        Alert.alert('Error', 'Failed to fetch profile data');
+        Alert.alert('Error', `Failed to fetch profile data: ${error.message}`);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -51,21 +58,25 @@ const EditProfileScreen = ({ route }) => {
       return;
     }
 
+    setLoading(true);
     try {
       const response = await axios.put(`${API_BASE_URL}/driver/${user.d_id}`, {
         name: firstName,
         lastname: lastName,
-        type: type,
         gender: gender,
         driverphoto: profileImage
       });
       if (response.data) {
         Alert.alert('Success', 'Profile updated successfully');
         setEditMode(false);
+        // Navigate back to Dashboard with updated user data
+        navigation.navigate('DashboardD', { user: { ...user, name: firstName, lastname: lastName, gender, driverphoto: profileImage } });
       }
     } catch (error) {
       console.error('Failed to update driver data:', error);
-      Alert.alert('Error', 'Failed to update profile');
+      Alert.alert('Error', `Failed to update profile: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,7 +104,8 @@ const EditProfileScreen = ({ route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
+      {loading && <ActivityIndicator size="large" color="#0066cc" />}
       <Text style={styles.title}>{editMode ? 'Edit Profile' : 'Profile'}</Text>
       <View style={styles.profileImageContainer}>
         <Image source={{ uri: profileImage }} style={styles.profileImage} />
@@ -105,39 +117,63 @@ const EditProfileScreen = ({ route }) => {
       </View>
       {editMode ? (
         <>
-          <TextInput style={styles.input} placeholder="First Name" value={firstName} onChangeText={setFirstName} autoCapitalize="none" />
-          <TextInput style={styles.input} placeholder="Last Name" value={lastName} onChangeText={setLastName} autoCapitalize="none" />
-          <TextInput style={styles.input} placeholder="Type" value={type} onChangeText={setType} autoCapitalize="none" />
-          <TextInput style={styles.input} placeholder="Gender" value={gender} onChangeText={setGender} autoCapitalize="none" />
+          <TextInput
+            style={styles.input}
+            placeholder="First Name"
+            value={firstName}
+            onChangeText={setFirstName}
+            autoCapitalize="none"
+            placeholderTextColor="#888"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Last Name"
+            value={lastName}
+            onChangeText={setLastName}
+            autoCapitalize="none"
+            placeholderTextColor="#888"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Gender"
+            value={gender}
+            onChangeText={setGender}
+            autoCapitalize="none"
+            placeholderTextColor="#888"
+          />
           <TouchableOpacity onPress={handleUpdateProfile} style={styles.button}>
             <Text style={styles.buttonText}>Save Changes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setEditMode(false)} style={styles.cancelButton}>
+            <Text style={styles.buttonText}>Cancel</Text>
           </TouchableOpacity>
         </>
       ) : (
         <>
           <Text style={styles.infoText}>First Name: {firstName}</Text>
           <Text style={styles.infoText}>Last Name: {lastName}</Text>
-          <Text style={styles.infoText}>Type: {type}</Text>
           <Text style={styles.infoText}>Gender: {gender}</Text>
           <TouchableOpacity onPress={() => setEditMode(true)} style={styles.button}>
             <Text style={styles.buttonText}>Edit Profile</Text>
           </TouchableOpacity>
         </>
       )}
-    </View>
+    </ScrollView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#f5f5f5',
     padding: 20,
+    paddingBottom: 50,
   },
   title: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: 'bold',
+    color: '#022B42',
     marginBottom: 20,
   },
   profileImageContainer: {
@@ -148,16 +184,10 @@ const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 70,
+    borderWidth: 2,
+    borderColor: '#022B42',
   },
   editIcon: {
-    position: 'absolute',
-    bottom: 5,
-    right: 5,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    borderRadius: 12,
-    padding: 5,
-  },
-  imageIcon: {
     position: 'absolute',
     bottom: 5,
     right: 5,
@@ -168,25 +198,38 @@ const styles = StyleSheet.create({
   input: {
     width: '90%',
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderWidth: 1,
+    borderColor: '#022B42',
+    borderRadius: 10,
     marginBottom: 10,
     fontSize: 16,
+    backgroundColor: '#fff',
   },
   infoText: {
-    fontSize: 16,
+    fontSize: 18,
+    color: '#333',
     marginBottom: 10,
   },
   button: {
     marginTop: 20,
-    backgroundColor: '#0066cc',
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: '#022B42',
+    padding: 15,
+    borderRadius: 10,
+    width: '90%',
+    alignItems: 'center',
+  },
+  cancelButton: {
+    marginTop: 10,
+    backgroundColor: '#F44336',
+    padding: 15,
+    borderRadius: 10,
+    width: '90%',
+    alignItems: 'center',
   },
   buttonText: {
     color: 'white',
     fontSize: 18,
-    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });
 

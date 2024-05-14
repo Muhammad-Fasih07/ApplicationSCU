@@ -10,7 +10,6 @@ const ComplaintForm = ({ route }) => {
   const [phonenumber, setPhoneNumber] = useState(user.phonenumber || '');
   const [complaint, setComplaint] = useState('');
   const [reason, setReason] = useState('');
-  
 
   const reasons = [
     'Rude behavior',
@@ -57,51 +56,53 @@ const ComplaintForm = ({ route }) => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
+      <View style={styles.imageContainer}>
         <Image
           source={require('../assets/logoscu.png')}
           style={styles.logo}
-          resizeMode="center"
+          resizeMode="cover"
         />
       </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your name"
-        value={name}
-        onChangeText={setName}
-      />
+      <View style={styles.formContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your name"
+          value={name}
+          onChangeText={setName}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your Phone number"
-        value={phonenumber}
-        onChangeText={setPhoneNumber}
-        keyboardType="phone-pad"
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your Phone number"
+          value={phonenumber}
+          onChangeText={setPhoneNumber}
+          keyboardType="phone-pad"
+        />
 
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        placeholder="Enter your complaint"
-        value={complaint}
-        onChangeText={setComplaint}
-        multiline
-      />
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          placeholder="Enter your complaint"
+          value={complaint}
+          onChangeText={setComplaint}
+          multiline
+        />
 
-      <Picker
-        selectedValue={reason}
-        style={styles.picker}
-        onValueChange={(itemValue, itemIndex) => itemIndex !== 0 && setReason(itemValue)}
-      >
-        <Picker.Item label="Select a reason for complaint" value="" />
-        {reasons.map((reason, index) => (
-          <Picker.Item key={index} label={reason} value={reason} />
-        ))}
-      </Picker>
+        <Picker
+          selectedValue={reason}
+          style={styles.picker}
+          onValueChange={(itemValue, itemIndex) => itemIndex !== 0 && setReason(itemValue)}
+        >
+          <Picker.Item label="Select a reason for complaint" value="" />
+          {reasons.map((reason, index) => (
+            <Picker.Item key={index} label={reason} value={reason} />
+          ))}
+        </Picker>
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit Complaint</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Submit Complaint</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
@@ -109,42 +110,68 @@ const ComplaintForm = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F5F7FA',
     padding: 20,
   },
-  header: {
+  imageContainer: {
     alignItems: 'center',
-    marginBottom: 50,
+    marginBottom: 30,
   },
   logo: {
-    width: '60%',
-    height: 150,
-    borderRadius: 40,
+    width: '70%',
+    height: 140,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  formContainer: {
+    backgroundColor: '#FFF',
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
   input: {
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: '#022B42',
-    borderRadius: 20,
-    padding: 10,
+    borderRadius: 10,
+    padding: 15,
     marginBottom: 20,
+    backgroundColor: '#FFF',
     fontSize: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
   textArea: {
-    height: 200,
+    height: 150,
   },
   picker: {
     height: 50,
     width: '100%',
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#022B42',
+    borderRadius: 10,
+    backgroundColor: '#FFF',
+    padding: 10,
   },
   button: {
-    backgroundColor: '#022B42',
+    backgroundColor: '#FDD387',
     borderRadius: 20,
     padding: 15,
     alignItems: 'center',
     marginTop: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
   buttonText: {
-    color: '#fff',
+    color: '#022B42',
     fontSize: 18,
     fontWeight: 'bold',
   },

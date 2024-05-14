@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MapView, { Marker, Callout, Polyline as RNMPolyline } from 'react-native-maps';
 import axios from 'axios';
-import { API_KEY } from '../src/env';
+import { API_KEY, API_BASE_URL } from '../src/env';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import Polyline from '@mapbox/polyline';
@@ -15,6 +15,7 @@ const ButtonWithIcon = ({ iconName, label, onPress, isIncrement = false, isDecre
 );
 
 const PDbooking = ({ route }) => {
+  const { user } = route.params;
   const { selectedRoute, dropOffPoint, pickupPoint } = route.params;
   const navigation = useNavigation();
   const [pickupCoordinates, setPickupCoordinates] = useState(null);
@@ -126,6 +127,33 @@ const PDbooking = ({ route }) => {
       setFare(updatedFare);
     }
   }, [polylineCoords, seats]);
+  
+  const confirmBooking = async () => {
+    try {
+      const bookingDetails = {
+        pickupPoint,
+        dropOffPoint,
+        seats,
+        fare,
+        pid: user.pid, // Ensure the correct key is used (pid instead of user)
+      };
+  
+      const response = await axios.post(`${API_BASE_URL}/api/bookings`, bookingDetails);
+  
+      if (response.status === 200) {
+        alert('Booking successful!');
+        navigation.navigate('BookingConfirmation', { bookingDetails ,user:user});
+      } else {
+        throw new Error('Booking failed');
+      }
+    } catch (error) {
+      console.error('Error confirming booking:', error);
+      alert('Booking failed. Please try again.');
+    }
+  };
+  
+  
+  
 
   return (
     <View style={styles.container}>
@@ -170,7 +198,7 @@ const PDbooking = ({ route }) => {
           <Text style={styles.label}>You Pay</Text>
           <Text style={styles.amount}>{`${fare.toFixed(2)} PKR`}</Text>
         </View>
-        <TouchableOpacity style={styles.bookButton} onPress={() => alert('Booking successful!')}>
+        <TouchableOpacity style={styles.bookButton} onPress={confirmBooking}>
           <Text style={styles.bookButtonText}>BOOK</Text>
         </TouchableOpacity>
       </View>

@@ -1,83 +1,87 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, Linking, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const ContactUsScreen = ({ navigation,route}) => {
-
-  
+const ContactUsScreen = ({ navigation, route }) => {
+  const { user } = route.params;
   const phoneNumber = '03117443034'; // Replace with your phone number
 
   const handleCallPress = () => {
     Linking.openURL(`tel:${phoneNumber}`);
   };
-  const { user } = route.params;
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#f5f5f5', alignItems: 'center', justifyContent: 'center' }}>
-      <View
-        style={{
-          height: 60,
-          width: '100%',
-          backgroundColor: '#022B42',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Text style={{ color: '#fff', fontSize: 24 }}>Contact Us</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Contact Us</Text>
       </View>
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'space-around', paddingVertical: 20 }}>
-        <TouchableOpacity
-          style={{
-            width: 200,
-            height: 200,
-            borderRadius: 100,
-            backgroundColor: '#022B42',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginVertical: 10,
-            elevation: 3,
-            shadowColor: '#000',
-            shadowOpacity: 0.3,
-            shadowRadius: 4,
-            shadowOffset: { height: 1 },
-          }}
-          onPress={handleCallPress}
-        >
-          <Icon name="call" size={50} color="#FDD387" />
-          <Text style={{ color: '#fff', fontSize: 18, marginTop: 8, textAlign: 'center' }}>Call</Text>
+      <View style={styles.content}>
+        <TouchableOpacity style={styles.button} onPress={handleCallPress}>
+          <Icon name="call" size={50} color='#022B42' />
+          <Text style={styles.buttonText}>Call</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Complaint',{ user: user })}
-          style={{
-            width: 200,
-            height: 200,
-            borderRadius: 100,
-            backgroundColor: '#022B42',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginVertical: 10,
-            elevation: 3,
-            shadowColor: '#000',
-            shadowOpacity: 0.3,
-            shadowRadius: 4,
-            shadowOffset: { height: 1 },
-          }}
+          onPress={() => navigation.navigate('Complaint', { user })}
+          style={styles.button}
         >
-          <Icon name="person" size={50} color="#FDD387" />
-          <Text
-            style={{
-              color: '#fff',
-              fontSize: 18,
-              marginTop: 8,
-              textAlign: 'center',
-            }}
-          >
-            Your Complaints
-          </Text>
+          <Icon name="person" size={50} color='#022B42' />
+          <Text style={styles.buttonText}>Your Complaints</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#022B42', // Primary color background
+    alignItems: 'center',
+  },
+  header: {
+    width: '100%',
+    paddingVertical: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgb(94, 147, 177)', // Secondary color
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  headerText: {
+    color: '#FFF',
+    fontSize: 28,
+    fontWeight: 'bold',
+    fontFamily: 'sans-serif-medium',
+  },
+  content: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+    width: '100%',
+  },
+  button: {
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: '#FDD387', // Accent color
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 20,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    shadowOffset: { height: 2 },
+  },
+  buttonText: {
+    color: '#022B42',
+    fontSize: 18,
+    marginTop: 10,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontFamily: 'sans-serif-light',
+  },
+});
 
 export default ContactUsScreen;

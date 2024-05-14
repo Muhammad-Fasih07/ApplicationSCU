@@ -42,6 +42,10 @@ import Passengerdroproute from './Components/Passengerdroproute';
 import PDbooking from './Components/PDbooking';
 import Paymenttype from './Components/Paymenttype';
 import Payment from './Components/Payment';
+import BookingConfirmation from './Components/BookingConfirmation';
+import NotificationsScreen from './Components/NotificationsScreen';
+import NotifactionsScreenP from './Components/NotifactionsScreenP';
+import ChatScreen from './Components/ChatScreen';
 
 const Stack = createStackNavigator();
 
@@ -88,9 +92,14 @@ const App = () => {
         <Stack.Screen name="PDbooking" component={PDbooking} />
         <Stack.Screen name="Payment" component={Payment} />
         <Stack.Screen name="Paymenttype" component={Paymenttype} />
+        <Stack.Screen name="BookingConfirmation" component={BookingConfirmation} />
+        <Stack.Screen name="NotificationsScreen" component={NotificationsScreen} />
+        <Stack.Screen name="NotificationsScreenP" component={NotifactionsScreenP} />
+        <Stack.Screen name="ChatScreen" component={ChatScreen} />
 
 
-       
+
+
         
       </Stack.Navigator>
     </NavigationContainer>

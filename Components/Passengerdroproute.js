@@ -3,13 +3,14 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const Passengerdroproute = ({ route }) => {
+  const { user } = route.params;
   const { selectedRoute, pickupPoint } = route.params;
   const navigation = useNavigation();
 
   const handleDropoffPointPress = (dropOffPoint) => {
     console.log('Drop-off point selected:', dropOffPoint.realName || 'Unknown drop-off location');
     navigation.navigate('PDbooking', {
-      selectedRoute, 
+      selectedRoute, user,
       pickupPoint, 
       dropOffPoint: dropOffPoint.realName || 'Unknown drop-off location'
     });

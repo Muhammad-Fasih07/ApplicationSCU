@@ -3,18 +3,17 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
-  Button,
   Alert,
   TouchableOpacity,
   FlatList,
+  SafeAreaView,
 } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { API_KEY } from '../src/env';
+import { Ionicons } from '@expo/vector-icons';
 
-const RouteScreen = ({ navigation,route }) => {
-
-  const {user } = route.params;
+const RouteScreen = ({ navigation, route }) => {
+  const { user } = route.params;
   const [pickupPoints, setPickupPoints] = useState([]);
   const [dropOffPoints, setDropOffPoints] = useState([]);
   const pickupSearchRef = useRef(null);
@@ -25,9 +24,9 @@ const RouteScreen = ({ navigation,route }) => {
       latitude: details.geometry.location.lat,
       longitude: details.geometry.location.lng,
       address: details.formatted_address,
-      realName: details.name, // Store the real name of the location
+      realName: details.name,
     };
-    
+
     const points = type === 'pickup' ? pickupPoints : dropOffPoints;
     const setPoints = type === 'pickup' ? setPickupPoints : setDropOffPoints;
 
@@ -53,7 +52,8 @@ const RouteScreen = ({ navigation,route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.heading}>Plan Your Route</Text>
       <GooglePlacesAutocomplete
         ref={pickupSearchRef}
         placeholder="Add Pickup Points"
@@ -64,7 +64,8 @@ const RouteScreen = ({ navigation,route }) => {
           language: 'en',
         }}
         styles={{
-          textInput: styles.textInput
+          textInput: styles.textInput,
+          listView: styles.listView,
         }}
       />
       <FlatList
@@ -72,11 +73,11 @@ const RouteScreen = ({ navigation,route }) => {
         keyExtractor={(item, index) => `pickup-${index}`}
         renderItem={({ item, index }) => (
           <View style={styles.locationItem}>
-            <Text style={[styles.locationText, { color: 'black' }]}>
+            <Text style={styles.locationText}>
               {item.realName} - {item.address}
             </Text>
             <TouchableOpacity onPress={() => handleRemoveLocation(index, 'pickup')}>
-              <Text style={styles.removeText}>Remove</Text>
+              <Ionicons name="trash-bin" size={20} color="red" />
             </TouchableOpacity>
           </View>
         )}
@@ -91,7 +92,8 @@ const RouteScreen = ({ navigation,route }) => {
           language: 'en',
         }}
         styles={{
-          textInput: styles.textInput
+          textInput: styles.textInput,
+          listView: styles.listView,
         }}
       />
       <FlatList
@@ -99,57 +101,74 @@ const RouteScreen = ({ navigation,route }) => {
         keyExtractor={(item, index) => `dropoff-${index}`}
         renderItem={({ item, index }) => (
           <View style={styles.locationItem}>
-            <Text style={[styles.locationText, { color: 'black' }]}>
+            <Text style={styles.locationText}>
               {item.realName} - {item.address}
             </Text>
             <TouchableOpacity onPress={() => handleRemoveLocation(index, 'dropoff')}>
-              <Text style={styles.removeText}>Remove</Text>
+              <Ionicons name="trash-bin" size={20} color="red" />
             </TouchableOpacity>
           </View>
         )}
       />
-      <View style={styles.buttonContainer}>
-        <Button title="Go to Pick Screen" onPress={navigateToPick} />
-      </View>
-    </View>
+      <TouchableOpacity style={styles.buttonContainer} onPress={navigateToPick}>
+        <Text style={styles.buttonText}>Go to Pick Screen</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 25,
-    backgroundColor: 'rgba(2,43,66,0.7)',
+    padding: 15,
+    backgroundColor: '#F5F5F5',
+  },
+  heading: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#022B42',
+    textAlign: 'center',
   },
   textInput: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#022B42',
     borderWidth: 1,
-    paddingLeft: 10,
+    paddingLeft: 15,
     borderRadius: 10,
     fontSize: 16,
+    backgroundColor: '#FFF',
+    marginBottom: 10,
+  },
+  listView: {
+    backgroundColor: '#FFF',
   },
   locationItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 10,
+    padding: 7,
     borderBottomWidth: 1,
-    borderBottomColor: 'lightgray',
-    backgroundColor: 'white',
+    borderBottomColor: '#E0E0E0',
+    backgroundColor: '#FFF',
+    marginBottom: 5,
+    borderRadius: 10,
   },
   locationText: {
     flex: 1,
-    fontSize: 12,
-    
-  },
-  removeText: {
-    color: 'red',
+    fontSize: 11,
+    color: '#333',
   },
   buttonContainer: {
-    backgroundColor: 'rgba(2,43,66,1)',
-    borderRadius: 5,
+    backgroundColor: '#022B42',
+    borderRadius: 10,
+    paddingVertical: 15,
+    alignItems: 'center',
     marginTop: 20,
-    padding: 10,
+  },
+  buttonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

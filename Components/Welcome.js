@@ -1,63 +1,27 @@
 import { StyleSheet, Text, View, SafeAreaView, ImageBackground, Dimensions, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { TextInput } from 'react-native-gesture-handler';
 
 const { height } = Dimensions.get('window');
 
 const Welcome = ({ navigation }) => {
   return (
-    <SafeAreaView>
-      <View style={{ backgroundColor: 'rgb(94, 147, 177)' }}>
+    <SafeAreaView style={styles.safeAreaView}>
+      <View style={styles.container}>
         <ImageBackground
-          style={{
-            height: height / 1.6,
-          }}
-          resizeMode="center"
+          style={styles.imageBackground}
+          resizeMode="cover"
           source={require('../assets/logo.png')}
         />
-        <View
-          style={{
-            paddingHorizontal: 16,
-            paddingTop: 4,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 40,
-              fontWeight: 'bold',
-              color: 'white',
-              textAlign: 'center',
-              marginTop: -50,
-            }}
-          >
-            EMpower Her
-          </Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.titleText}>EMpower Her</Text>
         </View>
 
-        <View style={{ paddingHorizontal: 8, paddingVertical: 36 }}>
+        <View style={styles.buttonContainer}>
           <TouchableOpacity
             onPress={() => navigation.navigate('Login')}
-            style={{
-              paddingVertical: 9.5,
-              paddingHorizontal: 10,
-              width: '80%',
-              borderRadius: 4,
-              backgroundColor: '#022B42',
-              marginLeft: 34,
-              alignContent: 'center',
-              marginVertical: 120,
-            }}
+            style={styles.getStartedButton}
           >
-            <Text
-              style={{
-                color: 'white',
-                fontSize: 20,
-                fontWeight: 'bold',
-                textAlign: 'center',
-              }}
-            >
-              Get started
-            </Text>
+            <Text style={styles.getStartedButtonText}>Get started</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -67,4 +31,51 @@ const Welcome = ({ navigation }) => {
 
 export default Welcome;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  safeAreaView: {
+    flex: 1,
+    backgroundColor: '#5E93B1',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  imageBackground: {
+    height: height / 1.8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textContainer: {
+    marginTop: -50,
+    paddingHorizontal: 16,
+  },
+  titleText: {
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
+  buttonContainer: {
+    paddingHorizontal: 16,
+    marginTop: 30,
+    alignItems: 'center',
+  },
+  getStartedButton: {
+    width: '80%',
+    paddingVertical: 15,
+    borderRadius: 25,
+    backgroundColor: '#022B42',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  getStartedButtonText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+});
