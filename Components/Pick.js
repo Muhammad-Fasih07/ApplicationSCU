@@ -19,15 +19,13 @@ import polyline from '@mapbox/polyline';
 import { API_KEY, API_BASE_URL } from '../src/env';
 
 const Pick = ({ route, navigation }) => {
-  console.log('Received route params in Pick:', route.params);
-
   const { user, pickupPoints = [], dropOffPoints = [] } = route.params;
 
   if (!user) {
     console.error('User object is undefined in Pick component');
     Alert.alert('Error', 'User data is missing, cannot proceed.');
-    navigation.goBack(); // Go back or navigate to a fallback screen
-    return null; // Prevent further rendering of the component
+    navigation.goBack();
+    return null;
   }
 
   const [currentPosition, setCurrentPosition] = useState({
@@ -57,7 +55,7 @@ const Pick = ({ route, navigation }) => {
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const toLocalISOString = (date) => {
-    const offset = date.getTimezoneOffset() * 60000; // offset in milliseconds
+    const offset = date.getTimezoneOffset() * 60000;
     const localISOTime = new Date(date - offset).toISOString().slice(0, -1);
     return localISOTime;
   };
@@ -192,7 +190,7 @@ const Pick = ({ route, navigation }) => {
     const point = {
       latitude: location.latitude,
       longitude: location.longitude,
-      title: address, // Use real address instead of location title
+      title: address,
     };
 
     if (type === 'pickup') {
@@ -216,8 +214,8 @@ const Pick = ({ route, navigation }) => {
     setStartLocation({
       latitude: details.geometry.location.lat,
       longitude: details.geometry.location.lng,
-      address: details.formatted_address, // Using formatted address as address
-      realName: details.name || 'Unknown Location', // Using the name from details or a placeholder
+      address: details.formatted_address,
+      realName: details.name || 'Unknown Location',
     });
   };
 
@@ -225,13 +223,12 @@ const Pick = ({ route, navigation }) => {
     setEndLocation({
       latitude: details.geometry.location.lat,
       longitude: details.geometry.location.lng,
-      address: details.formatted_address, // Using formatted address as address
-      realName: details.name || 'Unknown Location', // Using the name from details or a placeholder
+      address: details.formatted_address,
+      realName: details.name || 'Unknown Location',
     });
   };
 
   const handleAddPoint = () => {
-    // Navigate to RouteScreen and pass pickupPoints and dropOffPoints
     navigation.navigate('RouteScreen', { pickupPoints, dropOffPoints, user });
   };
 
@@ -275,13 +272,13 @@ const Pick = ({ route, navigation }) => {
 
       if (response.data && response.data.results.length > 0) {
         const details = response.data.results[0].formatted_address;
-        setMarkerTitle(details); // Ensure details is a string
+        setMarkerTitle(details);
       } else {
         setMarkerTitle('Location details not found');
       }
     } catch (err) {
       console.error('Error fetching location details:', err);
-      setMarkerTitle('Failed to fetch location details'); // Ensure this is a string
+      setMarkerTitle('Failed to fetch location details');
     } finally {
       setFetchingLocation(false);
     }
@@ -295,7 +292,6 @@ const Pick = ({ route, navigation }) => {
 
     setFormSubmitted(true);
 
-    // Prepare data using address and realName
     const requestData = {
       source: startLocation ? startLocation.address : null,
       destination: endLocation ? endLocation.address : null,
@@ -313,7 +309,10 @@ const Pick = ({ route, navigation }) => {
       })),
       pickupTime: pickupTime ? toLocalISOString(pickupTime) : null,
       dropoffTime: dropOffTime ? toLocalISOString(dropOffTime) : null,
-      d_id: user.d_id, // Ensure this line correctly accesses the user's d_id
+      d_id: user.d_id,
+      name: user.name,
+      phonenumber: user.phonenumber,
+      vehicle_number_plate: user.vehicle_number_plate,
     };
 
     try {
@@ -335,7 +334,7 @@ const Pick = ({ route, navigation }) => {
     } catch (error) {
       console.error('Error creating route:', error.message);
       Alert.alert('Error', error.message);
-      setFormSubmitted(false); // Allow re-submission if there's an error
+      setFormSubmitted(false);
     }
   };
 
@@ -367,7 +366,7 @@ const Pick = ({ route, navigation }) => {
         onPanDrag={handleMapInteractionStart}
         onRegionChangeComplete={handleMapInteractionEnd}
         handleLocationSelect={handleLocationSelect}
-        showsTraffic={true} // Show live traffic
+        showsTraffic={true}
       >
         {startLocation && (
           <Marker
@@ -434,7 +433,6 @@ const Pick = ({ route, navigation }) => {
           <GooglePlacesAutocomplete
             placeholder="From where? (Pickup)"
             onPress={(data, details = null) => {
-              // Ensure that details is not null
               if (details) {
                 addPickupPoint(details);
               }
@@ -455,7 +453,6 @@ const Pick = ({ route, navigation }) => {
           <GooglePlacesAutocomplete
             placeholder="To where? (Drop-off)"
             onPress={(data, details = null) => {
-              // Ensure that details is not null
               if (details) {
                 addDropoffPoint(details);
               }
@@ -498,7 +495,7 @@ const Pick = ({ route, navigation }) => {
               mode="time"
               is24Hour={true}
               display="default"
-              onChange={onPickupTimeChange} // Use the new handler
+              onChange={onPickupTimeChange}
             />
           )}
           {showDropOffTimePicker && (
@@ -507,7 +504,7 @@ const Pick = ({ route, navigation }) => {
               mode="time"
               is24Hour={true}
               display="default"
-              onChange={onDropOffTimeChange} // Use the new handler
+              onChange={onDropOffTimeChange}
             />
           )}
           <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>

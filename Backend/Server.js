@@ -187,11 +187,13 @@ app.post('/api/login', (req, res) => {
   }
 
   const passengerQuery = 'SELECT * FROM passenger WHERE phonenumber = ? AND password = ?';
-  const driverQuery = 'SELECT * FROM driver WHERE phonenumber = ? AND password = ?'; // Update the column name
+  const driverQuery = `
+    SELECT d.*, v.vehicle_number_plate 
+    FROM driver d 
+    JOIN vehicle v ON d.d_id = v.d_id 
+    WHERE d.phonenumber = ? AND d.password = ?
+  `;
   const values = [phonenumber, password];
-
-  // Log the query and values for debugging
-  console.log('Passenger Query:', passengerQuery, 'Values:', values);
 
   db.query(passengerQuery, values, (passengerErr, passengerResults) => {
     if (passengerErr) {
@@ -202,18 +204,12 @@ app.post('/api/login', (req, res) => {
     if (passengerResults.length > 0) {
       const passenger = passengerResults[0];
       const { pid, name, identity, phonenumber, photo /* ... other fields */ } = passenger;
-
-      // Return passenger details along with success message and navigate to dashboard1
       return res.status(200).json({
         message: 'Passenger login successful',
         user: { pid, name, identity, phonenumber, photo },
-        navigateTo: 'Dashboard', // Modify the dashboard name as needed
+        navigateTo: 'Dashboard', 
       });
     }
-
-    // If passenger login failed, check the driver table
-    // Log the query and values for debugging
-    console.log('Driver Query:', driverQuery, 'Values:', values);
 
     db.query(driverQuery, values, (driverErr, driverResults) => {
       if (driverErr) {
@@ -223,17 +219,14 @@ app.post('/api/login', (req, res) => {
 
       if (driverResults.length > 0) {
         const driver = driverResults[0];
-        const { d_id, name, identity, lastname, gender, driverphoto, phonenumber /* ... other fields */ } = driver;
-
-        // Return driver details along with success message and navigate to dashboard2
+        const { d_id, name, identity, lastname, gender, driverphoto, phonenumber, vehicle_number_plate /* ... other fields */ } = driver;
         return res.status(200).json({
           message: 'Driver login successful',
-          user: { d_id, name, identity, lastname, gender, driverphoto, phonenumber },
-          navigateTo: 'DashboardD', // Modify the dashboard name as needed
+          user: { d_id, name, identity, lastname, gender, driverphoto, phonenumber, vehicle_number_plate },
+          navigateTo: 'DashboardD',
         });
       }
 
-      // If neither passenger nor driver login is successful
       return res.status(401).json({ message: 'Invalid phone number or password' });
     });
   });
@@ -605,61 +598,56 @@ app.get('/api/vehicles', (req, res) => {
 
 // Endpoint to create a new route
 app.post('/pickdroproutes', (req, res) => {
-  console.log(req.body); // Log the entire body to see what you receive
+  const {
+    source,
+    destination,
+    pickupPoints,
+    dropoffPoints,
+    pickupTime,
+    dropoffTime,
+    d_id,
+    name,
+    phonenumber,
+    vehicle_number_plate,
+  } = req.body;
 
-  const { source, destination, pickupPoints, dropoffPoints, pickupTime, dropoffTime, d_id } = req.body;
-
-  if (!source || !destination || !pickupPoints || !dropoffPoints || !pickupTime || !dropoffTime || !d_id) {
-    return res.status(400).json({ message: 'All fields are required' });
+  if (!source || !destination || !d_id || !name || !phonenumber || !vehicle_number_plate) {
+    return res.status(400).json({ message: 'Missing required fields.' });
   }
-  
-  try {
-    // Prepare the full details for pickup and dropoff points
-    const formattedPickupPoints = pickupPoints.map(point => ({
-      
-      address: point.address,
-      realName: point.realName
-    }));
-    const formattedDropoffPoints = dropoffPoints.map(point => ({
-      
-      address: point.address,
-      realName: point.realName
-    }));
 
-    // Serialize the filtered data to JSON strings
-    const pickupPointsJSON = JSON.stringify(formattedPickupPoints);
-    const dropoffPointsJSON = JSON.stringify(formattedDropoffPoints);
+  const query = `INSERT INTO pickdroproute (source, destination, pickupPoints, dropoffPoints, pickupTime, dropoffTime, d_id, name, phonenumber, vehicle_number_plate)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-    // Insert the data into the database
-    const query = `
-      INSERT INTO pickdroproute (source, destination, pickuppoints, dropoffpoints, pickuptime, dropofftime, d_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `;
+  const values = [
+    source,
+    destination,
+    JSON.stringify(pickupPoints),
+    JSON.stringify(dropoffPoints),
+    pickupTime,
+    dropoffTime,
+    d_id,
+    name,
+    phonenumber,
+    vehicle_number_plate,
+  ];
 
-    const values = [source, destination, pickupPointsJSON, dropoffPointsJSON, pickupTime, dropoffTime, d_id];
-
-    db.query(query, values, (error, results, fields) => {
-      if (error) {
-        console.error('Error inserting route:', error);
-        res.status(500).json({ message: 'Error inserting route' });
-        return;
-      }
-      res.status(201).json({ message: 'Route created successfully', routeId: results.insertId });
-    });
-  } catch (err) {
-    console.error('Error processing request:', err);
-    res.status(400).json({ message: 'Invalid JSON data received' });
-  }
+  db.query(query, values, (err, results) => {
+    if (err) {
+      console.error('Error inserting into pickdroproute:', err);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+    res.status(201).json({ message: 'Route created successfully', data: results });
+  });
 });
 
-function safeParse(jsonString) {
+const safeParse = (jsonString) => {
   try {
     return JSON.parse(jsonString);
-  } catch (e) {
-    console.error('Failed to parse JSON:', jsonString, e);
-    return null; // or however you want to handle errors
+  } catch (error) {
+    console.error('Failed to parse JSON:', error);
+    return null;
   }
-}
+};
 
 app.get('/pickdroproute', (req, res) => {
   const query = 'SELECT * FROM pickdroproute';
@@ -680,18 +668,19 @@ app.get('/pickdroproute', (req, res) => {
 });
 
 
+
 // Endpoint to save pick&Drop booking
 app.post('/api/bookings', (req, res) => {
-  const { pickupPoint, dropOffPoint, seats, fare, pid } = req.body;
+  const { pickupPoint, dropOffPoint, seats, fare, pid, pname, phonenumberp, d_id, dname, phonenumberd, vehicle_number_plate } = req.body;
 
-  if (!pickupPoint || !dropOffPoint || !seats || !fare || !pid) {
+  if (!pickupPoint || !dropOffPoint || !seats || !fare || !pid || !pname || !phonenumberp || !d_id || !dname || !phonenumberd || !vehicle_number_plate) {
     res.status(400).send('Missing required fields');
     return;
   }
 
-  const query = 'INSERT INTO bookings (pickupPoint, dropOffPoint, seats, fare, pid, status) VALUES (?, ?, ?, ?, ?, "pending")';
+  const query = 'INSERT INTO bookings (pickupPoint, dropOffPoint, seats, fare, pid, pname, phonenumberp, status, d_id, dname, phonenumberd, vehicle_number_plate) VALUES (?, ?, ?, ?, ?, ?, ?, "pending", ?, ?, ?, ?)';
 
-  db.query(query, [pickupPoint, dropOffPoint, seats, fare, pid], (err, result) => {
+  db.query(query, [pickupPoint, dropOffPoint, seats, fare, pid, pname, phonenumberp, d_id, dname, phonenumberd, vehicle_number_plate], (err, result) => {
     if (err) {
       console.error('Error saving booking:', err);
       res.status(500).send('Server error');
@@ -702,14 +691,14 @@ app.post('/api/bookings', (req, res) => {
 });
 
 
-app.get('/api/bookings/pending', (req, res) => {
-  const query = 'SELECT * FROM bookings WHERE status = "pending"';
 
+app.get('/api/bookings/pending', (req, res) => {
+  const query = 'SELECT id, pickupPoint, dropOffPoint, seats, fare, pname,dname,phonenumberd,vehicle_number_plate, phonenumberp FROM bookings WHERE status = "pending"';
+  
   db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching pending bookings:', err);
-      res.status(500).send('Server error');
-      return;
+      return res.status(500).send('Server error');
     }
     res.status(200).json(results);
   });
@@ -729,6 +718,73 @@ app.put('/api/bookings/:id/status', (req, res) => {
     res.status(200).send('Booking status updated successfully');
   });
 });
+
+app.get('/api/bookings', (req, res) => {
+  let { pid, status } = req.query;
+
+  // Log the entire req.query object
+  console.log('Received query parameters:', req.query);
+
+  // Set default pid for testing if not provided
+  if (!pid) {
+    console.log('No pid provided, setting default pid for testing.');
+    
+  } else {
+    // Ensure pid is a number
+    pid = parseInt(pid, 10);
+    if (isNaN(pid)) {
+      console.error('Invalid pid value:', pid);
+      return res.status(400).send('Invalid pid value');
+    }
+  }
+
+  const query = 'SELECT * FROM bookings WHERE pid = ? AND status = ?';
+  console.log(`Executing query: ${query} with values [${pid}, ${status}]`);
+
+  db.query(query, [pid, status], (err, results) => {
+    if (err) {
+      console.error('Error fetching bookings:', err);
+      return res.status(500).send('Server error');
+    }
+    console.log('Query results:', results);
+    return res.status(200).json(results);
+  });
+});
+
+
+app.get('/api/booking', (req, res) => {
+  let { d_id, status } = req.query;
+
+  // Log the entire req.query object
+  console.log('Received query parameters:', req.query);
+
+  if (!d_id) {
+    console.error('No d_id provided');
+    return res.status(400).send('No d_id provided');
+  }
+
+  d_id = parseInt(d_id, 10);
+  if (isNaN(d_id)) {
+    console.error('Invalid d_id value:', d_id);
+    return res.status(400).send('Invalid d_id value');
+  }
+
+  const query = 'SELECT * FROM bookings WHERE d_id = ? AND status = ?';
+  console.log(`Executing query: ${query} with values [${d_id}, ${status}]`);
+
+  db.query(query, [d_id, status], (err, results) => {
+    if (err) {
+      console.error('Error fetching bookings:', err);
+      return res.status(500).send('Server error');
+    }
+    console.log('Query results:', results); // Log results
+    return res.status(200).json(results);
+  });
+});
+
+
+
+
 
 
 
@@ -766,6 +822,26 @@ app.post('/api/chat', (req, res) => {
       return res.status(500).json({ error: 'Error inserting message' });
     }
     res.status(201).json({ id: result.insertId });
+  });
+});
+
+
+
+// API to handle route request submission
+app.post('/api/route-request', (req, res) => {
+  const { pickuplocation, dropofflocation } = req.body;
+
+  if (!pickuplocation || !dropofflocation) {
+    return res.status(400).send('Missing required fields');
+  }
+
+  const query = 'INSERT INTO routerequest (pickuplocation, dropofflocation) VALUES (?, ?)';
+  db.query(query, [pickuplocation, dropofflocation], (err, result) => {
+    if (err) {
+      console.error('Error saving route request:', err);
+      return res.status(500).send('Server error');
+    }
+    res.status(200).send('Route request saved successfully');
   });
 });
 

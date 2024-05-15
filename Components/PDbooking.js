@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import MapView, { Marker, Callout, Polyline as RNMPolyline } from 'react-native-maps';
 import axios from 'axios';
 import { API_KEY, API_BASE_URL } from '../src/env';
@@ -15,29 +15,36 @@ const ButtonWithIcon = ({ iconName, label, onPress, isIncrement = false, isDecre
 );
 
 const PDbooking = ({ route }) => {
-  const { user } = route.params;
-  const { selectedRoute, dropOffPoint, pickupPoint } = route.params;
+  const { user, selectedRoute } = route.params;
+  const { dropOffPoint, pickupPoint } = route.params;
   const navigation = useNavigation();
-  const [pickupCoordinates, setPickupCoordinates] = useState(null);
-  const [dropOffCoordinates, setDropOffCoordinates] = useState(null);
+  const [pickupDetails, setPickupDetails] = useState(null);
+  const [dropOffDetails, setDropOffDetails] = useState(null);
   const [polylineCoords, setPolylineCoords] = useState([]);
   const [seats, setSeats] = useState(1);
   const [fare, setFare] = useState(0);
 
   useEffect(() => {
-    fetchCoordinates(pickupPoint)
-      .then((coords) => setPickupCoordinates(coords))
-      .catch((error) => console.error('Error fetching pickup coordinates:', error));
-    fetchCoordinates(dropOffPoint)
-      .then((coords) => setDropOffCoordinates(coords))
-      .catch((error) => console.error('Error fetching drop-off coordinates:', error));
+    const fetchInitialCoordinates = async () => {
+      try {
+        const pickupCoords = await fetchCoordinates(pickupPoint);
+        const dropOffCoords = await fetchCoordinates(dropOffPoint);
+        setPickupDetails(pickupCoords);
+        setDropOffDetails(dropOffCoords);
+      } catch (error) {
+        console.error('Error fetching initial coordinates:', error);
+        Alert.alert('Error', 'Failed to fetch initial coordinates. Please try again.');
+      }
+    };
+
+    fetchInitialCoordinates();
   }, [pickupPoint, dropOffPoint]);
 
   useEffect(() => {
-    if (pickupCoordinates && dropOffCoordinates) {
-      fetchRoute(pickupCoordinates, dropOffCoordinates);
+    if (pickupDetails && dropOffDetails) {
+      fetchRoute(pickupDetails, dropOffDetails);
     }
-  }, [pickupCoordinates, dropOffCoordinates]);
+  }, [pickupDetails, dropOffDetails]);
 
   const fetchCoordinates = async (address) => {
     try {
@@ -48,10 +55,12 @@ const PDbooking = ({ route }) => {
         },
       });
       if (response.data.results.length > 0) {
+        const { lat, lng } = response.data.results[0].geometry.location;
+        const formattedAddress = response.data.results[0].formatted_address;
         return {
-          latitude: response.data.results[0].geometry.location.lat,
-          longitude: response.data.results[0].geometry.location.lng,
-          name: response.data.results[0].formatted_address,
+          latitude: lat,
+          longitude: lng,
+          name: formattedAddress,
         };
       } else {
         throw new Error('Zero results returned for the address.');
@@ -71,15 +80,20 @@ const PDbooking = ({ route }) => {
           key: API_KEY,
         },
       });
-      const routeCoords = response.data.routes[0].overview_polyline.points;
-      const decodedCoords = Polyline.decode(routeCoords);
-      const formattedCoords = decodedCoords.map((point) => ({
-        latitude: point[0],
-        longitude: point[1],
-      }));
-      setPolylineCoords(formattedCoords);
+      if (response.data.routes.length > 0) {
+        const routeCoords = response.data.routes[0].overview_polyline.points;
+        const decodedCoords = Polyline.decode(routeCoords);
+        const formattedCoords = decodedCoords.map((point) => ({
+          latitude: point[0],
+          longitude: point[1],
+        }));
+        setPolylineCoords(formattedCoords);
+      } else {
+        throw new Error('No routes found');
+      }
     } catch (error) {
       console.error('Error fetching route:', error);
+      Alert.alert('Error', 'Failed to fetch route. Please try again.');
     }
   };
 
@@ -93,15 +107,20 @@ const PDbooking = ({ route }) => {
       return acc;
     }, 0);
 
-    const fuelPricePerLiter = 290; // Fuel price in PKR
-    const averageFuelConsumptionPerKm = 0.12; // Average fuel consumption per km (adjust as needed)
-    const baseFarePerKm = 20; // Base fare per km, adjust as needed
+    const baseFare = 60; // Base fare in PKR
+    const farePerKm = 30; // Fare per kilometer in PKR
+    const timeFarePerMinute = 2; // Fare per minute in PKR (assume some constant time)
+    const workingDaysPerMonth = 22; // Number of working days per month
 
-    // Total fuel cost calculation
-    const fuelCost = totalDistance * averageFuelConsumptionPerKm * fuelPricePerLiter;
-    // Total fare calculation
-    const monthlyFare = (baseFarePerKm * totalDistance + fuelCost) * 2 * 22 * seats;
+    // Assume an average speed to calculate total time (time = distance / speed)
+    const averageSpeedKmPerHour = 30; // Average speed in km/h
+    const totalTimeInMinutes = (totalDistance / averageSpeedKmPerHour) * 60;
 
+    const distanceFare = totalDistance * farePerKm;
+    const timeFare = totalTimeInMinutes * timeFarePerMinute;
+
+    // Monthly fare calculation
+    const monthlyFare = (baseFare + distanceFare + timeFare) * seats * workingDaysPerMonth;
     return monthlyFare;
   };
 
@@ -127,22 +146,28 @@ const PDbooking = ({ route }) => {
       setFare(updatedFare);
     }
   }, [polylineCoords, seats]);
-  
+
   const confirmBooking = async () => {
     try {
       const bookingDetails = {
-        pickupPoint,
-        dropOffPoint,
+        pickupPoint: pickupDetails.name, // Save real name
+        dropOffPoint: dropOffDetails.name, // Save real name
         seats,
         fare,
         pid: user.pid, // Ensure the correct key is used (pid instead of user)
+        pname: user.name,
+        phonenumberp: user.phonenumber,
+        d_id: selectedRoute.d_id,
+        dname: selectedRoute.name,
+        phonenumberd: selectedRoute.phonenumber,
+        vehicle_number_plate: selectedRoute.vehicle_number_plate,
       };
-  
+
       const response = await axios.post(`${API_BASE_URL}/api/bookings`, bookingDetails);
-  
+
       if (response.status === 200) {
         alert('Booking successful!');
-        navigation.navigate('BookingConfirmation', { bookingDetails ,user:user});
+        navigation.navigate('BookingConfirmation', { bookingDetails, user });
       } else {
         throw new Error('Booking failed');
       }
@@ -151,9 +176,6 @@ const PDbooking = ({ route }) => {
       alert('Booking failed. Please try again.');
     }
   };
-  
-  
-  
 
   return (
     <View style={styles.container}>
@@ -166,17 +188,17 @@ const PDbooking = ({ route }) => {
           longitudeDelta: 0.1,
         }}
       >
-        {pickupCoordinates && (
-          <Marker coordinate={pickupCoordinates} title="Pickup Point">
+        {pickupDetails && (
+          <Marker coordinate={pickupDetails} title="Pickup Point">
             <Callout>
-              <Text>{pickupCoordinates.name}</Text>
+              <Text>{pickupDetails.name}</Text>
             </Callout>
           </Marker>
         )}
-        {dropOffCoordinates && (
-          <Marker coordinate={dropOffCoordinates} title="Drop-off Point">
+        {dropOffDetails && (
+          <Marker coordinate={dropOffDetails} title="Drop-off Point">
             <Callout>
-              <Text>{dropOffCoordinates.name}</Text>
+              <Text>{dropOffDetails.name}</Text>
             </Callout>
           </Marker>
         )}
@@ -188,7 +210,7 @@ const PDbooking = ({ route }) => {
           <Text style={styles.seatsText}>{`${seats} Seat${seats > 1 ? 's' : ''}`}</Text>
           <ButtonWithIcon iconName="add" label="" onPress={() => setSeats(seats + 1)} isIncrement />
           <TouchableOpacity onPress={() => navigation.navigate('Paymenttype')}
-            style={{ flexDirection: 'row', alignItems: 'center', borderWidth: 3,borderRadius: 10, borderColor: 'green', padding: 5 }}
+            style={{ flexDirection: 'row', alignItems: 'center', borderWidth: 3, borderRadius: 10, borderColor: 'green', padding: 5 }}
           >
             <Icon name="attach-money" size={24} color="green" />
             <Text style={{ marginLeft: 5, color: 'green' }}>Cash</Text>

@@ -26,9 +26,30 @@ const NotificationsScreenP = ({ route }) => {
   const renderNotification = ({ item }) => (
     <View style={styles.notificationCard}>
       <View style={styles.notificationDetails}>
-        <Text style={styles.notificationText}><Icon name="place" size={20} /> Pickup Point: {item.pickupPoint}</Text>
-        <Text style={styles.notificationText}><Icon name="flag" size={20} /> Drop-off Point: {item.dropOffPoint}</Text>
-        <Text style={styles.notificationText}><Icon name="info" size={20} /> Status: {item.status}</Text>
+        <View style={styles.notificationRow}>
+          <Icon name="place" size={24} style={styles.icon} />
+          <Text style={styles.notificationText}>Pickup Point: {item.pickupPoint}</Text>
+        </View>
+        <View style={styles.notificationRow}>
+          <Icon name="flag" size={24} style={styles.icon} />
+          <Text style={styles.notificationText}>Drop-off Point: {item.dropOffPoint}</Text>
+        </View>
+        <View style={styles.notificationRow}>
+          <Icon name="info" size={24} style={styles.icon} />
+          <Text style={styles.notificationText}>Status: {item.status}</Text>
+        </View>
+        <View style={styles.notificationRow}>
+          <Icon name="person" size={24} style={styles.icon} />
+          <Text style={styles.notificationText}>Driver Name: {item.dname}</Text>
+        </View>
+        <View style={styles.notificationRow}>
+          <Icon name="phone" size={24} style={styles.icon} />
+          <Text style={styles.notificationText}>Cell No.: {item.phonenumberd}</Text>
+        </View>
+        <View style={styles.notificationRow}>
+          <Icon name="directions-car" size={24} style={styles.icon} />
+          <Text style={styles.notificationText}>Number Plate: {item.vehicle_number_plate}</Text>
+        </View>
       </View>
     </View>
   );
@@ -84,10 +105,19 @@ const styles = StyleSheet.create({
   notificationDetails: {
     marginBottom: 15,
   },
+  notificationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  icon: {
+    marginRight: 10,
+    color: '#022B42',
+  },
   notificationText: {
     fontSize: 16,
     color: '#333',
-    marginBottom: 5,
+    flex: 1,
   },
 });
 

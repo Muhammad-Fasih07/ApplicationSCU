@@ -33,10 +33,30 @@ const NotificationsScreen = ({ route }) => {
   const renderBooking = ({ item }) => (
     <View style={styles.bookingCard}>
       <View style={styles.bookingDetails}>
-        <Text style={styles.bookingText}><Icon name="place" size={20} /> Pickup: {item.pickupPoint}</Text>
-        <Text style={styles.bookingText}><Icon name="flag" size={20} /> Drop-off: {item.dropOffPoint}</Text>
-        <Text style={styles.bookingText}><Icon name="event-seat" size={20} /> Seats: {item.seats}</Text>
-        <Text style={styles.bookingText}><Icon name="attach-money" size={20} /> Fare: {item.fare} PKR</Text>
+        <View style={styles.bookingRow}>
+          <Icon name="place" size={20} style={styles.icon} />
+          <Text style={styles.bookingText}>Pickup: {item.pickupPoint}</Text>
+        </View>
+        <View style={styles.bookingRow}>
+          <Icon name="flag" size={20} style={styles.icon} />
+          <Text style={styles.bookingText}>Drop-off: {item.dropOffPoint}</Text>
+        </View>
+        <View style={styles.bookingRow}>
+          <Icon name="event-seat" size={20} style={styles.icon} />
+          <Text style={styles.bookingText}>Seats: {item.seats}</Text>
+        </View>
+        <View style={styles.bookingRow}>
+          <Icon name="attach-money" size={20} style={styles.icon} />
+          <Text style={styles.bookingText}>Fare: {item.fare} PKR</Text>
+        </View>
+        <View style={styles.bookingRow}>
+          <Icon name="person" size={20} style={styles.icon} />
+          <Text style={styles.bookingText}>Passenger: {item.pname}</Text>
+        </View>
+        <View style={styles.bookingRow}>
+          <Icon name="phone" size={20} style={styles.icon} />
+          <Text style={styles.bookingText}>Phone: {item.phonenumberp}</Text>
+        </View>
       </View>
       <View style={styles.bookingActions}>
         <TouchableOpacity
@@ -106,10 +126,18 @@ const styles = StyleSheet.create({
   bookingDetails: {
     marginBottom: 15,
   },
+  bookingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  icon: {
+    marginRight: 10,
+  },
   bookingText: {
     fontSize: 16,
     color: '#333',
-    marginBottom: 5,
+    flex: 1, // Ensure text wraps correctly
   },
   bookingActions: {
     flexDirection: 'row',

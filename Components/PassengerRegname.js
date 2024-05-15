@@ -7,16 +7,14 @@ const Register = ({ navigation, route }) => {
   const { identity, phonenumber } = route.params;
 
   const handleNameChange = (text) => {
-    if (text.length <= 20) {
-      if (/^[a-zA-Z]*$/.test(text) || text === '') {
-        setName(text);
-      }
+    if (/^[a-zA-Z\s]{0,20}$/.test(text)) {
+      setName(text);
     }
   };
 
   const handleSubmit = () => {
-    if (!Name || !/^[A-Za-z]+$/.test(Name)) {
-      Alert.alert('Invalid Name', 'Please enter a valid name using only alphabets.');
+    if (!Name || !/^[A-Za-z\s]{2,}$/.test(Name)) {
+      Alert.alert('Invalid Name', 'Please enter a valid name with at least two alphabets.');
       return;
     }
 
@@ -42,6 +40,7 @@ const Register = ({ navigation, route }) => {
           value={Name}
           onChangeText={handleNameChange}
           maxLength={20}
+          onSubmitEditing={handleSubmit} // Trigger form submission when Enter key is pressed
         />
       </View>
 

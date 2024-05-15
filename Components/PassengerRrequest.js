@@ -31,7 +31,7 @@ const getShadowStyle = () => {
 
 const screen = Dimensions.get('window'); // Get device dimensions
 
-const PassengerRequest = ({route}) => {
+const PassengerRequest = ({ route }) => {
   const { user } = route.params;
   const navigation = useNavigation();
   const [routes, setRoutes] = useState([]);
@@ -65,9 +65,9 @@ const PassengerRequest = ({route}) => {
         destination: item.destination,
         user: user
       })}
-      style={styles.containerStyle}
+      style={styles.routeItemContainer}
     >
-      <View style={styles.routeContainer}>
+      <View style={styles.iconContainer}>
         <Icon name="radio-button-checked" size={20} color="blue" />
         <View style={styles.verticalLine} />
         <Icon name="radio-button-checked" size={20} color="red" />
@@ -89,7 +89,7 @@ const PassengerRequest = ({route}) => {
     <View style={styles.container}>
       <Text style={styles.header}>Routes</Text>
       {loading ? (
-        <ActivityIndicator size="large" color="#000" />
+        <ActivityIndicator size="large" color="#022B42" />
       ) : error ? (
         <Text style={styles.errorText}>{error}</Text>
       ) : routes.length > 0 ? (
@@ -97,6 +97,7 @@ const PassengerRequest = ({route}) => {
           data={routes}
           keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
           renderItem={renderRouteItem}
+          contentContainerStyle={styles.flatListContent}
         />
       ) : (
         <Text style={styles.infoText}>No routes available</Text>
@@ -114,46 +115,46 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 25,
-    fontWeight: 'bold',
+    fontWeight: '900',
     color: '#022B42',
     marginBottom: 20,
   },
-  containerStyle: {
+  routeItemContainer: {
     ...getShadowStyle(),
-    backgroundColor: 'rgba(253, 211, 135, 0.7)',
+    backgroundColor: '#FDD387',
     borderRadius: 20,
-    padding: 10,
+    padding: 15,
     marginBottom: 15,
     borderColor: 'rgba(2,43,66,0.8)',
-    borderWidth: 3,
+    borderWidth: 1,
     flexDirection: 'row',
     width: screen.width * 0.9,
     alignSelf: 'center',
   },
-  textStyle: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 5,
-  },
-  boldTextStyle: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#555',
-    marginBottom: 5,
-  },
-  routeContainer: {
+  iconContainer: {
     flexDirection: 'column',
     alignItems: 'center',
     marginRight: 20,
   },
   verticalLine: {
-    width: 4,
-    height: 205,
+    width: 2,
+    height: 80,
     backgroundColor: '#022B42',
     marginVertical: 5,
   },
   textContainer: {
     flex: 1,
+  },
+  textStyle: {
+    fontSize: 14,
+    color: '#022B42',
+    marginBottom: 5,
+  },
+  boldTextStyle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#022B42',
+    marginBottom: 5,
   },
   errorText: {
     fontSize: 18,
@@ -166,6 +167,9 @@ const styles = StyleSheet.create({
     color: '#555',
     textAlign: 'center',
     marginTop: 20,
+  },
+  flatListContent: {
+    paddingBottom: 20,
   },
 });
 

@@ -1,182 +1,259 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { API_BASE_URL } from '../src/env';  // Adjust the path as necessary
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import axios from 'axios';
+import polyline from '@mapbox/polyline';
+import { API_KEY, API_BASE_URL } from '../src/env';
 
-const PassengerRoute = () => {
-  const [currentLocation, setCurrentLocation] = useState(null);
-  const [startLocation, setStartLocation] = useState('');
-  const [endLocation, setEndLocation] = useState('');
-  const [pickTime, setPickTime] = useState(new Date());
-  const [dropTime, setDropTime] = useState(new Date());
-  const [selectedPickTime, setSelectedPickTime] = useState('Pick Time');
-  const [selectedDropTime, setSelectedDropTime] = useState('Drop Time');
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const [isPickTimePickerVisible, setPickTimePickerVisible] = useState(false);
-  const [isDropTimePickerVisible, setDropTimePickerVisible] = useState(false);
+const PassengerRoute = ({ navigation }) => {
+  const [currentPosition, setCurrentPosition] = useState({
+    latitude: 30.3753,
+    longitude: 69.3451,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+  const [pickupLocation, setPickupLocation] = useState(null);
+  const [dropoffLocation, setDropoffLocation] = useState(null);
+  const [polylineCoordinates, setPolylineCoordinates] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    getLocationAsync();
+    requestPermissionsAndLocate();
   }, []);
 
-  const getLocationAsync = async () => {
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Location permission denied');
-        return;
-      }
+  useEffect(() => {
+    if (pickupLocation && dropoffLocation) {
+      fetchRoute(pickupLocation, dropoffLocation);
+    }
+  }, [pickupLocation, dropoffLocation]);
 
-      const location = await Location.getCurrentPositionAsync({});
-      setCurrentLocation({
+  const requestPermissionsAndLocate = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setError('Permission to access location was denied');
+      return;
+    }
+    setLoading(true);
+    try {
+      let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest });
+      setCurrentPosition({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+        latitudeDelta: 0.015,
+        longitudeDelta: 0.0121,
       });
     } catch (error) {
-      console.error('Error getting location:', error);
+      console.error('Error getting current location:', error);
+      setError('Error getting current location. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handlePickTimeChange = (event, selectedTime) => {
-    const currentTime = selectedTime || pickTime;
-    setPickTime(currentTime);
-    setSelectedPickTime(currentTime.toLocaleTimeString());
-    setPickTimePickerVisible(false); // Hide the picker after selection
-  };
-
-  const handleDropTimeChange = (event, selectedTime) => {
-    const currentTime = selectedTime || dropTime;
-    setDropTime(currentTime);
-    setSelectedDropTime(currentTime.toLocaleTimeString());
-    setDropTimePickerVisible(false); // Hide the picker after selection
-  };
-
-  const showPicker = (pickerType) => {
-    if (pickerType === 'pick') {
-      setPickTimePickerVisible(true);
-    } else if (pickerType === 'drop') {
-      setDropTimePickerVisible(true);
+  const fetchRoute = async (startLoc, endLoc) => {
+    setLoading(true);
+    const directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${startLoc.latitude},${startLoc.longitude}&destination=${endLoc.latitude},${endLoc.longitude}&key=${API_KEY}&mode=driving&alternatives=true&traffic_model=best_guess&departure_time=now`;
+    try {
+      const response = await axios.get(directionsUrl);
+      if (response.data.status !== 'OK') {
+        console.error('Failed to fetch directions:', response.data.error_message);
+        setError('Failed to fetch directions. Please try again later.');
+        return;
+      }
+      const points = polyline.decode(response.data.routes[0].overview_polyline.points);
+      const coordinates = points.map(point => ({
+        latitude: point[0],
+        longitude: point[1],
+      }));
+      setPolylineCoordinates(coordinates);
+    } catch (error) {
+      console.error('Error fetching directions:', error);
+      setError('Error fetching directions. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSubmit = async () => {
-    if (formSubmitted) {
-      Alert.alert('Error', 'Form already submitted. Please try again.');
+    if (!pickupLocation || !dropoffLocation) {
+      Alert.alert('Error', 'Please select both pickup and drop-off locations.');
       return;
     }
-
     try {
-      const response = await fetch(`${API_BASE_URL}/api/passengerroutes`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          picklocation: startLocation,
-          droplocation: endLocation,
-          picktime: pickTime.toLocaleTimeString(),
-          droptime: dropTime.toLocaleTimeString(),
-        }),
+      const response = await axios.post(`${API_BASE_URL}/api/route-request`, {
+        pickuplocation: pickupLocation.address,
+        dropofflocation: dropoffLocation.address,
       });
-
-      if (response.ok) {
-        console.log('Route inserted successfully!');
-        setFormSubmitted(true);
-        Alert.alert('Success', 'Route added successfully!');
+      if (response.status === 200) {
+        Alert.alert('Success', 'Route request submitted successfully!');
       } else {
-        console.error('Error inserting route');
-        Alert.alert('Error', 'Error adding route. Please try again.');
+        Alert.alert('Error', 'Failed to submit route request.');
       }
     } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('Error', 'Error adding route. Please try again.');
+      console.error('Error submitting route request:', error);
+      Alert.alert('Error', 'Failed to submit route request.');
     }
   };
 
   return (
     <View style={{ flex: 1 }}>
-      <MapView style={{ flex: 2 }} initialRegion={currentLocation} showsUserLocation={true} followsUserLocation={true}>
-        {currentLocation && <Marker coordinate={currentLocation} pinColor="blue" />}
+      {loading && <ActivityIndicator style={styles.loadingIndicator} size="large" color="#0000ff" />}
+      {error && <Text style={styles.errorText}>{error}</Text>}
+      <MapView
+        style={{ flex: 1 }}
+        region={currentPosition}
+        showsUserLocation={true}
+        followUserLocation={true}
+        mapType="standard"
+      >
+        {pickupLocation && (
+          <Marker
+            coordinate={{ latitude: pickupLocation.latitude, longitude: pickupLocation.longitude }}
+            title="Pickup Location"
+          />
+        )}
+        {dropoffLocation && (
+          <Marker
+            coordinate={{ latitude: dropoffLocation.latitude, longitude: dropoffLocation.longitude }}
+            title="Drop-off Location"
+          />
+        )}
+        {polylineCoordinates.length > 0 && (
+          <Polyline coordinates={polylineCoordinates} strokeColor="blue" strokeWidth={4} />
+        )}
       </MapView>
-
-      <View style={{ flex: 1, backgroundColor: '#FDD387', borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingHorizontal: 16, paddingTop: 10 }}>
-        <ScrollView contentContainerStyle={{ paddingBottom: 15 }}>
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-            <View style={{ borderBottomWidth: 1, paddingBottom: 10, backgroundColor: '#022B42' }}>
-              <Text style={{ fontSize: 19, fontWeight: 'bold', color: 'white', paddingHorizontal: 16, paddingVertical: 6, paddingLeft: 50 }}>
-                Passenger Route Request
-              </Text>
-            </View>
-            <View style={{ alignItems: 'center', padding: 15 }}>
-              {/* Start Location and Pick Time */}
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-                <TextInput style={{ height: 40, borderColor: '#022B42', borderWidth: 2, marginBottom: 10, width: '50%', borderRadius: 10, paddingHorizontal: 10 }}
-                  placeholder="Start Location"
-                  value={startLocation}
-                  onChangeText={(text) => setStartLocation(text)}
-                />
-                <TouchableOpacity style={{ backgroundColor: '#022B42', padding: 10, borderRadius: 20, justifyContent: 'center', alignItems: 'center', marginLeft: 10 }}
-                  onPress={() => showPicker('pick')}>
-                  <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>{selectedPickTime}</Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* End Location and Drop Time */}
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-                <TextInput style={{ height: 40, borderColor: '#022B42', borderWidth: 2, marginBottom: 10, width: '50%', borderRadius: 10, paddingHorizontal: 10 }}
-                  placeholder="End Location"
-                  value={endLocation}
-                  onChangeText={(text) => setEndLocation(text)}
-                />
-                <TouchableOpacity style={{ backgroundColor: '#022B42', padding: 10, borderRadius: 20, justifyContent: 'center', alignItems: 'center', marginLeft: 10 }}
-                  onPress={() => showPicker('drop')}>
-                  <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>{selectedDropTime}</Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* Submit Button */}
-              <TouchableOpacity style={{ backgroundColor: '#022B42', padding: 15, borderRadius: 20, justifyContent: 'center', alignItems: 'center', width: '70%', marginTop: 10 }}
-                onPress={handleSubmit}>
-                <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Submit Route</Text>
-              </TouchableOpacity>
-
-              {formSubmitted && <Text style={{ color: 'green', fontSize: 16, fontWeight: 'bold', marginTop: 10 }}>Route submitted successfully!</Text>}
-            </View>
-
-            {/* DateTimePicker conditional rendering based on Platform and visibility */}
-            {Platform.OS === 'android' && (
-              <>
-                {isPickTimePickerVisible && (
-                  <DateTimePicker
-                    testID="pickTimePicker"
-                    value={pickTime}
-                    mode="time"
-                    is24Hour={true}
-                    display="default"
-                    onChange={handlePickTimeChange}
-                  />
-                )}
-                {isDropTimePickerVisible && (
-                  <DateTimePicker
-                    testID="dropTimePicker"
-                    value={dropTime}
-                    mode="time"
-                    is24Hour={true}
-                    display="default"
-                    onChange={handleDropTimeChange}
-                  />
-                )}
-              </>
-            )}
-          </KeyboardAvoidingView>
-        </ScrollView>
-      </View>
+      <KeyboardAvoidingView
+        style={styles.inputContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      >
+        <GooglePlacesAutocomplete
+          placeholder="From where? (Pickup)"
+          onPress={(data, details = null) => {
+            if (details) {
+              setPickupLocation({
+                latitude: details.geometry.location.lat,
+                longitude: details.geometry.location.lng,
+                address: details.formatted_address,
+                realName: details.name || 'Unknown Location',
+              });
+            }
+          }}
+          query={{
+            key: API_KEY,
+            language: 'en',
+            components: 'country:pk',
+          }}
+          fetchDetails={true}
+          styles={{
+            textInput: styles.input,
+            listView: styles.listView,
+            description: styles.description,
+            poweredContainer: styles.poweredContainer,
+          }}
+        />
+        <GooglePlacesAutocomplete
+          placeholder="To where? (Drop-off)"
+          onPress={(data, details = null) => {
+            if (details) {
+              setDropoffLocation({
+                latitude: details.geometry.location.lat,
+                longitude: details.geometry.location.lng,
+                address: details.formatted_address,
+                realName: details.name || 'Unknown Location',
+              });
+            }
+          }}
+          query={{
+            key: API_KEY,
+            language: 'en',
+            components: 'country:pk',
+          }}
+          fetchDetails={true}
+          styles={{
+            textInput: styles.input,
+            listView: styles.listView,
+            description: styles.description,
+            poweredContainer: styles.poweredContainer,
+          }}
+        />
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>Submit Route</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  loadingIndicator: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+  },
+  errorText: {
+    position: 'absolute',
+    top: '50%',
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    color: 'red',
+    fontSize: 18,
+  },
+  inputContainer: {
+    position: 'absolute',
+    backgroundColor: 'rgba(2,43,66,0.6)',
+    bottom: 0,
+    width: '100%',
+    padding: 20,
+  },
+  input: {
+    backgroundColor: 'white',
+    paddingHorizontal: 10,
+    height: 40,
+    borderRadius: 5,
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  listView: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    maxHeight: 150,
+    zIndex: 1000,
+  },
+  description: {
+    fontWeight: 'bold',
+  },
+  poweredContainer: {
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    backgroundColor: 'rgba(2,43,66,0.8)',
+  },
+  submitButton: {
+    padding: 10,
+    backgroundColor: '#022B42',
+    borderRadius: 10,
+    marginBottom: 5,
+  },
+  submitButtonText: {
+    textAlign: 'center',
+    color: 'white',
+    fontSize: 18,
+  },
+});
 
 export default PassengerRoute;

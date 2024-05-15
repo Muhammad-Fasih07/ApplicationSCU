@@ -46,6 +46,9 @@ import BookingConfirmation from './Components/BookingConfirmation';
 import NotificationsScreen from './Components/NotificationsScreen';
 import NotifactionsScreenP from './Components/NotifactionsScreenP';
 import ChatScreen from './Components/ChatScreen';
+import PassengerBooking from './Components/PassengerBooking';
+import DriverAcceptedBookings from './Components/DriverAcceptedBookings';
+import Track from './Components/Track';
 
 const Stack = createStackNavigator();
 
@@ -96,8 +99,10 @@ const App = () => {
         <Stack.Screen name="NotificationsScreen" component={NotificationsScreen} />
         <Stack.Screen name="NotificationsScreenP" component={NotifactionsScreenP} />
         <Stack.Screen name="ChatScreen" component={ChatScreen} />
-
-
+        <Stack.Screen name="PassengerBooking" component={PassengerBooking} />
+        <Stack.Screen name="DriverAcceptedBookings" component={DriverAcceptedBookings} />
+        <Stack.Screen name="Track" component={Track} />
+        
 
 
         

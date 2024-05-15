@@ -25,19 +25,6 @@ const DashboardD = ({ route, navigation }) => {
   const [pendingBookings, setPendingBookings] = useState([]);
   const [unreadNotifications, setUnreadNotifications] = useState(false);
 
-  useEffect(() => {
-    const backAction = () => {
-      Alert.alert('Hold on!', 'Are you sure you want to exit?', [
-        { text: 'Cancel', onPress: () => null, style: 'cancel' },
-        { text: 'YES', onPress: () => BackHandler.exitApp() },
-      ]);
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
-
-    return () => backHandler.remove();
-  }, []);
 
   const handleLogout = () => {
     navigation.navigate('Login');
@@ -119,7 +106,7 @@ const DashboardD = ({ route, navigation }) => {
                 <Text style={styles.drawerUserName}>{user.name}</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('DriverAcceptedBookings', { user: user })}>
               <Text style={styles.drawerItemText}>Your Trip</Text>
             </TouchableOpacity>
             <TouchableOpacity>
@@ -143,7 +130,7 @@ const DashboardD = ({ route, navigation }) => {
             <TouchableOpacity onPress={() => navigation.navigate('Privacycenter')}>
               <Text style={styles.drawerItemText}>Privacy Center</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Welcome')}>
+            <TouchableOpacity onPress={handleLogout}>
               <Text style={styles.drawerItemTextLogout}>Logout</Text>
             </TouchableOpacity>
           </View>

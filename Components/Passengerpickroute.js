@@ -11,25 +11,25 @@ const Passengerpickroute = ({ route }) => {
     console.log('Pickup point selected:', pickupPoint.realName);
     // Navigate with the pickup point's real name as a parameter
     navigation.navigate('Passengerdroproute', {
-      selectedRoute,user,
-      pickupPoint: pickupPoint.realName || 'Unknown location'
+      selectedRoute,
+      user,
+      pickupPoint: pickupPoint.realName || 'Unknown location',
     });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>{selectedRoute.name} - Pickup Points</Text>
+      <Text style={styles.header}> - Pickup Points</Text>
       {selectedRoute.pickuppoints ? (
         selectedRoute.pickuppoints.map((pickupPoint, index) => (
           <TouchableOpacity key={index} style={styles.button} onPress={() => handlePickupPointPress(pickupPoint)}>
-            {/* Combine realName and address for display */}
             <Text style={styles.buttonText}>
               {pickupPoint.realName ? `${pickupPoint.realName} - ${pickupPoint.address}` : 'Unknown location'}
             </Text>
           </TouchableOpacity>
         ))
       ) : (
-        <Text>No pickup points available</Text>
+        <Text style={styles.noPointsText}>No pickup points available</Text>
       )}
     </View>
   );
@@ -38,23 +38,38 @@ const Passengerpickroute = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#f4f4f4',
     padding: 20,
   },
   header: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 26,
+    fontWeight: '900',
     marginVertical: 20,
+    color: '#022B42',
   },
   button: {
-    backgroundColor: '#E0E0E0',
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: '#FDD387',
+    padding: 15,
+    borderRadius: 10,
     marginTop: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 5,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 18,
+    color: '#022B42',
     textAlign: 'center',
+  },
+  noPointsText: {
+    fontSize: 16,
+    color: '#888',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 

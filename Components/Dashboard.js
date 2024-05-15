@@ -1,14 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, TouchableOpacity, StatusBar, Modal,
-  SafeAreaView, TextInput, Image, Linking, FlatList,
+  SafeAreaView, Image, Linking, FlatList,
   Alert, StyleSheet, BackHandler,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as Animatable from 'react-native-animatable';
-import { API_BASE_URL } from '../src/env'; // Ensure this is correctly pointing to your environment settings
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { API_BASE_URL, API_KEY } from '../src/env';
 
 const Dashboard = ({ route, navigation }) => {
   const { user } = route.params;
@@ -18,24 +19,12 @@ const Dashboard = ({ route, navigation }) => {
   const [emergencyModalVisible, setEmergencyModalVisible] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadNotifications, setUnreadNotifications] = useState(false);
-
-  useEffect(() => {
-    const backAction = () => {
-      Alert.alert('Hold on!', 'Are you sure you want to exit?', [
-        { text: 'Cancel', onPress: () => null, style: 'cancel' },
-        { text: 'YES', onPress: () => BackHandler.exitApp() },
-      ]);
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
-
-    return () => backHandler.remove();
-  }, []);
-
-  const handleLogout = () => {
-    navigation.navigate('Login');
-  };
+  const [homeAddress, setHomeAddress] = useState('');
+  const [instituteAddress, setInstituteAddress] = useState('');
+  const [homeAddressPlaceholder, setHomeAddressPlaceholder] = useState('My current location');
+  const [instituteAddressPlaceholder, setInstituteAddressPlaceholder] = useState('Where to?');
+  const [isHomeFocused, setIsHomeFocused] = useState(false);
+  const [isInstituteFocused, setIsInstituteFocused] = useState(false);
 
   useEffect(() => {
     fetchNotifications();
@@ -65,6 +54,25 @@ const Dashboard = ({ route, navigation }) => {
   const handleEmergencyCall = number => {
     Linking.openURL(`tel:${number}`);
     setEmergencyModalVisible(false);
+  };
+
+  const navigateToPassengerBooking = () => {
+    console.log('Navigating to PassengerBooking with user:', user);
+    navigation.navigate('PassengerBooking', { user: user });
+  };
+
+  const handleAddHome = () => {
+    if (homeAddress) {
+      setHomeAddressPlaceholder(homeAddress);
+      Alert.alert('Home Address', homeAddress);
+    }
+  };
+
+  const handleAddInstitute = () => {
+    if (instituteAddress) {
+      setInstituteAddressPlaceholder(instituteAddress);
+      Alert.alert('Institute Address', instituteAddress);
+    }
   };
 
   return (
@@ -108,7 +116,7 @@ const Dashboard = ({ route, navigation }) => {
                 <Text style={styles.drawerUserName}>{user.name}</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={navigateToPassengerBooking}>
               <Text style={styles.drawerItemText}>Your Trip</Text>
             </TouchableOpacity>
             <TouchableOpacity>
@@ -173,16 +181,46 @@ const Dashboard = ({ route, navigation }) => {
             </View>
             <View style={styles.inputSection}>
               <View style={styles.inputActions}>
-                <TextInput style={styles.input} placeholder="My current location" placeholderTextColor="#888" />
-                <TextInput style={styles.input} placeholder="Where to?" placeholderTextColor="#888" />
+                <GooglePlacesAutocomplete
+                  placeholder={homeAddressPlaceholder}
+                  onPress={(data, details = null) => {
+                    setHomeAddress(data.description);
+                  }}
+                  query={{
+                    key: API_KEY,
+                    language: 'en',
+                  }}
+                  styles={{
+                    textInput: [styles.input, { marginRight: 10 }],
+                    listView: isHomeFocused ? styles.listViewFocused : {},
+                  }}
+                  onFocus={() => setIsHomeFocused(true)}
+                  onBlur={() => setIsHomeFocused(false)}
+                />
+                <GooglePlacesAutocomplete
+                  placeholder={instituteAddressPlaceholder}
+                  onPress={(data, details = null) => {
+                    setInstituteAddress(data.description);
+                  }}
+                  query={{
+                    key: API_KEY,
+                    language: 'en',
+                  }}
+                  styles={{
+                    textInput: styles.input,
+                    listView: isInstituteFocused ? styles.listViewFocused : {},
+                  }}
+                  onFocus={() => setIsInstituteFocused(true)}
+                  onBlur={() => setIsInstituteFocused(false)}
+                />
               </View>
-              <TouchableOpacity style={styles.addButton}>
+              <TouchableOpacity style={styles.addButton} onPress={handleAddHome}>
                 <Icon name="add" size={20} color="#000" />
                 <Text style={styles.addButtonText}>Add Home</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.addButton}>
+              <TouchableOpacity style={styles.addButton} onPress={handleAddInstitute}>
                 <Icon name="add" size={20} color="#000" />
-                <Text style={styles.addButtonText}>Add Work</Text>
+                <Text style={styles.addButtonText}>Add Institute</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.routeInfo}>
@@ -191,11 +229,11 @@ const Dashboard = ({ route, navigation }) => {
                 <Text style={styles.viewAllButtonText}>VIEW ALL</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.chatIconContainer}>
+            {/* <View style={styles.chatIconContainer}>
               <TouchableOpacity onPress={() => navigation.navigate('ChatScreen', { user, userType: 'passenger' })}>
                 <Ionicons name="chatbubble-ellipses" size={30} color="#fff" />
               </TouchableOpacity>
-            </View>
+            </View> */}
           </>
         )}
       />
@@ -349,7 +387,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 10,
     width: '48%',
-    color: '#FFF',
+    color: '#022B42',
+  },
+  listViewFocused: {
+    width: '150%', // Increase the width of the list when focused
   },
   addButton: {
     flexDirection: 'row',
